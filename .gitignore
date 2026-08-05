@@ -1,0 +1,7 @@
+# 本地源文件与素材不入库，只发布 jianshi-youli-transfer/ 下的自包含 HTML
+prd/
+prototype/
+annex/
+flowcharts/
+templates/
+.DS_Store

@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>荐尺有礼 · 商家转账到零钱迁移 PRD v1.0</title>
+<style>
+:root{--brand:#a86115;--ink:#303133;--muted:#6b7280;--line:#ebeef4;--thead:#f2f5f9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",Arial,sans-serif;color:var(--ink);background:#fff;font-size:14px;line-height:1.75}
+.layout{display:flex;align-items:flex-start}
+.side{width:292px;flex:none;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:22px 0 40px;background:#fff}
+.side .brand{padding:0 22px 16px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.side .brand small{display:block;font-size:11px;letter-spacing:1px;color:var(--brand);font-weight:700}
+.side .brand h1{font-size:16px;margin-top:5px;line-height:1.5}
+.toc{list-style:none;padding:0 12px}
+.toc>li>a{display:block;padding:8px 10px;border-radius:5px;color:var(--ink);text-decoration:none;font-size:13.5px}
+.toc>li>a:hover{background:#faf6f0;color:var(--brand)}
+.toc-sub{list-style:none;padding:2px 0 6px 12px;border-left:1px solid var(--line);margin-left:12px}
+.toc-sub a{display:block;padding:6px 10px;border-radius:5px;color:var(--muted);text-decoration:none;font-size:12.5px}
+.toc-sub a:hover{background:#faf6f0;color:var(--brand)}
+.main{flex:1;min-width:0;padding:0 0 70px}
+.hero{background:linear-gradient(135deg,#1f3a63,#274b80);color:#fff;padding:40px 44px}
+.hero h2{font-size:25px;font-weight:700;letter-spacing:.5px}
+.hero .ver{margin-top:12px;display:inline-block;font-size:12px;background:rgba(255,255,255,.16);padding:4px 12px;border-radius:12px}
+.hero .vbtn{float:right;font-size:12px;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:5px 12px;cursor:pointer}
+.section{padding:30px 44px;border-bottom:1px solid var(--line)}
+.section>h2{font-size:19px;margin-bottom:16px;padding-left:11px;border-left:4px solid var(--brand);line-height:1.3}
+.section>h3{font-size:15.5px;margin:20px 0 10px}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:13px;margin:10px 0}
+th{background:var(--thead);text-align:left;padding:9px 12px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+table.params td:first-child code{white-space:nowrap;color:#8a4c0a;font-weight:600}
+td code,li code,p code{background:#f6f7f9;border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;color:#8a4c0a}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;font-weight:700;color:#fff}
+.tag.p0{background:#c0392b}.tag.p1{background:#d68910}
+p{margin:8px 0}
+ul,ol{margin:6px 0 6px 20px}
+li{margin:3px 0}
+a{color:var(--brand)}
+.callout{background:#fdf8f1;border:1px solid #f0e0c8;border-left:3px solid var(--brand);border-radius:5px;padding:11px 14px;margin:12px 0;font-size:13px}
+.callout b{color:var(--brand)}
+.module{border:1px solid var(--line);border-radius:7px;margin:18px 0;overflow:hidden}
+.module-head{background:var(--thead);padding:11px 16px;font-size:15px;font-weight:700;border-bottom:1px solid var(--line)}
+.module-head span{font-size:12px;font-weight:400;color:var(--muted);margin-left:8px}
+.module-body{padding:16px 18px}
+.feature-content{width:100%}
+.module-body h4{font-size:13.5px;color:var(--brand);margin:16px 0 7px;padding-bottom:5px;border-bottom:1px dashed var(--line)}
+.module-body h4:first-child{margin-top:0}
+.module-body ul{margin-left:18px;font-size:13.2px}
+.iframe-wrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:14px 0}
+.iframe-head{background:var(--thead);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600}
+.iframe-head button{font-size:12px;padding:3px 8px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;color:var(--brand)}
+.iframe-wrap iframe{width:100%;height:820px;border:0;display:block;background:#eef0f3}
+.mermaid-box{border:1px solid var(--line);border-radius:6px;margin:14px 0;overflow:hidden}
+.mermaid-box .bar{background:var(--thead);padding:7px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600}
+.mermaid-box .view{padding:14px;overflow-x:auto;background:#fff}
+.mermaid-svg{overflow-x:auto}
+.mermaid-svg svg{display:block;max-width:100%;height:auto}
+.src-details{font-size:12px;color:var(--brand);padding:6px 0}
+.src-details pre.src{padding:14px;background:#fbfbfc;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto;color:#444;margin:6px 0 0}
+.att{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.att a{display:block;width:250px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;text-decoration:none;color:var(--ink);font-size:13px}
+.att a:hover{border-color:var(--brand);background:#fdf8f1}
+.att a b{display:block;color:var(--brand);font-size:13.5px;margin-bottom:3px}
+.att a span{color:var(--muted);font-size:11.5px}
+.imgcard{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:12px 0;width:330px;display:inline-block;vertical-align:top;margin-right:12px}
+.imgcard .ih{background:var(--thead);padding:6px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;border-bottom:1px solid var(--line)}
+.imgcard .ih button{font-size:12px;padding:3px 8px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;color:var(--brand)}
+.imgcard img{width:100%;display:block}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:999;padding:24px}
+.modal-bg.on{display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:8px;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
+.modal-box .mh{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700}
+.modal-box .mh button{font-size:13px;padding:4px 12px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer}
+.modal-box .mc{flex:1;overflow:auto;background:#eef0f3}
+.modal-box .mc iframe{width:100%;height:100%;border:0}
+#imgViewport{flex:1;overflow:hidden;background:#1c1c1c;position:relative;cursor:grab}
+#imgViewport img{position:absolute;left:50%;top:50%;transform-origin:center center;user-select:none;-webkit-user-drag:none}
+#verModal .mc{background:#fff;padding:16px}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand">
+      <small>PRD · 荐尺有礼</small>
+      <h1>微信支付「企业付款到零钱」切换「商家转账到零钱」</h1>
+    </div>
+    <ul class="toc">
+      <li><a href="#bg">一、需求背景</a></li>
+      <li><a href="#goal">二、需求目标</a></li>
+      <li><a href="#scope">三、需求功能清单</a></li>
+      <li><a href="#solution">四、详细方案</a>
+        <ul class="toc-sub">
+          <li><a href="#solution-auth">4.1 发起免确认收款授权</a></li>
+          <li><a href="#solution-close">4.2 接收用户关闭授权结果并更新状态</a></li>
+          <li><a href="#solution-withdraw">4.3 提现新增免确认收款授权</a></li>
+          <li><a href="#solution-float">4.4 授权收款悬浮按钮</a></li>
+          <li><a href="#solution-transfer">4.5 红包审核改为商家转账接口发放</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="hero">
+      <button class="vbtn" onclick="document.getElementById('verModal').classList.add('on')">版本日志</button>
+      <h2>荐尺有礼 · 微信支付「企业付款到零钱」切换「商家转账到零钱」</h2>
+      <div class="ver">v1.0 · 初版</div>
+    </div>
+
+    <div class="section" id="proj">
+      <h2>项目信息</h2>
+      <table>
+        <tr><th style="width:130px">项目名称</th><td>荐尺有礼 · 商家转账到零钱迁移（用户授权免确认模式）</td></tr>
+        <tr><th>当前版本</th><td>v1.0</td></tr>
+        <tr><th>产品经理</th><td>Jacko</td></tr>
+        <tr><th>更新时间</th><td>2026-08-03</td></tr>
+        <tr><th>涉及系统</th><td>荐尺有礼小程序、小程序统一平台</td></tr>
+        <tr><th>涉及模块</th><td>我的奖励列表、老介新列表、提现申请、免确认收款授权、红包审核与发放</td></tr>
+      </table>
+    </div>
+
+    <div class="section" id="bg">
+      <h2>一、需求背景</h2>
+      <p>荐尺有礼是推荐类小程序：用户分享给好友，好友报名下单后，推荐者可在小程序申请提现，后台审核通过即自动发放现金奖励。现金奖励原通过微信支付「企业付款到零钱」发放。</p>
+      <p>近期后台审核通过后调用接口发放失败，原因为微信支付已将「企业付款到零钱」出资额度调整为单笔 200 元，且后续将逐步下线。荐尺单笔奖励常超过 200 元，导致奖励无法发放。</p>
+      <p>现商户号已开通「商家转账」并完成提额，单笔额度已提升至 500 元，需切换到商家转账接口，采用<b>用户授权免确认模式</b>发放现金奖励。</p>
+      <table>
+        <thead><tr><th style="width:150px">项目</th><th>企业付款到零钱（现状）</th><th>商家转账到零钱（目标）</th></tr></thead>
+        <tbody>
+          <tr><td>接口状态</td><td>额度受限，逐步下线</td><td>微信支付现行能力</td></tr>
+          <tr><td>单笔额度</td><td>200 元</td><td>已提额至 500 元</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="goal">
+      <h2>二、需求目标</h2>
+      <table>
+        <thead><tr><th style="width:120px">目标类型</th><th>描述</th><th style="width:170px">衡量指标</th><th style="width:110px">目标值</th></tr></thead>
+        <tbody>
+          <tr><td>业务连续性</td><td>解决单笔超 200 元奖励发放失败，恢复大额奖励自动发放</td><td>审核通过奖励的发放成功率</td><td>≥ 99%</td></tr>
+          <tr><td>渠道切换</td><td>奖励发放全量切换至商家转账接口，不再调用企业付款到零钱</td><td>旧接口调用量</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:16px">用户申请提现最新流程：</p>
+      <div class="mermaid-box">
+        <div class="bar"><span>用户申请提现最新流程图</span></div>
+        <div class="view"><div class="mermaid-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 0 480 1100" width="100%" style="max-width:460px;display:block;margin:0 auto" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#555"/></marker></defs>
+<rect x="120.0" y="0.0" width="220" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="25.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">用户进入「我的奖励列表/老介新列表」</text>
+<rect x="155.0" y="76.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="101.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">点击「去提现」</text>
+<rect x="142.5" y="152.0" width="175" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="177.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">后端查询授权状态</text>
+<polygon points="230,228 290.0,268.0 230,308 170.0,268.0" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="273.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">已授权?</text>
+<rect x="-25.0" y="336.0" width="190" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="360.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">弹窗增加授权说明</text><text x="70.0" y="382.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">按钮：同意授权并提现</text>
+<rect x="-30.0" y="432.0" width="200" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="456.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">跳转微信授权页</text><text x="70.0" y="478.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">发起免确认收款授权</text>
+<rect x="-5.0" y="528.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="553.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">用户确认授权</text>
+<rect x="-25.0" y="600.0" width="190" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="625.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">同步后端授权状态</text>
+<rect x="152.5" y="672.0" width="155" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="697.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">自动提交提现申请</text>
+<rect x="115.0" y="744.0" width="230" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="768.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">后台审核通过</text><text x="230.0" y="790.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">状态保持「提现审核中」</text>
+<rect x="115.0" y="836.0" width="230" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="860.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">商家转账接口发放</text><text x="230.0" y="882.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">场景：现金营销</text>
+<polygon points="230,928 290.0,968.0 230,1008 170.0,968.0" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="973.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">转账成功?</text>
+<rect x="-5.0" y="1044.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="1069.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">标记发放成功</text>
+<rect x="215.0" y="1036.0" width="210" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="320.0" y="1060.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">记录失败</text><text x="320.0" y="1082.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">状态保持「提现审核中」</text>
+<path d="M230.0 40.0 V76.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 116.0 V152.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 192.0 V228.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 308.0 V672.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 712.0 V744.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 804.0 V836.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 896.0 V928.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M170.0 268.0 H70.0 V336.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="170.0" y="261.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">否</text>
+<path d="M70.0 396.0 V432.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 492.0 V528.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 568.0 V600.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 640.0 H230.0 V672.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M170.0 968.0 H70.0 V1044.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="170.0" y="961.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">是</text>
+<path d="M290.0 968.0 H320.0 V1036.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="290.0" y="961.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">否</text>
+</svg></div>
+        <details class="src-details"><summary>查看源码</summary><pre class="src">graph TD
+    A[用户进入「我的奖励列表/老介新列表」] --> B[点击「去提现」]
+    B --> C[后端查询授权状态]
+    C --> D{已授权?}
+    D -- 否 --> E[弹窗增加授权说明<br/>按钮: 同意授权并提现]
+    E --> F[跳转微信授权页<br/>发起免确认收款授权]
+    F --> G[用户确认授权]
+    G --> H[同步后端授权状态]
+    H --> I[自动提交提现申请]
+    D -- 是 --> I
+    I --> J[后台审核通过<br/>状态保持「提现审核中」]
+    J --> K[商家转账接口发放<br/>transfer_scene_id=1000]
+    K --> L{转账成功?}
+    L -- 是 --> M[标记发放成功]
+    L -- 否 --> N[记录失败<br/>状态保持「提现审核中」]</pre></details></div>
+      
+    </div>
+
+    <div class="section" id="scope">
+      <h2>三、需求功能清单</h2>
+      <table>
+        <thead><tr><th style="width:130px">系统</th><th style="width:130px">模块</th><th style="width:200px">功能点</th><th style="width:70px">优先级</th><th>说明</th><th style="width:70px">详细方案</th></tr></thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">小程序统一平台</td>
+            <td rowspan="2">免确认收款授权</td>
+            <td>发起免确认收款授权</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>后端封装微信「发起免确认收款授权」接口，供前端在用户确认授权时调用，申请授权单并获取用于拉起授权页的 package 参数</td>
+            <td><a href="#solution-auth">查看</a></td>
+          </tr>
+          <tr>
+            <td>接收用户关闭授权结果并更新状态</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>接收微信授权结果通知，同步更新系统内授权记录状态，覆盖用户确认授权与用户关闭授权两类结果</td>
+            <td><a href="#solution-close">查看</a></td>
+          </tr>
+          <tr>
+            <td rowspan="2">荐尺有礼小程序</td>
+            <td>我的奖励列表<br>老介新列表</td>
+            <td>提现新增免确认收款授权</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>点击「去提现」后的确认弹窗按授权情况展示不同内容：未授权时在原提示基础上增加授权说明，确认后先授权再直接提交提现申请；已授权时维持现有弹窗与流程</td>
+            <td><a href="#solution-withdraw">查看</a></td>
+          </tr>
+          <tr>
+            <td>我的奖励列表</td>
+            <td>授权收款悬浮按钮</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>推荐人存在推荐成功且未提现的记录、且当前未授权免确认收款时，展示悬浮按钮，点击跳转微信授权页</td>
+            <td><a href="#solution-float">查看</a></td>
+          </tr>
+          <tr>
+            <td>小程序统一平台</td>
+            <td>红包审核</td>
+            <td>红包审核改为商家转账接口发放</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>审核通过后改调用商家转账接口发放奖励，转账场景为现金营销，未授权或转账失败时审核状态不流转，保持提现审核中</td>
+            <td><a href="#solution-transfer">查看</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="solution">
+      <h2>四、详细方案</h2>
+
+      <div class="module" id="solution-auth">
+        <div class="module-head">4.1 发起免确认收款授权 <span>小程序统一平台 · 免确认收款授权</span></div>
+        <div class="module-body feature-content">
+          <h4>前端规则逻辑</h4>
+          <ul>
+            <li>不涉及（授权发起由后端封装，前端在用户点「同意授权并提现」或悬浮按钮后调用后端发起授权接口，拿到 package 后拉起微信授权页）。</li>
+          </ul>
+          <h4>交互逻辑</h4>
+          <ul>
+            <li>不涉及。</li>
+          </ul>
+          <h4>后端处理逻辑</h4>
+          <ul>
+            <li>后端封装微信支付商户【发起免确认收款授权】接口（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4015901167" target="_blank">微信支付商户文档 4015901167</a>），用于拉起微信授权页完成免确认收款授权。</li>
+            <li>请求必传参数如下：
+              <table class="params">
+                <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+                <tbody>
+                  <tr><td><code>out_authorization_no</code></td><td>string</td><td>是</td><td>商户侧授权单号，商户内唯一，仅数字与大小写字母</td></tr>
+                  <tr><td><code>appid</code></td><td>string</td><td>是</td><td>商户 appid</td></tr>
+                  <tr><td><code>openid</code></td><td>string</td><td>是</td><td>收款用户 openid</td></tr>
+                  <tr><td><code>transfer_scene_id</code></td><td>string</td><td>是</td><td>转账场景 ID，固定为 1000（现金营销）</td></tr>
+                  <tr><td><code>user_display_name</code></td><td>string</td><td>是</td><td>固定传入「悦享福利」</td></tr>
+                  <tr><td><code>authorization_notify_url</code></td><td>string</td><td>是</td><td>授权结果通知地址，HTTPS、不可带参数</td></tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module" id="solution-close">
+        <div class="module-head">4.2 接收用户关闭授权结果并更新状态 <span>小程序统一平台 · 免确认收款授权</span></div>
+        <div class="module-body feature-content">
+          <h4>前端规则逻辑</h4>
+          <ul><li>不涉及。</li></ul>
+          <h4>交互逻辑</h4>
+          <ul><li>不涉及。</li></ul>
+          <h4>后端处理逻辑</h4>
+          <ul>
+            <li>接收微信支付商户【免确认收款授权结果通知】回调，根据通知更新用户授权状态（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4014512908" target="_blank">微信支付商户文档 4014512908</a>）。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module" id="solution-withdraw">
+        <div class="module-head">4.3 提现新增免确认收款授权 <span>荐尺有礼小程序 · 我的奖励列表 / 老介新列表</span></div>
+        <div class="module-body feature-content">
+          <h4>前端规则逻辑</h4>
+          <ul>
+            <li>点击「去提现」时调用后端接口查询用户授权状态，按返回结果展示不同弹窗：未授权时在原有「温馨提示」基础上增加授权说明区，按钮文案为「同意授权并提现」；已授权时维持现有弹窗，按钮为「我已了解，继续提现」。</li>
+            <li>未授权态点击「同意授权并提现」：跳转微信授权页完成免确认收款授权，授权成功后调用后端接口同步授权状态，同步成功再自动提交本次提现申请，无需二次确认。</li>
+          </ul>
+          <h4>原型和截图</h4>
+          <p>改造后（未授权态，新增授权说明区 + 按钮文案变化；已授权态维持现状）：</p>
+          <div class="iframe-wrap">
+            <div class="iframe-head"><span>增量原型 · 去提现弹窗（未授权态 / 已授权态）</span><button onclick="openPrev('prototype/prototype_v1.0.html#unauth','去提现弹窗 · 未授权态')">放大查看未授权态</button></div>
+            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+<html lang=&quot;zh-CN&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;>
+<title>荐尺有礼 · 商家转账迁移 原型 v1.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;Helvetica Neue&quot;,&quot;Microsoft YaHei&quot;,Arial,sans-serif;background:#e9eaec;padding:18px;color:#333}
+.stage{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.phone-wrap{display:none}
+.phone-wrap.on{display:block}
+.phone-title{text-align:center;font-size:12px;color:#8a8f99;margin-bottom:8px;font-weight:600}
+.phone{width:375px;height:760px;background:#f4f4f4;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.16);border:1px solid #d8dade}
+.statusbar{height:28px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600;color:#111}
+.navbar{height:46px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;font-weight:700;color:#111;border-bottom:1px solid #f0f0f0}
+.navbar .back{position:absolute;left:14px;font-size:20px;color:#111;font-weight:400}
+.capsule{position:absolute;right:12px;width:80px;height:28px;border:1px solid #ececec;border-radius:14px;display:flex;align-items:center;justify-content:space-around;background:#fff;font-size:11px;color:#333}
+.capsule i{font-style:normal}
+.capsule .sp{width:1px;height:13px;background:#e6e6e6}
+.body{height:calc(760px - 28px - 46px - 52px);overflow-y:auto;padding:12px;position:relative;background:#f4f4f4}
+/* 我的推荐 卡片 */
+.card{background:#FFF9F0;border-radius:14px;box-shadow:0 3px 12px rgba(190,150,200,.18);padding:12px;margin-bottom:12px}
+.sec-head{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.sec-bar{width:4px;height:16px;background:#F1514C;border-radius:2px;flex:none}
+.sec-t{font-size:15px;font-weight:700;color:#1c1c1c}
+.sec-note{font-size:11px;color:#3d7eff}
+.tickets{display:flex;gap:10px}
+.ticket{flex:1;background:#FFE6D6;border-radius:12px;padding:14px 8px;text-align:center;position:relative}
+.ticket .pill{display:inline-block;background:#FF8A3D;color:#fff;font-size:11px;padding:2px 12px;border-radius:10px}
+.ticket .num{margin-top:9px;font-size:23px;font-weight:800;color:#F1502F}
+.btn-main{display:block;width:100%;background:#FA5A2D;color:#fff;border:0;border-radius:23px;padding:13px 0;font-size:15px;font-weight:700;margin-bottom:12px}
+/* 奖励记录卡 */
+.rec-strip{background:#FFE2CF;border-radius:9px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;margin:-2px -2px 11px}
+.rec-strip .n{color:#F1502F;font-size:13px;font-weight:600}
+.rec-strip .t{color:#9a9a9a;font-size:11px}
+.rec-top{display:flex;align-items:center;gap:11px}
+.avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(#FFE08A,#FFC94D);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.rec-user .nm{font-size:14px;font-weight:600;color:#222}
+.rec-user .ph{font-size:12px;color:#8b8b8b;margin-top:2px}
+.rec-amt{margin-left:auto;text-align:right}
+.rec-amt .lb{font-size:11px;color:#9a9a9a}
+.rec-amt .v{font-size:20px;font-weight:800;color:#F1502F}
+.rec-amt .q{display:inline-block;width:14px;height:14px;line-height:13px;border-radius:50%;background:#dcdcdc;color:#fff;font-size:10px;text-align:center;margin-left:3px;vertical-align:2px}
+.hr{height:1px;background:#FCE0CC;margin:11px 0}
+.rec-bot{display:flex;align-items:flex-end;justify-content:space-between}
+.rec-bot .l{font-size:12px;color:#8b8b8b;line-height:1.8}
+.rec-bot .l b{color:#333;font-weight:500}
+.rec-bot .l em{font-style:normal;color:#F1502F}
+.rec-bot .from{font-size:12px;color:#333;margin-bottom:7px;text-align:right}
+.btn-draw{background:#FA5A2D;color:#fff;border:0;border-radius:17px;padding:8px 20px;font-size:13px;font-weight:600}
+.float{position:absolute;right:10px;width:58px;height:58px;border-radius:50%;background:#F08A34;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1.18;box-shadow:0 3px 10px rgba(0,0,0,.22);z-index:4}
+.float-hist{bottom:120px}
+.float-auth{bottom:188px;background:#FA5A2D}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:52px;background:#fff;border-top:1px solid #f0f0f0;display:flex}
+.tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#a5a5a5;gap:2px}
+.tabbar div span{font-size:18px}
+.tabbar div.act{color:#F79C29}
+.empty{text-align:center;color:#bcbcbc;font-size:12px;padding:24px 0}
+/* 弹窗（1:1 还原 02_去提现确认弹窗_现状） */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:0 34px;z-index:6}
+.modal{background:#fff;border-radius:18px;width:88%;max-width:340px;box-shadow:0 16px 44px rgba(0,0,0,.30)}
+/* 顶部直接用用户提供的图（enter_tips.png，自带橙红渐变+光芒+铃铛+云朵），不另加颜色 */
+.modal-top{position:relative;display:flex;justify-content:center;padding-top:3px;margin-top:-67px}
+.modal-top .bell-img{width:148px;height:auto;display:block}
+.modal-b{padding:6px 22px 24px;text-align:center}
+.modal-b h3{color:#D84315;font-size:18px;font-weight:600;margin-bottom:14px;letter-spacing:.5px}
+.modal-b p{font-size:13px;color:#666;line-height:1.85;text-align:center}
+.auth-block{margin-top:14px;border:1px dashed #FFB488;background:#FFF6EF;border-radius:9px;padding:11px 12px;text-align:left}
+.auth-block b{display:block;font-size:13px;color:#D84315;font-weight:700;margin-bottom:5px}
+.auth-block p{font-size:12.5px;color:#6a6a6a;line-height:1.75;text-align:left}
+.modal-btns{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.mb1{background:#FF7043;color:#fff;border:0;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700;box-shadow:0 4px 10px rgba(255,112,67,.28)}
+.mb2{background:#FFF8F5;color:#FF7043;border:1px solid #FFAB91;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700}
+.fx{outline:2px solid #a86115 !important;outline-offset:2px;border-radius:10px;box-shadow:0 0 0 4px rgba(168,97,21,.16)}
+.fx-tag{position:absolute;background:#a86115;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;transform:translateY(-100%);margin-top:-4px;z-index:9}
+</style>
+</head>
+<body>
+<div class=&quot;stage&quot;>
+
+  <!-- ① 我的奖励列表 = 我的推荐列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-reward&quot;>
+    <div class=&quot;phone-title&quot;>① 我的奖励列表（= 我的推荐列表）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:52</span><span>5G ▮39%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span><span class=&quot;sec-note&quot;>（每隔5分钟可下拉页面更新推荐奖励）</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:45:22</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>吴先生</div><div class=&quot;ph&quot;>135****4555</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态</b> <em>已接单</em></div>
+            <button class=&quot;btn-draw&quot; id=&quot;r-withdraw&quot;>去提现</button>
+          </div>
+        </div>
+        <div class=&quot;empty&quot;>— 已经到底了 —</div>
+      </div>
+      <div class=&quot;float float-auth&quot; id=&quot;r-floatauth&quot;>授权<br>收款</div>
+      <div class=&quot;float float-hist&quot;>历史<br>活动</div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+    </div>
+  </div>
+
+  <!-- ② 去提现确认弹窗 · 未授权态（改造后） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-unauth&quot;>
+    <div class=&quot;phone-title&quot;>② 去提现确认弹窗 · 未授权态（改造后）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;auth-block&quot; id=&quot;u-authblock&quot;>
+              <b>需授权微信免确认收款</b>
+              <p>授权后审核通过的奖励将自动到账微信零钱，无需你再次确认；</p>
+            </div>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot; id=&quot;u-btn1&quot;>同意授权并提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 去提现确认弹窗 · 已授权态（维持现状） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-authed&quot;>
+    <div class=&quot;phone-title&quot;>③ 去提现确认弹窗 · 已授权态（维持现状）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot; id=&quot;a-modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot;>我已了解，继续提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 老介新列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-ljx&quot;>
+    <div class=&quot;phone-title&quot;>④ 老介新列表</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:55</span><span>5G ▮43%</span></div>
+      <div class=&quot;navbar&quot;><span class=&quot;back&quot;>‹</span>老介新<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot; style=&quot;background:#fff&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:51:07</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>汤先生</div><div class=&quot;ph&quot;>136****5789</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态：</b><em>已接单</em></div>
+            <div>
+              <div class=&quot;from&quot;>来自（173****1369）的推荐</div>
+              <button class=&quot;btn-draw&quot; id=&quot;l-withdraw&quot;>去提现</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var pages = {reward:'w-reward', unauth:'w-unauth', authed:'w-authed', ljx:'w-ljx'};
+  var focusMap = {
+    'float-auth':   {page:'reward', el:'r-floatauth', tag:'新增：授权收款悬浮按钮'},
+    'withdraw':     {page:'reward', el:'r-withdraw',  tag:'点击触发授权校验'},
+    'dialog-unauth':{page:'unauth', el:'u-authblock', tag:'新增：授权说明区'},
+    'dialog-btn':   {page:'unauth', el:'u-btn1',      tag:'按钮文案变化'},
+    'dialog-authed':{page:'authed', el:'a-modal',     tag:'已授权：维持现状'},
+    'ljx-withdraw': {page:'ljx',    el:'l-withdraw',  tag:'点击触发授权校验'}
+  };
+  function show(list){
+    Object.keys(pages).forEach(function(k){
+      document.getElementById(pages[k]).classList.toggle('on', list.indexOf(k) > -1);
+    });
+  }
+  function render(){
+    document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
+    document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
+    var rawHash = (location.hash || '').replace('#','');
+    var hash = rawHash.split('?')[0];
+    var focus = new URLSearchParams(location.search).get('focus') || '';
+    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    var f = focusMap[focus];
+    if (f) { show([f.page]); }
+    else if (pages[hash]) { show([hash]); }
+    else { show(Object.keys(pages)); }
+    if (f) {
+      var el = document.getElementById(f.el);
+      if (el) {
+        el.classList.add('fx');
+        var tag = document.createElement('span');
+        tag.className = 'fx-tag'; tag.textContent = f.tag;
+        var host = el.offsetParent || el.parentNode;
+        var t = document.createElement('div');
+        t.style.position='absolute';
+        t.style.left = (el.offsetLeft) + 'px';
+        t.style.top  = (el.offsetTop) + 'px';
+        t.appendChild(tag);
+        host.appendChild(t);
+      }
+    }
+  }
+  render();
+  window.addEventListener('hashchange', render);
+})();
+</script>
+</body>
+</html>
+"></iframe>
+          </div>
+          <div class="iframe-wrap">
+            <div class="iframe-head"><span>增量原型 · 去提现弹窗（已授权态，维持现状）</span><button onclick="openPrev('prototype/prototype_v1.0.html#authed','去提现弹窗 · 已授权态')">放大查看已授权态</button></div>
+            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+<html lang=&quot;zh-CN&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;>
+<title>荐尺有礼 · 商家转账迁移 原型 v1.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;Helvetica Neue&quot;,&quot;Microsoft YaHei&quot;,Arial,sans-serif;background:#e9eaec;padding:18px;color:#333}
+.stage{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.phone-wrap{display:none}
+.phone-wrap.on{display:block}
+.phone-title{text-align:center;font-size:12px;color:#8a8f99;margin-bottom:8px;font-weight:600}
+.phone{width:375px;height:760px;background:#f4f4f4;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.16);border:1px solid #d8dade}
+.statusbar{height:28px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600;color:#111}
+.navbar{height:46px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;font-weight:700;color:#111;border-bottom:1px solid #f0f0f0}
+.navbar .back{position:absolute;left:14px;font-size:20px;color:#111;font-weight:400}
+.capsule{position:absolute;right:12px;width:80px;height:28px;border:1px solid #ececec;border-radius:14px;display:flex;align-items:center;justify-content:space-around;background:#fff;font-size:11px;color:#333}
+.capsule i{font-style:normal}
+.capsule .sp{width:1px;height:13px;background:#e6e6e6}
+.body{height:calc(760px - 28px - 46px - 52px);overflow-y:auto;padding:12px;position:relative;background:#f4f4f4}
+/* 我的推荐 卡片 */
+.card{background:#FFF9F0;border-radius:14px;box-shadow:0 3px 12px rgba(190,150,200,.18);padding:12px;margin-bottom:12px}
+.sec-head{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.sec-bar{width:4px;height:16px;background:#F1514C;border-radius:2px;flex:none}
+.sec-t{font-size:15px;font-weight:700;color:#1c1c1c}
+.sec-note{font-size:11px;color:#3d7eff}
+.tickets{display:flex;gap:10px}
+.ticket{flex:1;background:#FFE6D6;border-radius:12px;padding:14px 8px;text-align:center;position:relative}
+.ticket .pill{display:inline-block;background:#FF8A3D;color:#fff;font-size:11px;padding:2px 12px;border-radius:10px}
+.ticket .num{margin-top:9px;font-size:23px;font-weight:800;color:#F1502F}
+.btn-main{display:block;width:100%;background:#FA5A2D;color:#fff;border:0;border-radius:23px;padding:13px 0;font-size:15px;font-weight:700;margin-bottom:12px}
+/* 奖励记录卡 */
+.rec-strip{background:#FFE2CF;border-radius:9px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;margin:-2px -2px 11px}
+.rec-strip .n{color:#F1502F;font-size:13px;font-weight:600}
+.rec-strip .t{color:#9a9a9a;font-size:11px}
+.rec-top{display:flex;align-items:center;gap:11px}
+.avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(#FFE08A,#FFC94D);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.rec-user .nm{font-size:14px;font-weight:600;color:#222}
+.rec-user .ph{font-size:12px;color:#8b8b8b;margin-top:2px}
+.rec-amt{margin-left:auto;text-align:right}
+.rec-amt .lb{font-size:11px;color:#9a9a9a}
+.rec-amt .v{font-size:20px;font-weight:800;color:#F1502F}
+.rec-amt .q{display:inline-block;width:14px;height:14px;line-height:13px;border-radius:50%;background:#dcdcdc;color:#fff;font-size:10px;text-align:center;margin-left:3px;vertical-align:2px}
+.hr{height:1px;background:#FCE0CC;margin:11px 0}
+.rec-bot{display:flex;align-items:flex-end;justify-content:space-between}
+.rec-bot .l{font-size:12px;color:#8b8b8b;line-height:1.8}
+.rec-bot .l b{color:#333;font-weight:500}
+.rec-bot .l em{font-style:normal;color:#F1502F}
+.rec-bot .from{font-size:12px;color:#333;margin-bottom:7px;text-align:right}
+.btn-draw{background:#FA5A2D;color:#fff;border:0;border-radius:17px;padding:8px 20px;font-size:13px;font-weight:600}
+.float{position:absolute;right:10px;width:58px;height:58px;border-radius:50%;background:#F08A34;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1.18;box-shadow:0 3px 10px rgba(0,0,0,.22);z-index:4}
+.float-hist{bottom:120px}
+.float-auth{bottom:188px;background:#FA5A2D}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:52px;background:#fff;border-top:1px solid #f0f0f0;display:flex}
+.tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#a5a5a5;gap:2px}
+.tabbar div span{font-size:18px}
+.tabbar div.act{color:#F79C29}
+.empty{text-align:center;color:#bcbcbc;font-size:12px;padding:24px 0}
+/* 弹窗（1:1 还原 02_去提现确认弹窗_现状） */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:0 34px;z-index:6}
+.modal{background:#fff;border-radius:18px;width:88%;max-width:340px;box-shadow:0 16px 44px rgba(0,0,0,.30)}
+/* 顶部直接用用户提供的图（enter_tips.png，自带橙红渐变+光芒+铃铛+云朵），不另加颜色 */
+.modal-top{position:relative;display:flex;justify-content:center;padding-top:3px;margin-top:-67px}
+.modal-top .bell-img{width:148px;height:auto;display:block}
+.modal-b{padding:6px 22px 24px;text-align:center}
+.modal-b h3{color:#D84315;font-size:18px;font-weight:600;margin-bottom:14px;letter-spacing:.5px}
+.modal-b p{font-size:13px;color:#666;line-height:1.85;text-align:center}
+.auth-block{margin-top:14px;border:1px dashed #FFB488;background:#FFF6EF;border-radius:9px;padding:11px 12px;text-align:left}
+.auth-block b{display:block;font-size:13px;color:#D84315;font-weight:700;margin-bottom:5px}
+.auth-block p{font-size:12.5px;color:#6a6a6a;line-height:1.75;text-align:left}
+.modal-btns{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.mb1{background:#FF7043;color:#fff;border:0;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700;box-shadow:0 4px 10px rgba(255,112,67,.28)}
+.mb2{background:#FFF8F5;color:#FF7043;border:1px solid #FFAB91;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700}
+.fx{outline:2px solid #a86115 !important;outline-offset:2px;border-radius:10px;box-shadow:0 0 0 4px rgba(168,97,21,.16)}
+.fx-tag{position:absolute;background:#a86115;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;transform:translateY(-100%);margin-top:-4px;z-index:9}
+</style>
+</head>
+<body>
+<div class=&quot;stage&quot;>
+
+  <!-- ① 我的奖励列表 = 我的推荐列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-reward&quot;>
+    <div class=&quot;phone-title&quot;>① 我的奖励列表（= 我的推荐列表）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:52</span><span>5G ▮39%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span><span class=&quot;sec-note&quot;>（每隔5分钟可下拉页面更新推荐奖励）</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:45:22</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>吴先生</div><div class=&quot;ph&quot;>135****4555</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态</b> <em>已接单</em></div>
+            <button class=&quot;btn-draw&quot; id=&quot;r-withdraw&quot;>去提现</button>
+          </div>
+        </div>
+        <div class=&quot;empty&quot;>— 已经到底了 —</div>
+      </div>
+      <div class=&quot;float float-auth&quot; id=&quot;r-floatauth&quot;>授权<br>收款</div>
+      <div class=&quot;float float-hist&quot;>历史<br>活动</div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+    </div>
+  </div>
+
+  <!-- ② 去提现确认弹窗 · 未授权态（改造后） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-unauth&quot;>
+    <div class=&quot;phone-title&quot;>② 去提现确认弹窗 · 未授权态（改造后）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;auth-block&quot; id=&quot;u-authblock&quot;>
+              <b>需授权微信免确认收款</b>
+              <p>授权后审核通过的奖励将自动到账微信零钱，无需你再次确认；</p>
+            </div>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot; id=&quot;u-btn1&quot;>同意授权并提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 去提现确认弹窗 · 已授权态（维持现状） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-authed&quot;>
+    <div class=&quot;phone-title&quot;>③ 去提现确认弹窗 · 已授权态（维持现状）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot; id=&quot;a-modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot;>我已了解，继续提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 老介新列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-ljx&quot;>
+    <div class=&quot;phone-title&quot;>④ 老介新列表</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:55</span><span>5G ▮43%</span></div>
+      <div class=&quot;navbar&quot;><span class=&quot;back&quot;>‹</span>老介新<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot; style=&quot;background:#fff&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:51:07</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>汤先生</div><div class=&quot;ph&quot;>136****5789</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态：</b><em>已接单</em></div>
+            <div>
+              <div class=&quot;from&quot;>来自（173****1369）的推荐</div>
+              <button class=&quot;btn-draw&quot; id=&quot;l-withdraw&quot;>去提现</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var pages = {reward:'w-reward', unauth:'w-unauth', authed:'w-authed', ljx:'w-ljx'};
+  var focusMap = {
+    'float-auth':   {page:'reward', el:'r-floatauth', tag:'新增：授权收款悬浮按钮'},
+    'withdraw':     {page:'reward', el:'r-withdraw',  tag:'点击触发授权校验'},
+    'dialog-unauth':{page:'unauth', el:'u-authblock', tag:'新增：授权说明区'},
+    'dialog-btn':   {page:'unauth', el:'u-btn1',      tag:'按钮文案变化'},
+    'dialog-authed':{page:'authed', el:'a-modal',     tag:'已授权：维持现状'},
+    'ljx-withdraw': {page:'ljx',    el:'l-withdraw',  tag:'点击触发授权校验'}
+  };
+  function show(list){
+    Object.keys(pages).forEach(function(k){
+      document.getElementById(pages[k]).classList.toggle('on', list.indexOf(k) > -1);
+    });
+  }
+  function render(){
+    document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
+    document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
+    var rawHash = (location.hash || '').replace('#','');
+    var hash = rawHash.split('?')[0];
+    var focus = new URLSearchParams(location.search).get('focus') || '';
+    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    var f = focusMap[focus];
+    if (f) { show([f.page]); }
+    else if (pages[hash]) { show([hash]); }
+    else { show(Object.keys(pages)); }
+    if (f) {
+      var el = document.getElementById(f.el);
+      if (el) {
+        el.classList.add('fx');
+        var tag = document.createElement('span');
+        tag.className = 'fx-tag'; tag.textContent = f.tag;
+        var host = el.offsetParent || el.parentNode;
+        var t = document.createElement('div');
+        t.style.position='absolute';
+        t.style.left = (el.offsetLeft) + 'px';
+        t.style.top  = (el.offsetTop) + 'px';
+        t.appendChild(tag);
+        host.appendChild(t);
+      }
+    }
+  }
+  render();
+  window.addEventListener('hashchange', render);
+})();
+</script>
+</body>
+</html>
+"></iframe>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="module" id="solution-float">
+        <div class="module-head">4.4 授权收款悬浮按钮 <span>荐尺有礼小程序 · 我的奖励列表</span></div>
+        <div class="module-body feature-content">
+          <h4>前端规则逻辑</h4>
+          <ul>
+            <li>推荐人存在推荐状态=推荐成功的客户记录 且 该推荐记录存在未提现情况 且 用户未授权免确认收款，在「我的奖励列表」页展示「授权收款」悬浮按钮。</li>
+            <li>悬浮按钮点击跳转微信授权页，授权成功后按钮消失。</li>
+          </ul>
+          <h4>交互逻辑</h4>
+          <ul><li>不涉及。</li></ul>
+          <h4>后端处理逻辑</h4>
+          <ul>
+            <li>悬浮按钮展示条件中「未授权」以本地授权记录状态为准，状态来源同 4.3。</li>
+            <li>调起授权流程与 4.3 一致，具体实现见 4.1（生成 <code>out_authorization_no</code>、请求微信「发起免确认收款授权」接口获取 <code>package</code>、落库待授权记录、复用未过期单号）。</li>
+          </ul>
+          <h4>原型和截图</h4>
+          <div class="iframe-wrap">
+            <div class="iframe-head"><span>增量原型 · 我的奖励列表（含授权收款悬浮按钮）</span><button onclick="openPrev('prototype/prototype_v1.0.html#reward','我的奖励列表')">放大查看</button></div>
+            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+<html lang=&quot;zh-CN&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;>
+<title>荐尺有礼 · 商家转账迁移 原型 v1.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;Helvetica Neue&quot;,&quot;Microsoft YaHei&quot;,Arial,sans-serif;background:#e9eaec;padding:18px;color:#333}
+.stage{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.phone-wrap{display:none}
+.phone-wrap.on{display:block}
+.phone-title{text-align:center;font-size:12px;color:#8a8f99;margin-bottom:8px;font-weight:600}
+.phone{width:375px;height:760px;background:#f4f4f4;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.16);border:1px solid #d8dade}
+.statusbar{height:28px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600;color:#111}
+.navbar{height:46px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;font-weight:700;color:#111;border-bottom:1px solid #f0f0f0}
+.navbar .back{position:absolute;left:14px;font-size:20px;color:#111;font-weight:400}
+.capsule{position:absolute;right:12px;width:80px;height:28px;border:1px solid #ececec;border-radius:14px;display:flex;align-items:center;justify-content:space-around;background:#fff;font-size:11px;color:#333}
+.capsule i{font-style:normal}
+.capsule .sp{width:1px;height:13px;background:#e6e6e6}
+.body{height:calc(760px - 28px - 46px - 52px);overflow-y:auto;padding:12px;position:relative;background:#f4f4f4}
+/* 我的推荐 卡片 */
+.card{background:#FFF9F0;border-radius:14px;box-shadow:0 3px 12px rgba(190,150,200,.18);padding:12px;margin-bottom:12px}
+.sec-head{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.sec-bar{width:4px;height:16px;background:#F1514C;border-radius:2px;flex:none}
+.sec-t{font-size:15px;font-weight:700;color:#1c1c1c}
+.sec-note{font-size:11px;color:#3d7eff}
+.tickets{display:flex;gap:10px}
+.ticket{flex:1;background:#FFE6D6;border-radius:12px;padding:14px 8px;text-align:center;position:relative}
+.ticket .pill{display:inline-block;background:#FF8A3D;color:#fff;font-size:11px;padding:2px 12px;border-radius:10px}
+.ticket .num{margin-top:9px;font-size:23px;font-weight:800;color:#F1502F}
+.btn-main{display:block;width:100%;background:#FA5A2D;color:#fff;border:0;border-radius:23px;padding:13px 0;font-size:15px;font-weight:700;margin-bottom:12px}
+/* 奖励记录卡 */
+.rec-strip{background:#FFE2CF;border-radius:9px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;margin:-2px -2px 11px}
+.rec-strip .n{color:#F1502F;font-size:13px;font-weight:600}
+.rec-strip .t{color:#9a9a9a;font-size:11px}
+.rec-top{display:flex;align-items:center;gap:11px}
+.avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(#FFE08A,#FFC94D);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.rec-user .nm{font-size:14px;font-weight:600;color:#222}
+.rec-user .ph{font-size:12px;color:#8b8b8b;margin-top:2px}
+.rec-amt{margin-left:auto;text-align:right}
+.rec-amt .lb{font-size:11px;color:#9a9a9a}
+.rec-amt .v{font-size:20px;font-weight:800;color:#F1502F}
+.rec-amt .q{display:inline-block;width:14px;height:14px;line-height:13px;border-radius:50%;background:#dcdcdc;color:#fff;font-size:10px;text-align:center;margin-left:3px;vertical-align:2px}
+.hr{height:1px;background:#FCE0CC;margin:11px 0}
+.rec-bot{display:flex;align-items:flex-end;justify-content:space-between}
+.rec-bot .l{font-size:12px;color:#8b8b8b;line-height:1.8}
+.rec-bot .l b{color:#333;font-weight:500}
+.rec-bot .l em{font-style:normal;color:#F1502F}
+.rec-bot .from{font-size:12px;color:#333;margin-bottom:7px;text-align:right}
+.btn-draw{background:#FA5A2D;color:#fff;border:0;border-radius:17px;padding:8px 20px;font-size:13px;font-weight:600}
+.float{position:absolute;right:10px;width:58px;height:58px;border-radius:50%;background:#F08A34;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1.18;box-shadow:0 3px 10px rgba(0,0,0,.22);z-index:4}
+.float-hist{bottom:120px}
+.float-auth{bottom:188px;background:#FA5A2D}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:52px;background:#fff;border-top:1px solid #f0f0f0;display:flex}
+.tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#a5a5a5;gap:2px}
+.tabbar div span{font-size:18px}
+.tabbar div.act{color:#F79C29}
+.empty{text-align:center;color:#bcbcbc;font-size:12px;padding:24px 0}
+/* 弹窗（1:1 还原 02_去提现确认弹窗_现状） */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:0 34px;z-index:6}
+.modal{background:#fff;border-radius:18px;width:88%;max-width:340px;box-shadow:0 16px 44px rgba(0,0,0,.30)}
+/* 顶部直接用用户提供的图（enter_tips.png，自带橙红渐变+光芒+铃铛+云朵），不另加颜色 */
+.modal-top{position:relative;display:flex;justify-content:center;padding-top:3px;margin-top:-67px}
+.modal-top .bell-img{width:148px;height:auto;display:block}
+.modal-b{padding:6px 22px 24px;text-align:center}
+.modal-b h3{color:#D84315;font-size:18px;font-weight:600;margin-bottom:14px;letter-spacing:.5px}
+.modal-b p{font-size:13px;color:#666;line-height:1.85;text-align:center}
+.auth-block{margin-top:14px;border:1px dashed #FFB488;background:#FFF6EF;border-radius:9px;padding:11px 12px;text-align:left}
+.auth-block b{display:block;font-size:13px;color:#D84315;font-weight:700;margin-bottom:5px}
+.auth-block p{font-size:12.5px;color:#6a6a6a;line-height:1.75;text-align:left}
+.modal-btns{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.mb1{background:#FF7043;color:#fff;border:0;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700;box-shadow:0 4px 10px rgba(255,112,67,.28)}
+.mb2{background:#FFF8F5;color:#FF7043;border:1px solid #FFAB91;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700}
+.fx{outline:2px solid #a86115 !important;outline-offset:2px;border-radius:10px;box-shadow:0 0 0 4px rgba(168,97,21,.16)}
+.fx-tag{position:absolute;background:#a86115;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;transform:translateY(-100%);margin-top:-4px;z-index:9}
+</style>
+</head>
+<body>
+<div class=&quot;stage&quot;>
+
+  <!-- ① 我的奖励列表 = 我的推荐列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-reward&quot;>
+    <div class=&quot;phone-title&quot;>① 我的奖励列表（= 我的推荐列表）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:52</span><span>5G ▮39%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span><span class=&quot;sec-note&quot;>（每隔5分钟可下拉页面更新推荐奖励）</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:45:22</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>吴先生</div><div class=&quot;ph&quot;>135****4555</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态</b> <em>已接单</em></div>
+            <button class=&quot;btn-draw&quot; id=&quot;r-withdraw&quot;>去提现</button>
+          </div>
+        </div>
+        <div class=&quot;empty&quot;>— 已经到底了 —</div>
+      </div>
+      <div class=&quot;float float-auth&quot; id=&quot;r-floatauth&quot;>授权<br>收款</div>
+      <div class=&quot;float float-hist&quot;>历史<br>活动</div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+    </div>
+  </div>
+
+  <!-- ② 去提现确认弹窗 · 未授权态（改造后） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-unauth&quot;>
+    <div class=&quot;phone-title&quot;>② 去提现确认弹窗 · 未授权态（改造后）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;auth-block&quot; id=&quot;u-authblock&quot;>
+              <b>需授权微信免确认收款</b>
+              <p>授权后审核通过的奖励将自动到账微信零钱，无需你再次确认；</p>
+            </div>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot; id=&quot;u-btn1&quot;>同意授权并提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 去提现确认弹窗 · 已授权态（维持现状） -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-authed&quot;>
+    <div class=&quot;phone-title&quot;>③ 去提现确认弹窗 · 已授权态（维持现状）</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:53</span><span>5G ▮40%</span></div>
+      <div class=&quot;navbar&quot;>我的奖励<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;sec-head&quot;><span class=&quot;sec-bar&quot;></span><span class=&quot;sec-t&quot;>我的推荐</span></div>
+          <div class=&quot;tickets&quot;>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>累计奖励</span><div class=&quot;num&quot;>￥0</div></div>
+            <div class=&quot;ticket&quot;><span class=&quot;pill&quot;>已推荐</span><div class=&quot;num&quot;>1人</div></div>
+          </div>
+        </div>
+        <button class=&quot;btn-main&quot;>进入老介新列表</button>
+      </div>
+      <div class=&quot;tabbar&quot;><div><span>⌂</span>首页</div><div class=&quot;act&quot;><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class=&quot;mask&quot;>
+        <div class=&quot;modal&quot; id=&quot;a-modal&quot;>
+          <div class=&quot;modal-top&quot;><img class=&quot;bell-img&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUYAAAFGCAMAAAAhCcbCAAADAFBMVEUAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v3////////////////////////////+zXX+3qb9e3PsYFr/pEz+bjr5WjX9azn/rFH/cTv9aDn/p07/okv7YTf6Xzf/oEr/sVb6XDb/nEj4VzT8ZTj/qE//qlD/dTz4VTT/ej37ZDj/s1j/fT7/rlT/rlP3UjP/kkT/dzz8Zzj/czv/j0P/nkn7Yzf/tFr/t2D/gD7/mUf6Xjb/tl3/nUn/lUX/gz//i0L/mkf/l0b4VDP/sFT/tVz/hkD/lkb+1Y33UTL/iEH/tVv/iUH+v07/uGH/jUL+3aPvZ1jvZVf9fHD+1Iv+tZz//fv4c13/+fb/sl/4dl70c1r/p1z1blj/wH7+0oX/xH/+0H3/xHb/9vL9fGr/m03+zoLzb1z+wWz7cjv/rV/+25v/6dD+3J//wXHzbVvza1v/yqL+yXz9e2r/9uz/7Of/7dn/3bbzaVr/lk35YUH+0sf/06b/sG3/vGz9f2v+vmr/u2j/u2b/uGb/nlb+2JX/zpX+tUv9dUb+5+P/yYj/tp3/olv/qFb+e0/+uk38ej3/8O3/8uX+2ND/4b79u6r+sJb+ynP/i039okf+4t3+nHz+rkr/5MX+yb/8rZ//0J7+xm//s2X7ck37l4P+jWH8fGH/4Nf+yLj/1a38tKT7knr/lW3/lFT+vU35Z0v+p0j7iXD8gmb/kEr71tT7zsz9wbL/1KDyiYPubmntZmH9g1f7bUX+tq7/w6n0oJz/u4r/qGr2fVH2bE3/1rT/w5b/q4n+oIL9iYL/tHr5dF32r6z6vLn8o5P/28X+rJD4w8DwfHfxZ1H5YPtZAAAAPHRSTlMA/fT6+PEDwirlyNK5CgbuLxLqIBcOnOkBZ0i9M9jNba52oyVBOlpXilLegrR64xupXtqYhf1/jE5FkZU4ds44AAAhyUlEQVR42uzYTUiT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&quot; alt=&quot;&quot;></div>
+          <div class=&quot;modal-b&quot;>
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class=&quot;modal-btns&quot;>
+              <button class=&quot;mb1&quot;>我已了解，继续提现</button>
+              <button class=&quot;mb2&quot;>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 老介新列表 -->
+  <div class=&quot;phone-wrap&quot; id=&quot;w-ljx&quot;>
+    <div class=&quot;phone-title&quot;>④ 老介新列表</div>
+    <div class=&quot;phone&quot;>
+      <div class=&quot;statusbar&quot;><span>16:55</span><span>5G ▮43%</span></div>
+      <div class=&quot;navbar&quot;><span class=&quot;back&quot;>‹</span>老介新<div class=&quot;capsule&quot;><i>···</i><div class=&quot;sp&quot;></div><i>⊙</i></div></div>
+      <div class=&quot;body&quot; style=&quot;background:#fff&quot;>
+        <div class=&quot;card&quot;>
+          <div class=&quot;rec-strip&quot;><span class=&quot;n&quot;>嘉豪测试0803</span><span class=&quot;t&quot;>2026-08-03 16:51:07</span></div>
+          <div class=&quot;rec-top&quot;>
+            <div class=&quot;avatar&quot;>🤖</div>
+            <div class=&quot;rec-user&quot;><div class=&quot;nm&quot;>汤先生</div><div class=&quot;ph&quot;>136****5789</div></div>
+            <div class=&quot;rec-amt&quot;><div class=&quot;lb&quot;>奖励金额</div><div class=&quot;v&quot;>￥1.2<span class=&quot;q&quot;>?</span></div></div>
+          </div>
+          <div class=&quot;hr&quot;></div>
+          <div class=&quot;rec-bot&quot;>
+            <div class=&quot;l&quot;>满0.30元可提现<br><b>状态：</b><em>已接单</em></div>
+            <div>
+              <div class=&quot;from&quot;>来自（173****1369）的推荐</div>
+              <button class=&quot;btn-draw&quot; id=&quot;l-withdraw&quot;>去提现</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var pages = {reward:'w-reward', unauth:'w-unauth', authed:'w-authed', ljx:'w-ljx'};
+  var focusMap = {
+    'float-auth':   {page:'reward', el:'r-floatauth', tag:'新增：授权收款悬浮按钮'},
+    'withdraw':     {page:'reward', el:'r-withdraw',  tag:'点击触发授权校验'},
+    'dialog-unauth':{page:'unauth', el:'u-authblock', tag:'新增：授权说明区'},
+    'dialog-btn':   {page:'unauth', el:'u-btn1',      tag:'按钮文案变化'},
+    'dialog-authed':{page:'authed', el:'a-modal',     tag:'已授权：维持现状'},
+    'ljx-withdraw': {page:'ljx',    el:'l-withdraw',  tag:'点击触发授权校验'}
+  };
+  function show(list){
+    Object.keys(pages).forEach(function(k){
+      document.getElementById(pages[k]).classList.toggle('on', list.indexOf(k) > -1);
+    });
+  }
+  function render(){
+    document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
+    document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
+    var rawHash = (location.hash || '').replace('#','');
+    var hash = rawHash.split('?')[0];
+    var focus = new URLSearchParams(location.search).get('focus') || '';
+    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    var f = focusMap[focus];
+    if (f) { show([f.page]); }
+    else if (pages[hash]) { show([hash]); }
+    else { show(Object.keys(pages)); }
+    if (f) {
+      var el = document.getElementById(f.el);
+      if (el) {
+        el.classList.add('fx');
+        var tag = document.createElement('span');
+        tag.className = 'fx-tag'; tag.textContent = f.tag;
+        var host = el.offsetParent || el.parentNode;
+        var t = document.createElement('div');
+        t.style.position='absolute';
+        t.style.left = (el.offsetLeft) + 'px';
+        t.style.top  = (el.offsetTop) + 'px';
+        t.appendChild(tag);
+        host.appendChild(t);
+      }
+    }
+  }
+  render();
+  window.addEventListener('hashchange', render);
+})();
+</script>
+</body>
+</html>
+"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="module" id="solution-transfer">
+        <div class="module-head">4.5 红包审核改为商家转账接口发放 <span>小程序统一平台 · 红包审核</span></div>
+        <div class="module-body feature-content">
+          <h4>前端规则逻辑</h4>
+          <ul><li>不涉及。</li></ul>
+          <h4>交互逻辑</h4>
+          <ul><li>不涉及。</li></ul>
+          <h4>后端处理逻辑</h4>
+          <ul>
+            <li>审核通过后调用微信支付商户【用户授权后转账】接口发放奖励（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4014399371" target="_blank">微信支付商户文档 4014399371</a>）。</li>
+            <li>若接口返回单据状态（state）为 <code>SUCCESS</code>，则代表转账成功，更新提现记录的审核状态为「提现成功」、提现状态为「提现成功」，并补充提现时间。</li>
+            <li>若接口返回单据状态（state）不为 <code>SUCCESS</code>，则根据失败原因的枚举值匹配对应中文错误原因并提示；审核状态与提现状态不流转，保持「提现审核中」。</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    
+
+    <!--SECTIONS-->
+  </main>
+</div>
+
+<div class="modal-bg" id="prevModal">
+  <div class="modal-box">
+    <div class="mh"><span id="prevTitle">原型预览</span><button onclick="closePrev()">关闭</button></div>
+    <div class="mc"><iframe id="prevFrame" sandbox="allow-scripts allow-same-origin"></iframe></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="imgModal">
+  <div class="modal-box">
+    <div class="mh"><span id="imgTitle">图片查看</span><span style="font-weight:400;font-size:12px;color:#6b7280">滚轮缩放 · 按住拖动</span><button onclick="closeImg()">关闭</button></div>
+    <div id="imgViewport"><img id="imgEl" alt=""></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="verModal">
+  <div class="modal-box" style="max-width:760px;height:auto;max-height:80vh">
+    <div class="mh"><span>版本日志</span><button onclick="document.getElementById('verModal').classList.remove('on')">关闭</button></div>
+    <div class="mc">
+      <table>
+        <thead><tr><th>版本</th><th>日期</th><th>变更说明</th><th>产品经理</th></tr></thead>
+        <tbody><tr><td>v1.0</td><td>2026-08-03</td><td>初版：企业付款到零钱切换商家转账到零钱（用户授权免确认模式），覆盖小程序授权入口与统一平台发起授权、授权记录、关闭回调、审核发放改造；功能清单含「发起免确认收款授权」接口</td><td>Jacko</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPrev(src, title){
+  document.getElementById('prevTitle').textContent = title || '原型预览';
+  document.getElementById('prevFrame').src = src;
+  document.getElementById('prevModal').classList.add('on');
+}
+function closePrev(){
+  document.getElementById('prevModal').classList.remove('on');
+  document.getElementById('prevFrame').src = '';
+}
+var iscale=1, itx=0, ity=0, idrag=false, isx=0, isy=0;
+function applyImg(){
+  document.getElementById('imgEl').style.transform =
+    'translate(-50%,-50%) translate(' + itx + 'px,' + ity + 'px) scale(' + iscale + ')';
+}
+function openImg(src, title){
+  iscale=1; itx=0; ity=0;
+  document.getElementById('imgTitle').textContent = title || '图片查看';
+  var el = document.getElementById('imgEl');
+  el.src = src;
+  el.style.maxWidth = '92%'; el.style.maxHeight = '92%';
+  applyImg();
+  document.getElementById('imgModal').classList.add('on');
+}
+function closeImg(){
+  document.getElementById('imgModal').classList.remove('on');
+  document.getElementById('imgEl').src = '';
+}
+(function(){
+  var vp = document.getElementById('imgViewport');
+  vp.addEventListener('wheel', function(e){
+    e.preventDefault();
+    iscale = Math.min(8, Math.max(0.2, iscale * (e.deltaY < 0 ? 1.12 : 0.89)));
+    applyImg();
+  }, {passive:false});
+  vp.addEventListener('mousedown', function(e){ idrag=true; isx=e.clientX-itx; isy=e.clientY-ity; vp.style.cursor='grabbing'; });
+  window.addEventListener('mouseup', function(){ idrag=false; vp.style.cursor='grab'; });
+  window.addEventListener('mousemove', function(e){ if(!idrag) return; itx=e.clientX-isx; ity=e.clientY-isy; applyImg(); });
+})();
+(function(){
+  var ifr = Array.prototype.slice.call(document.querySelectorAll('iframe[data-src]'));
+  function tryLoad(f){
+    if(!f.getAttribute('data-loaded')){
+      f.src = f.getAttribute('data-src');
+      f.setAttribute('data-loaded','1');
+    }
+  }
+  function checkAll(){
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    ifr.forEach(function(f){
+      var r = f.getBoundingClientRect();
+      if(r.top < vh + 200 && r.bottom > -200) tryLoad(f);
+    });
+  }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(en){ if(en.isIntersecting) tryLoad(en.target); });
+    }, {rootMargin:'200px'});
+    ifr.forEach(function(f){ io.observe(f); });
+  }
+  window.addEventListener('scroll', checkAll, {passive:true});
+  window.addEventListener('resize', checkAll);
+  // 首屏立即判一次（含页面初始即在视口内的 iframe）
+  checkAll();
+})();
+</script>
+
+</body>
+</html>
