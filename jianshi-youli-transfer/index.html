@@ -302,8 +302,8 @@ a{color:var(--brand)}
           <h4>原型和截图</h4>
           <p>改造后（未授权态，新增授权说明区 + 按钮文案变化；已授权态维持现状）：</p>
           <div class="iframe-wrap">
-            <div class="iframe-head"><span>增量原型 · 去提现弹窗（未授权态 / 已授权态）</span><button onclick="openPrev('prototype/prototype_v1.0.html#unauth','去提现弹窗 · 未授权态')">放大查看未授权态</button></div>
-            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+            <div class="iframe-head"><span>增量原型 · 去提现弹窗（未授权状态）</span><button onclick="openPrev('prototype/prototype_v1.0.html#unauth','去提现弹窗 · 未授权态')">放大查看未授权态</button></div>
+            <iframe class="proto" loading="lazy" sandbox="allow-scripts allow-same-origin" data-page="unauth" srcdoc="<!doctype html>
 <html lang=&quot;zh-CN&quot;>
 <head>
 <meta charset=&quot;utf-8&quot;>
@@ -536,12 +536,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
     });
   }
   function render(){
+    // 内联 srcdoc iframe：优先读取注入的 window.__page（最稳），其次宿主 iframe 的 data-page
+    var fp = (window.__page &amp;&amp; pages[window.__page]) ? window.__page : '';
+    if (!fp) { var fe = window.frameElement || null; if (fe &amp;&amp; fe.getAttribute) fp = fe.getAttribute('data-page') || ''; }
+    if (fp &amp;&amp; pages[fp]) { show([fp]); return; }
     document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
     document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
     var rawHash = (location.hash || '').replace('#','');
     var hash = rawHash.split('?')[0];
     var focus = new URLSearchParams(location.search).get('focus') || '';
-    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    if (!focus) { var m = /[?&amp;]focus=([^&amp;]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
     var f = focusMap[focus];
     if (f) { show([f.page]); }
     else if (pages[hash]) { show([hash]); }
@@ -566,13 +570,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
   window.addEventListener('hashchange', render);
 })();
 </script>
-</body>
+<script>window.__page=&quot;unauth&quot;;</script></body>
 </html>
 "></iframe>
           </div>
           <div class="iframe-wrap">
             <div class="iframe-head"><span>增量原型 · 去提现弹窗（已授权态，维持现状）</span><button onclick="openPrev('prototype/prototype_v1.0.html#authed','去提现弹窗 · 已授权态')">放大查看已授权态</button></div>
-            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+            <iframe class="proto" loading="lazy" sandbox="allow-scripts allow-same-origin" data-page="authed" srcdoc="<!doctype html>
 <html lang=&quot;zh-CN&quot;>
 <head>
 <meta charset=&quot;utf-8&quot;>
@@ -805,12 +809,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
     });
   }
   function render(){
+    // 内联 srcdoc iframe：优先读取注入的 window.__page（最稳），其次宿主 iframe 的 data-page
+    var fp = (window.__page &amp;&amp; pages[window.__page]) ? window.__page : '';
+    if (!fp) { var fe = window.frameElement || null; if (fe &amp;&amp; fe.getAttribute) fp = fe.getAttribute('data-page') || ''; }
+    if (fp &amp;&amp; pages[fp]) { show([fp]); return; }
     document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
     document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
     var rawHash = (location.hash || '').replace('#','');
     var hash = rawHash.split('?')[0];
     var focus = new URLSearchParams(location.search).get('focus') || '';
-    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    if (!focus) { var m = /[?&amp;]focus=([^&amp;]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
     var f = focusMap[focus];
     if (f) { show([f.page]); }
     else if (pages[hash]) { show([hash]); }
@@ -835,7 +843,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
   window.addEventListener('hashchange', render);
 })();
 </script>
-</body>
+<script>window.__page=&quot;authed&quot;;</script></body>
 </html>
 "></iframe>
           </div>
@@ -861,7 +869,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
           <h4>原型和截图</h4>
           <div class="iframe-wrap">
             <div class="iframe-head"><span>增量原型 · 我的奖励列表（含授权收款悬浮按钮）</span><button onclick="openPrev('prototype/prototype_v1.0.html#reward','我的奖励列表')">放大查看</button></div>
-            <iframe class="proto" sandbox="allow-scripts allow-same-origin" srcdoc="<!doctype html>
+            <iframe class="proto" loading="lazy" sandbox="allow-scripts allow-same-origin" data-page="reward" srcdoc="<!doctype html>
 <html lang=&quot;zh-CN&quot;>
 <head>
 <meta charset=&quot;utf-8&quot;>
@@ -1094,12 +1102,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
     });
   }
   function render(){
+    // 内联 srcdoc iframe：优先读取注入的 window.__page（最稳），其次宿主 iframe 的 data-page
+    var fp = (window.__page &amp;&amp; pages[window.__page]) ? window.__page : '';
+    if (!fp) { var fe = window.frameElement || null; if (fe &amp;&amp; fe.getAttribute) fp = fe.getAttribute('data-page') || ''; }
+    if (fp &amp;&amp; pages[fp]) { show([fp]); return; }
     document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
     document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
     var rawHash = (location.hash || '').replace('#','');
     var hash = rawHash.split('?')[0];
     var focus = new URLSearchParams(location.search).get('focus') || '';
-    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    if (!focus) { var m = /[?&amp;]focus=([^&amp;]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
     var f = focusMap[focus];
     if (f) { show([f.page]); }
     else if (pages[hash]) { show([hash]); }
@@ -1124,7 +1136,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;
   window.addEventListener('hashchange', render);
 })();
 </script>
-</body>
+<script>window.__page=&quot;reward&quot;;</script></body>
 </html>
 "></iframe>
           </div>
