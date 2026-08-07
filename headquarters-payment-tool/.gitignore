@@ -1,3 +1,5 @@
 .DS_Store
-.DS_Store
-*/.DS_Store
+# 本项目为多文件结构，源目录为必需，放行（覆盖根仓库全局忽略的 prd/ prototype/ annex/）
+!prd/
+!prototype/
+!annex/
