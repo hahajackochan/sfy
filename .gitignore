@@ -6,3 +6,5 @@ flowcharts/
 templates/
 .DS_Store
 IDEA.md
+# 本需求 PRD 需随仓库发布，覆盖上方 prd/ 忽略规则
+!prd/
