@@ -8,3 +8,5 @@ templates/
 IDEA.md
 # 本需求 PRD 需随仓库发布，覆盖上方 prd/ 忽略规则
 !prd/
+# 本需求 annex 素材（流程图等）需随仓库发布，覆盖上方 annex/ 忽略规则
+!annex/
