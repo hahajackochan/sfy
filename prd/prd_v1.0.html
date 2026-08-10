@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>荐尺有礼 · 商家转账到零钱迁移 PRD v1.0</title>
+  <style>
+    :root{--ink:#303133;--muted:#606266;--weak:#909399;--line:#ebeef4;--head:#f2f5f9;--brand:#a86115;--brand-soft:#fcebd8;--brand-pale:#fdf1e8;--bg:#fff;--ok:#67c23a;--warn:#e6a23c;--danger:#f56c6c;--blue:#409eff}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 20% 0%, #e0f2fe 0, transparent 28%), #f6f8fb;color:var(--ink);font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:#fff;padding:24px 18px;overflow:auto}
+    .brand{font-size:18px;font-weight:700;margin-bottom:4px}
+    .sub{color:var(--weak);font-size:12px;margin-bottom:22px}
+    .toc a{display:block;color:var(--muted);padding:7px 10px;border-radius:3px;text-decoration:none}
+    .toc a:hover{background:var(--brand-soft);color:var(--brand)}
+    .toc-group{margin:2px 0}
+    .toc-parent{width:100%;border:0;background:#f8fafc;color:var(--ink)!important;font-weight:700;display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:3px;cursor:pointer;font:inherit;text-align:left}
+    .toc-parent:hover{background:var(--brand-soft);color:var(--brand)!important}
+    .toc-arrow{font-size:12px;transition:transform .18s ease;color:var(--weak)}
+    .toc-group.collapsed .toc-arrow{transform:rotate(-90deg)}
+    .toc-sub{margin:4px 0 8px 12px;padding-left:10px;border-left:2px solid var(--line);display:block}
+    .toc-group.collapsed .toc-sub{display:none}
+    .toc-sub a{font-size:13px;padding:5px 8px;color:var(--weak)}
+    main{padding:28px 36px 80px;max-width:1480px}
+    .hero{background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 60%, #38bdf8 100%);color:#fff;border-radius:28px;padding:34px;box-shadow:0 18px 45px rgba(15,23,42,.08);margin-bottom:28px;border:0;position:relative}
+    .hero h1{font-size:34px;line-height:1.2;margin:0 0 12px;letter-spacing:-.04em}
+    .hero p{margin:0;color:rgba(255,255,255,.82);max-width:920px}
+    .hero .ver{display:inline-block;margin-top:14px;font-size:12px;background:rgba(255,255,255,.16);padding:4px 14px;border-radius:999px;color:#fff}
+    .hero .vbtn{position:absolute;top:20px;right:22px;font-size:12px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;cursor:pointer;transition:all .16s ease}
+    .hero .vbtn:hover{background:rgba(255,255,255,.26)}
+    section{border:1px solid var(--line);border-radius:4px;padding:24px;margin-bottom:18px;background:#fff}
+    h2{font-size:22px;margin:0 0 16px}
+    h3{font-size:17px;margin:22px 0 10px}
+    h4{font-size:15px;margin:16px 0 8px}
+    table{width:100%;border-collapse:collapse;margin:10px 0 16px}
+    th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:middle}
+    th{background:var(--head);color:var(--muted);font-weight:600}
+    .tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;font-size:12px}
+    .p0{background:#fef0f0;color:#c45656}
+    .p1{background:#fdf6ec;color:#b88230}
+    .ok{background:#f0f9eb;color:#529b2e}
+    .brandtag{background:var(--brand-pale);color:var(--brand)}
+    .blue{background:#ecf5ff;color:#337ecc}
+    .muted{color:var(--weak)}
+    .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand);padding:12px 14px;color:var(--muted);margin:12px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{border:1px solid var(--line);background:#fff;padding:14px;border-radius:4px}
+    .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+    .step{background:var(--head);padding:12px;border:1px solid var(--line);border-radius:4px;position:relative}
+    .step b{display:block}
+    .iframe-wrap{border:1px solid var(--line);background:#f7f8fa;border-radius:4px;padding:10px;margin:10px 0 18px;overflow:hidden}
+    .iframe-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:var(--weak);font-size:12px}
+    .iframe-actions{display:flex;gap:8px}
+    .flow-card{border:1px solid var(--line);border-radius:4px;background:#fff;margin:10px 0 18px;overflow:hidden}
+    .flow-card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafbfc;color:#606266;font-size:13px}
+    .flow-wrap{padding:12px;background:#fff;text-align:center}
+    .flow-wrap img{max-width:100%;max-height:360px;width:auto;height:auto;display:block;object-fit:contain;margin:0 auto}
+    .preview-btn{height:28px;padding:0 12px;border:1px solid #d9ecff;border-radius:999px;background:#ecf5ff;color:#337ecc;font-size:12px;line-height:26px;cursor:pointer;transition:all .16s ease;box-shadow:none}
+    .preview-btn:hover{background:#409eff;border-color:#409eff;color:#fff}
+    .preview-btn:active{transform:translateY(1px)}
+    .preview-modal-head .preview-btn{background:#f5f7fa;border-color:#dcdfe6;color:#606266}
+    .preview-modal-head .preview-btn:hover{background:#f56c6c;border-color:#f56c6c;color:#fff}
+    .iframe-wrap iframe{width:100%;height:760px;border:0;background:#fff;display:block}
+    .preview-modal{position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;padding:10px}
+    .preview-modal.show{display:flex}
+    .preview-modal-panel{width:min(99vw,1680px);height:min(98vh,1080px);background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.28);display:flex;flex-direction:column}
+    .preview-modal-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);font-weight:600}
+    .preview-modal-body{flex:1;overflow:hidden;background:#f6f8fb}
+    .preview-modal-body iframe{width:100%;height:100%;border:0;background:#fff}
+    .module{border:1px solid var(--line);border-radius:4px;margin:16px 0;overflow:hidden}
+    .module-head{background:var(--head);padding:12px 14px;font-weight:700}
+    .module-body{padding:16px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    ul{padding-left:1.2rem}
+    .logic-table td{vertical-align:top}
+    .logic-table ol{margin:0;padding-left:1.25rem}
+    .logic-table li{margin:2px 0}
+    .footer{color:var(--weak);font-size:12px;margin-top:24px}
+    .params td:first-child code{white-space:nowrap;color:var(--brand);font-weight:600}
+    td code,li code,p code{background:#f6f7f9;border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--brand)}
+    a{color:var(--brand)}
+    .mermaid-box{border:1px solid var(--line);border-radius:4px;margin:10px 0 18px;overflow:hidden;background:#fff}
+    .mermaid-box .bar{background:var(--head);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+    .mermaid-box .view{padding:14px;overflow-x:auto;background:#fff}
+    .mermaid-svg{overflow-x:auto}
+    .mermaid-svg svg{display:block;max-width:100%;height:auto}
+    .src-details{font-size:12px;color:var(--brand);padding:6px 0}
+    .src-details pre.src{padding:14px;background:#fbfbfc;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto;color:#444;margin:6px 0 0}
+    @media(max-width:1000px){.layout{grid-template-columns:1fr}.side{position:relative;height:auto}.meta,.grid,.flow,.two{grid-template-columns:1fr}main{padding:20px}.iframe-wrap iframe{height:540px}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand">荐尺有礼 · 商家转账 PRD</div>
+    <div class="sub">v1.0 · 初版</div>
+    <nav class="toc">
+      <a href="#info">项目信息</a>
+      <a href="#background">一、需求背景</a>
+      <a href="#goals">二、需求目标</a>
+      <a href="#scope">三、需求功能清单</a>
+      <div class="toc-group" id="solutionTocGroup">
+        <button class="toc-parent" type="button" onclick="toggleSolutionToc()"><span>四、详细方案</span><span class="toc-arrow">▼</span></button>
+        <div class="toc-sub">
+          <a href="#solution-auth">4.1 发起免确认收款授权</a>
+          <a href="#solution-close">4.2 接收用户关闭授权结果并更新状态</a>
+          <a href="#solution-withdraw">4.3 提现新增免确认收款授权</a>
+          <a href="#solution-float">4.4 授权收款悬浮按钮</a>
+          <a href="#solution-transfer">4.5 红包审核改为商家转账接口发放</a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <button class="vbtn" type="button" onclick="openVersionModal()">版本日志</button>
+      <h1>荐尺有礼 · 微信支付「企业付款到零钱」切换「商家转账到零钱」</h1>
+      <div class="ver">v1.0 · 初版</div>
+    </header>
+
+    <section id="info"><h2>项目信息</h2><table><tr><th style="width:130px">项目名称</th><td>荐尺有礼 · 商家转账到零钱迁移（用户授权免确认模式）</td></tr><tr><th>当前版本</th><td>v1.0</td></tr><tr><th>产品经理</th><td>陈嘉豪</td></tr><tr><th>更新时间</th><td>2026-08-03</td></tr><tr><th>涉及系统</th><td>荐尺有礼小程序、小程序统一平台</td></tr><tr><th>涉及模块</th><td>我的奖励列表、老介新列表、提现申请、免确认收款授权、红包审核与发放</td></tr></table></section>
+
+    <section id="background"><h2>一、需求背景</h2><p>荐尺有礼是推荐类小程序：用户分享给好友，好友报名下单后，推荐者可在小程序申请提现，后台审核通过即自动发放现金奖励。现金奖励原通过微信支付「企业付款到零钱」发放。</p><p>近期后台审核通过后调用接口发放失败，原因为微信支付已将「企业付款到零钱」出资额度调整为单笔 200 元，且后续将逐步下线。荐尺单笔奖励常超过 200 元，导致奖励无法发放。</p><p>现商户号已开通「商家转账」并完成提额，单笔额度已提升至 500 元，需切换到商家转账接口，采用<b>用户授权免确认模式</b>发放现金奖励。</p><table><tr><th style="width:150px">项目</th><th>企业付款到零钱（现状）</th><th>商家转账到零钱（目标）</th></tr><tr><td>接口状态</td><td>额度受限，逐步下线</td><td>微信支付现行能力</td></tr><tr><td>单笔额度</td><td>200 元</td><td>已提额至 500 元</td></tr></table></section>
+
+    <section id="goals"><h2>二、需求目标</h2><table><tr><th style="width:120px">目标类型</th><th>描述</th><th style="width:170px">衡量指标</th><th style="width:110px">目标值</th></tr><tr><td>业务连续性</td><td>奖励正常发放，解决单笔超 200 元奖励发放失败，恢复大额奖励自动发放</td><td>审核通过奖励的发放成功率</td><td>≥ 99%</td></tr></table><h3>用户申请提现最新流程</h3><div class="mermaid-box"><div class="bar"><span>用户申请提现最新流程图</span></div><div class="view"><div class="mermaid-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 0 480 1100" width="100%" style="max-width:460px;display:block;margin:0 auto" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#555"/></marker></defs>
+<rect x="120.0" y="0.0" width="220" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="25.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">用户进入「我的奖励列表/老介新列表」</text>
+<rect x="155.0" y="76.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="101.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">点击「去提现」</text>
+<rect x="142.5" y="152.0" width="175" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="177.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">后端查询授权状态</text>
+<polygon points="230,228 290.0,268.0 230,308 170.0,268.0" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="273.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">已授权?</text>
+<rect x="-25.0" y="336.0" width="190" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="360.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">弹窗增加授权说明</text><text x="70.0" y="382.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">按钮：同意授权并提现</text>
+<rect x="-30.0" y="432.0" width="200" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="456.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">跳转微信授权页</text><text x="70.0" y="478.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">发起免确认收款授权</text>
+<rect x="-5.0" y="528.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="553.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">用户确认授权</text>
+<rect x="-25.0" y="600.0" width="190" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="625.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">同步后端授权状态</text>
+<rect x="152.5" y="672.0" width="155" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="697.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">自动提交提现申请</text>
+<rect x="115.0" y="744.0" width="230" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="768.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">后台审核通过</text><text x="230.0" y="790.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">状态保持「提现审核中」</text>
+<rect x="115.0" y="836.0" width="230" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="860.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">商家转账接口发放</text><text x="230.0" y="882.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">场景：现金营销</text>
+<polygon points="230,928 290.0,968.0 230,1008 170.0,968.0" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="973.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">转账成功?</text>
+<rect x="-5.0" y="1044.0" width="150" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="70.0" y="1069.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">标记发放成功</text>
+<rect x="215.0" y="1036.0" width="210" height="60" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="320.0" y="1060.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">记录失败</text><text x="320.0" y="1082.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">状态保持「提现审核中」</text>
+<path d="M230.0 40.0 V76.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 116.0 V152.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 192.0 V228.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 308.0 V672.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 712.0 V744.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 804.0 V836.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M230.0 896.0 V928.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M170.0 268.0 H70.0 V336.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="170.0" y="261.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">否</text>
+<path d="M70.0 396.0 V432.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 492.0 V528.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 568.0 V600.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M70.0 640.0 H230.0 V672.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M170.0 968.0 H70.0 V1044.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="170.0" y="961.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">是</text>
+<path d="M290.0 968.0 H320.0 V1036.0" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arrow)"/><text x="290.0" y="961.0" font-size="12.5" fill="#c0392b" text-anchor="middle" font-family="-apple-system,PingFang SC,Arial,sans-serif">否</text>
+</svg></div>
+<details class="src-details"><summary>查看源码</summary><pre class="src">graph TD
+    A[用户进入「我的奖励列表/老介新列表」] --> B[点击「去提现」]
+    B --> C[后端查询授权状态]
+    C --> D{已授权?}
+    D -- 否 --> E[弹窗增加授权说明<br/>按钮: 同意授权并提现]
+    E --> F[跳转微信授权页<br/>发起免确认收款授权]
+    F --> G[用户确认授权]
+    G --> H[同步后端授权状态]
+    H --> I[自动提交提现申请]
+    D -- 是 --> I
+    I --> J[后台审核通过<br/>状态保持「提现审核中」]
+    J --> K[商家转账接口发放<br/>transfer_scene_id=1000]
+    K --> L{转账成功?}
+    L -- 是 --> M[标记发放成功]
+    L -- 否 --> N[记录失败<br/>状态保持「提现审核中」]</pre></details></div></section>
+
+    <section id="scope"><h2>三、需求功能清单</h2><table><tr><th style="width:130px">系统</th><th style="width:130px">模块</th><th style="width:200px">功能点</th><th style="width:70px">优先级</th><th>说明</th><th style="width:70px">详细方案</th></tr>
+<tr><td rowspan="2">小程序统一平台</td><td rowspan="2">免确认收款授权</td><td>发起免确认收款授权</td><td><span class="tag p0">P0</span></td><td>后端封装微信「发起免确认收款授权」接口，供前端在用户确认授权时调用，申请授权单并获取用于拉起授权页的 package 参数</td><td><a href="#solution-auth">查看</a></td></tr>
+<tr><td>接收用户关闭授权结果并更新状态</td><td><span class="tag p0">P0</span></td><td>接收微信授权结果通知，同步更新系统内授权记录状态，覆盖用户确认授权与用户关闭授权两类结果</td><td><a href="#solution-close">查看</a></td></tr>
+<tr><td rowspan="2">荐尺有礼小程序</td><td>我的奖励列表<br>老介新列表</td><td>提现新增免确认收款授权</td><td><span class="tag p0">P0</span></td><td>点击「去提现」后的确认弹窗按授权情况展示不同内容：未授权时在原提示基础上增加授权说明，确认后先授权再直接提交提现申请；已授权时维持现有弹窗与流程</td><td><a href="#solution-withdraw">查看</a></td></tr>
+<tr><td>我的奖励列表</td><td>授权收款悬浮按钮</td><td><span class="tag p0">P0</span></td><td>推荐人存在推荐成功且未提现的记录、且当前未授权免确认收款时，展示悬浮按钮，点击跳转微信授权页</td><td><a href="#solution-float">查看</a></td></tr>
+<tr><td>小程序统一平台</td><td>红包审核</td><td>红包审核改为商家转账接口发放</td><td><span class="tag p0">P0</span></td><td>审核通过后改调用商家转账接口发放奖励，转账场景为现金营销，未授权或转账失败时审核状态不流转，保持提现审核中</td><td><a href="#solution-transfer">查看</a></td></tr>
+</table></section>
+
+    <section id="solution"><h2>四、详细方案</h2>
+
+      <div class="module" id="solution-auth"><div class="module-head">4.1 发起免确认收款授权</div><div class="module-body">
+        <h4>前端规则逻辑</h4><ul><li>不涉及（授权发起由后端封装，前端在用户点「同意授权并提现」或悬浮按钮后调用后端发起授权接口，拿到 package 后拉起微信授权页）。</li></ul>
+        <h4>交互逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>后端处理逻辑</h4><ul><li>后端封装微信支付商户【发起免确认收款授权】接口（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4015901167" target="_blank" rel="noopener noreferrer">https://pay.weixin.qq.com/doc/v3/merchant/4015901167</a>），用于拉起微信授权页完成免确认收款授权。</li><li>请求必传参数如下：<table class="params"><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr><tr><td><code>out_authorization_no</code></td><td>string</td><td>是</td><td>商户侧授权单号，商户内唯一，仅数字与大小写字母</td></tr><tr><td><code>appid</code></td><td>string</td><td>是</td><td>商户 appid</td></tr><tr><td><code>openid</code></td><td>string</td><td>是</td><td>收款用户 openid</td></tr><tr><td><code>transfer_scene_id</code></td><td>string</td><td>是</td><td>转账场景 ID，固定为 1000（现金营销）</td></tr><tr><td><code>user_display_name</code></td><td>string</td><td>是</td><td>固定传入「悦享福利」</td></tr><tr><td><code>authorization_notify_url</code></td><td>string</td><td>是</td><td>授权结果通知地址，HTTPS、不可带参数</td></tr></table></li></ul>
+      </div></div>
+
+      <div class="module" id="solution-close"><div class="module-head">4.2 接收用户关闭授权结果并更新状态</div><div class="module-body">
+        <h4>前端规则逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>交互逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>后端处理逻辑</h4><ul><li>接收微信支付商户【免确认收款授权结果通知】回调，根据通知更新用户授权状态（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4014512908" target="_blank" rel="noopener noreferrer">https://pay.weixin.qq.com/doc/v3/merchant/4014512908</a>）。</li></ul>
+      </div></div>
+
+      <div class="module" id="solution-withdraw"><div class="module-head">4.3 提现新增免确认收款授权</div><div class="module-body">
+        <h4>前端规则逻辑</h4><ul><li>点击「去提现」时调用后端接口查询用户授权状态，按返回结果展示不同弹窗：未授权时在原有「温馨提示」基础上增加授权说明区，按钮文案为「同意授权并提现」；已授权时维持现有弹窗，按钮为「我已了解，继续提现」。</li><li>未授权态点击「同意授权并提现」：跳转微信授权页完成免确认收款授权，授权成功后调用后端接口同步授权状态，同步成功再自动提交本次提现申请，无需二次确认。</li><li>提现申请提交、后端发起商家转账后，前端通过 JSAPI 调起用户确认收款页面完成收款确认（wx.requestMerchantTransfer），接口说明见<a href="https://pay.weixin.qq.com/doc/v3/merchant/4012716430" target="_blank" rel="noopener noreferrer">https://pay.weixin.qq.com/doc/v3/merchant/4012716430</a>。</li></ul>
+        <h4>交互逻辑</h4><ul><li>未授权态弹窗展示授权说明区与「同意授权并提现」主按钮；已授权态弹窗维持现有「我已了解，继续提现」。</li></ul>
+        <h4>后端处理逻辑</h4><ul><li>「去提现」点击时提供授权状态查询接口；授权成功回调后同步授权状态，再自动提交提现申请。</li></ul>
+        <h4>原型和截图</h4><p>改造后（未授权态，新增授权说明区 + 按钮文案变化；已授权态维持现状）：</p>
+        <div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 去提现弹窗（未授权状态）</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../prototype/prototype_v1.0.html?focus=dialog-unauth&v=20260803" data-preview-title="去提现弹窗 · 未授权态">放大查看</button></div></div><iframe data-preview-key="prototype_v1.0.html" data-src="../prototype/prototype_v1.0.html?focus=dialog-unauth&v=20260803" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe></div>
+        <div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 去提现弹窗（已授权状态）</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../prototype/prototype_v1.0.html?focus=dialog-authed&v=20260803" data-preview-title="去提现弹窗 · 已授权态">放大查看</button></div></div><iframe data-preview-key="prototype_v1.0.html" data-src="../prototype/prototype_v1.0.html?focus=dialog-authed&v=20260803" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      </div></div>
+
+      <div class="module" id="solution-float"><div class="module-head">4.4 授权收款悬浮按钮</div><div class="module-body">
+        <h4>前端规则逻辑</h4><ul><li>推荐人存在推荐状态=推荐成功的客户记录 且 该推荐记录存在未提现情况 且 用户未授权免确认收款，在「我的奖励列表」页展示「授权收款」悬浮按钮。</li><li>悬浮按钮点击跳转微信授权页，授权成功后按钮消失。</li></ul>
+        <h4>交互逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>后端处理逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>原型和截图</h4><div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 我的奖励列表（含授权收款悬浮按钮）</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../prototype/prototype_v1.0.html?focus=float-auth&v=20260803" data-preview-title="我的奖励列表">放大查看</button></div></div><iframe data-preview-key="prototype_v1.0.html" data-src="../prototype/prototype_v1.0.html?focus=float-auth&v=20260803" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      </div></div>
+
+      <div class="module" id="solution-transfer"><div class="module-head">4.5 红包审核改为商家转账接口发放</div><div class="module-body">
+        <h4>前端规则逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>交互逻辑</h4><ul><li>不涉及。</li></ul>
+        <h4>后端处理逻辑</h4><ul><li>位置：小程序统一平台-活动管理-推荐有礼V2-活动管理/L3活动管理/小红书带单录入-红包审核。</li><li>审核通过后调用微信支付商户【用户授权后转账】接口发放奖励（接口文档：<a href="https://pay.weixin.qq.com/doc/v3/merchant/4014399371" target="_blank" rel="noopener noreferrer">https://pay.weixin.qq.com/doc/v3/merchant/4014399371</a>）。</li><li>若接口返回单据状态（state）为 <code>SUCCESS</code>，则代表转账成功，更新提现记录的审核状态为「提现成功」、提现状态为「提现成功」，并补充提现时间。</li><li>若接口返回单据状态（state）不为 <code>SUCCESS</code>，则根据失败原因的枚举值匹配对应中文错误原因并提示；审核状态与提现状态不流转，保持「提现审核中」。</li></ul>
+      </div></div>
+
+    </section>
+
+    <div class="footer">本文为 v1.0 初版 PRD，结合增量原型。</div>
+  </main>
+</div>
+
+<div id="versionModal" class="preview-modal" aria-hidden="true">
+  <div class="preview-modal-panel" style="width:min(96vw,860px);height:auto;max-height:80vh">
+    <div class="preview-modal-head">
+      <span>版本日志</span>
+      <button class="preview-btn" onclick="closeVersionModal()">关闭</button>
+    </div>
+    <div class="preview-modal-body" style="background:#fff;padding:16px;overflow:auto">
+      <table><tr><th>版本</th><th>日期</th><th>变更说明</th><th>产品经理</th></tr><tr><td>v1.0</td><td>2026-08-03</td><td>初版：企业付款到零钱切换商家转账到零钱（用户授权免确认模式），覆盖小程序授权入口与统一平台发起授权、授权记录、关闭回调、审核发放改造；功能清单含「发起免确认收款授权」接口</td><td>陈嘉豪</td></tr></table>
+    </div>
+  </div>
+</div>
+
+<div id="previewModal" class="preview-modal" aria-hidden="true">
+  <div class="preview-modal-panel">
+    <div class="preview-modal-head">
+      <span id="previewModalTitle">原型预览</span>
+      <button class="preview-btn" onclick="closePreviewModal()">关闭</button>
+    </div>
+    <div class="preview-modal-body"><iframe loading="lazy" id="previewModalFrame" sandbox="allow-scripts allow-same-origin"></iframe></div>
+  </div>
+</div>
+
+<script>
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (!location.hash) {
+    window.addEventListener('load', () => {
+      if (window.scrollY < 1200) window.scrollTo(0, 0);
+    }, { once: true });
+  }
+  function loadPrototypeFrame(frame) {
+    if (!frame || frame.dataset.loaded === '1') return;
+    const src = frame.dataset.src;
+    if (!src) return;
+    frame.dataset.loaded = '1';
+    frame.src = src;
+  }
+  const prototypeFrames = Array.from(document.querySelectorAll('iframe[data-src]'));
+  const frameObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadPrototypeFrame(entry.target);
+        frameObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px 120px 0px', threshold: 0.01 }) : null;
+  prototypeFrames.forEach(frame => {
+    if (frameObserver) frameObserver.observe(frame);
+    else frame.addEventListener('mouseenter', () => loadPrototypeFrame(frame), { once: true });
+  });
+
+  function toggleSolutionToc(){
+    document.getElementById('solutionTocGroup').classList.toggle('collapsed');
+  }
+  function openVersionModal(){
+    document.getElementById('versionModal').classList.add('show');
+    document.getElementById('versionModal').setAttribute('aria-hidden', 'false');
+  }
+  function closeVersionModal(){
+    document.getElementById('versionModal').classList.remove('show');
+    document.getElementById('versionModal').setAttribute('aria-hidden', 'true');
+  }
+  function openPreviewModal(src, title){
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewModalFrame');
+    document.getElementById('previewModalTitle').textContent = title || '原型预览';
+    frame.removeAttribute('srcdoc');
+    frame.src = src;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function closePreviewModal(){
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewModalFrame');
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    frame.src = 'about:blank';
+    frame.removeAttribute('srcdoc');
+  }
+  document.querySelectorAll('.preview-btn[data-preview-src]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const frame = document.getElementById('previewModalFrame');
+      if (btn.dataset.previewSrcdoc) {
+        frame.removeAttribute('src');
+        frame.removeAttribute('data-page');
+        if (btn.dataset.previewPage) frame.setAttribute('data-page', btn.dataset.previewPage);
+        frame.srcdoc = btn.dataset.previewSrcdoc;
+        document.getElementById('previewModalTitle').textContent = btn.dataset.previewTitle || '原型预览';
+        document.getElementById('previewModal').classList.add('show');
+        document.getElementById('previewModal').setAttribute('aria-hidden', 'false');
+      } else {
+        openPreviewModal(btn.dataset.previewSrc, btn.dataset.previewTitle);
+      }
+    });
+  });
+  document.getElementById('previewModal').addEventListener('click', (e) => { if (e.target.id === 'previewModal') closePreviewModal(); });
+  document.getElementById('versionModal').addEventListener('click', (e) => { if (e.target.id === 'versionModal') closeVersionModal(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePreviewModal(); closeVersionModal(); } });
+</script>
+</body>
+</html>
