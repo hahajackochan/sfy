@@ -155,7 +155,7 @@ F --> G{签署状态为 ALL 或 ARCHIVED？}
 G -->|是| H[允许确认收货]
 G -->|否| I[阻断确认收货]
 I --> J[提示请先签署合同后再确认收货～]</pre></div>
-          <h4>详细规则描述</h4><ul class="rules"><li>客户点击「确认收货」时，建行订单需先查询 X计划销售合同签署状态，未签署则阻断。</li><li>第一步：调用线上订单接口（查商机，doc.suofeiya.com.cn/web），platform 传 innerPlatform；oid 传主单号；permQueryType 传 unverifyData；关键返回参数 optyId（商机ID）。</li><li>第二步：使用第一步返回的 optyId 调用客户电子合同查询接口（<a href="https://doc.suofeiya.com.cn/web/#/280/10442" target="_blank" rel="noopener noreferrer">https://doc.suofeiya.com.cn/web/#/280/10442</a>），optyId 传第一步返回的 optyId；businessContractType 传 PAYMENT_TOOL_JH；关键返回参数 signingStatus（签署状态），当接口有返回数据且签署状态为 ALL 或 ARCHIVED 时即为已签署合同，可以允许确认收货。</li><li>合同已签署才允许确认收货；未签署则阻断并提示「请先签署合同后再确认收货～」。</li></ul>
+          <h4>详细规则描述</h4><ul class="rules"><li>客户点击「确认收货」时，建行订单需先查询 X计划销售合同签署状态，未签署则阻断。</li><li>第一步：调用线上订单接口（查商机，<a href="https://doc.suofeiya.com.cn/web/#/280/8080" target="_blank" rel="noopener noreferrer">https://doc.suofeiya.com.cn/web/#/280/8080</a>），platform 传 innerPlatform；oid 传主单号；permQueryType 传 unverifyData；关键返回参数 optyId（商机ID）。</li><li>第二步：使用第一步返回的 optyId 调用客户电子合同查询接口（<a href="https://doc.suofeiya.com.cn/web/#/280/10442" target="_blank" rel="noopener noreferrer">https://doc.suofeiya.com.cn/web/#/280/10442</a>），optyId 传第一步返回的 optyId；businessContractType 传 PAYMENT_TOOL_JH；关键返回参数 signingStatus（签署状态），当接口有返回数据且签署状态为 ALL 或 ARCHIVED 时即为已签署合同，可以允许确认收货。</li><li>合同已签署才允许确认收货；未签署则阻断并提示「请先签署合同后再确认收货～」。</li></ul>
         </div>
       </article>
 
