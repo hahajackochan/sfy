@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商户规则管理列表页原型</title>
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed');
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #555;
+      background: #f3f3f3;
+      min-width: 1280px;
+    }
+    .app { display: flex; min-height: 100vh; zoom: .88; }
+    .embed .app { zoom: .62; }
+    .sidebar {
+      width: 248px;
+      background: #fff;
+      border-right: 1px solid #e5e5e5;
+      flex: 0 0 248px;
+      min-height: 100vh;
+    }
+    .brand { padding: 24px 18px 18px; text-align: center; }
+    .logo {
+      width: 116px;
+      height: 116px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: #050505;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+    }
+    .logo .sogal { font-size: 11px; letter-spacing: 1px; }
+    .logo .cn { font-size: 13px; margin-top: 3px; }
+    .logo .vip { font-size: 30px; font-weight: 800; margin-top: 6px; }
+    .brand-title { font-size: 21px; font-weight: 700; color: #222; }
+    .menu { padding: 6px 0 30px; }
+    .menu-item, .submenu-item {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #5d646b;
+      white-space: nowrap;
+    }
+    .menu-item .icon, .submenu-item .icon { width: 20px; text-align: center; color: #7b8085; font-size: 17px; }
+    .menu-item .arrow { margin-left: auto; color: #a0a0a0; font-size: 13px; }
+    .submenu-item { padding-left: 52px; height: 42px; font-size: 15px; font-weight: 700; }
+    .submenu-item.active { color: #555; background: #fff; }
+    .content { flex: 1; min-width: 0; }
+    .topbar {
+      height: 76px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #e2e2e2;
+      display: flex;
+      align-items: stretch;
+    }
+    .hamburger {
+      width: 62px;
+      height: 76px;
+      background: #18aa92;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .module-nav { display: flex; align-items: stretch; }
+    .module {
+      min-width: 112px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #8b8b8b;
+      font-size: 16px;
+      font-weight: 700;
+      border-right: 1px solid #ececec;
+    }
+    .module.active { background: #18aa92; color: #fff; }
+    .module .module-icon { font-size: 20px; }
+    .tabs {
+      height: 48px;
+      background: #fff;
+      border-bottom: 2px solid #18aa92;
+      display: flex;
+      align-items: stretch;
+    }
+    .tab-left, .tab-right-btn {
+      width: 42px;
+      border-right: 1px solid #e7e7e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      background: #fff;
+    }
+    .tab {
+      padding: 0 18px;
+      border-right: 1px solid #e7e7e7;
+      display: flex;
+      align-items: center;
+      color: #777;
+      font-size: 15px;
+    }
+    .tab.active { background: #18aa92; color: #fff; }
+    .tab .close { margin-left: 12px; font-weight: 700; }
+    .tab-spacer { flex: 1; }
+    .main { padding: 24px 24px 40px; }
+    .filter-card, .table-card {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+      margin-bottom: 18px;
+    }
+    .filter-card { padding: 28px 26px 32px; }
+    .filter-row { display: flex; align-items: flex-end; gap: 22px; }
+    .field { flex: 1; min-width: 0; }
+    .field label {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .input, .select {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #dcdfe6;
+      background: #fff;
+      padding: 0 13px;
+      font-size: 16px;
+      color: #666;
+      outline: none;
+      border-radius: 2px;
+    }
+    .input::placeholder { color: #b9b9b9; }
+    .select-wrap { position: relative; }
+    .select-wrap:after {
+      content: "▾";
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      color: #888;
+      pointer-events: none;
+    }
+    .search-btn, .add-btn, .op-btn {
+      border: none;
+      border-radius: 3px;
+      color: #fff;
+      background: #18aa92;
+      font-weight: 700;
+      cursor: default;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .search-btn { width: 94px; height: 46px; font-size: 16px; margin-bottom: 0; }
+    .table-card { padding: 20px 22px 24px; position: relative; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .add-btn { width: 88px; height: 43px; font-size: 16px; }
+    .tools { display: flex; border: 1px solid #d9d9d9; border-radius: 3px; overflow: hidden; }
+    .tool-btn {
+      width: 42px;
+      height: 38px;
+      border: 0;
+      border-right: 1px solid #d9d9d9;
+      background: #fff;
+      color: #555;
+      font-size: 16px;
+    }
+    .tool-btn:last-child { border-right: 0; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    thead th {
+      height: 52px;
+      border-bottom: 1px solid #e5e5e5;
+      color: #555;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: left;
+      padding: 0 12px;
+      background: #fff;
+    }
+    tbody td {
+      height: 61px;
+      border-bottom: 1px solid #e9e9e9;
+      padding: 0 12px;
+      font-size: 15px;
+      color: #555;
+      vertical-align: middle;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .col-index { width: 72px; }
+    .col-name { width: 320px; }
+    .col-no { width: 190px; }
+    .col-type { width: 120px; }
+    .col-body { width: 260px; }
+    .col-time { width: 185px; }
+    .col-user { width: 120px; }
+    .col-op { width: 285px; }
+    .op-group { display: flex; gap: 7px; align-items: center; }
+    .op-btn { height: 36px; padding: 0 12px; font-size: 14px; }
+    .op-btn.delete { background: #ef5b68; }
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 18px;
+      color: #666;
+      font-size: 14px;
+    }
+    .page-size {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 64px;
+      height: 34px;
+      border: 1px solid #d9d9d9;
+      padding: 0 9px;
+      margin: 0 6px;
+      background: #fff;
+      color: #555;
+    }
+    .pages { display: flex; align-items: center; }
+    .page {
+      min-width: 38px;
+      height: 36px;
+      border: 1px solid #d9d9d9;
+      border-right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      background: #fff;
+      color: #666;
+    }
+    .page:last-child { border-right: 1px solid #d9d9d9; }
+    .page.active { background: #eeeeee; color: #333; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      background: #e8f7f4;
+      color: #18aa92;
+    }
+    .filter-dropdown { display:none; position:absolute; left:0; top:74px; width:100%; background:#fff; border:1px solid #dcdfe6; box-shadow:0 8px 18px rgba(0,0,0,.12); z-index:10; }
+    .filter-dropdown.open { display:block; }
+    .filter-option { height:40px; display:flex; align-items:center; padding:0 12px; font-size:15px; color:#555; cursor:default; }
+    .filter-option:hover { background:#f3f7f6; color:#18aa92; }
+    .empty-row td { height:180px; text-align:center; color:#999; font-size:16px; }
+    .focus-highlight { position:relative; z-index:2; box-shadow:0 0 0 3px rgba(252,235,216,.72), 0 0 0 1px #a86115 inset; background:rgba(252,235,216,.10); }
+    .column-highlight-box { position:absolute; z-index:3; pointer-events:none; border:3px solid rgba(168,97,21,.72); box-shadow:0 0 0 3px rgba(252,235,216,.5); background:rgba(252,235,216,.08); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <div class="sogal">SOGAL</div>
+          <div class="cn">索菲亚</div>
+          <div class="vip">会员VIP</div>
+        </div>
+        <div class="brand-title">索菲亚会员中心</div>
+      </div>
+      <nav class="menu">
+        <div class="menu-item"><span class="icon">▦</span><span>数据统计</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">👤</span><span>会员管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">◇</span><span>会员权益</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▣</span><span>商品管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▤</span><span>订单管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">✎</span><span>报名管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">⚙</span><span>配置管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">☷</span><span>活动管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">☑</span><span>任务中心</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">🎁</span><span>邀请有礼</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▥</span><span>员工管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">✉</span><span>短信营销</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">¥</span><span>国补管理</span><span class="arrow">⌄</span></div>
+        <div class="submenu-item active"><span class="icon">└</span><span>商户规则管理</span></div>
+        <div class="submenu-item"><span class="icon">└</span><span>商户管理</span></div>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div class="hamburger">☰</div>
+        <div class="module-nav">
+          <div class="module"><span class="module-icon">⌂</span>平台首页</div>
+          <div class="module"><span class="module-icon">▧</span>基础模块</div>
+          <div class="module"><span class="module-icon">▣</span>活动模块</div>
+          <div class="module"><span class="module-icon">◈</span>定制模块</div>
+          <div class="module active"><span class="module-icon">Ⓥ</span>会员模块</div>
+          <div class="module"><span class="module-icon">☷</span>公共模块</div>
+          <div class="module"><span class="module-icon">✎</span>设计师工具</div>
+          <div class="module"><span class="module-icon">☘</span>切换小程序⌄</div>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div class="tab-left">≪</div>
+        <div class="tab">首页</div>
+        <div class="tab active">商户规则管理 <span class="close">×</span></div>
+        <div class="tab-spacer"></div>
+        <div class="tab-right-btn">≫</div>
+        <div class="tab">关闭操作⌄</div>
+        <div class="tab">退出 ↪</div>
+      </div>
+
+      <main class="main">
+        <div class="filter-card">
+          <div class="filter-row">
+            <div class="field" id="filterNameField">
+              <label>规则名称</label>
+              <input id="ruleNameInput" class="input" placeholder="模糊匹配" />
+            </div>
+            <div class="field" id="filterMerchantNoField">
+              <label>商户号</label>
+              <input id="merchantNoInput" class="input" placeholder="完全匹配" />
+            </div>
+            <div class="field select-wrap" id="merchantTypeFilter" style="max-width: 260px;">
+              <label>商户类型</label>
+              <input id="merchantTypeInput" class="select" value="全部" readonly onclick="toggleMerchantTypeDropdown()" />
+              <div id="merchantTypeDropdown" class="filter-dropdown">
+                <div class="filter-option" onclick="selectMerchantType('全部')">全部</div>
+                <div class="filter-option" onclick="selectMerchantType('银联商户')">银联商户</div>
+                <div class="filter-option" onclick="selectMerchantType('建行商户')">建行商户</div>
+              </div>
+            </div>
+            <button class="search-btn" onclick="applyFilters()">⌕ 搜索</button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="toolbar">
+            <button class="add-btn">＋ 新增</button>
+            <div class="tools">
+              <button class="tool-btn">⟳</button>
+              <button class="tool-btn">⇄</button>
+              <button class="tool-btn">▾</button>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th class="col-index">序号</th>
+                <th class="col-name">规则名称</th>
+                <th class="col-no">商户号</th>
+                <th class="col-type">商户类型</th>
+                <th class="col-body">开户主体/商户名称</th>
+                <th class="col-time">创建时间</th>
+                <th class="col-time">最后更新时间</th>
+                <th class="col-user">最后更新人</th>
+                <th class="col-op">操作</th>
+              </tr>
+            </thead>
+            <tbody id="ruleTableBody">
+              <tr>
+                <td>16</td><td>米兰纳_广东官方补贴活动（15%优惠）</td><td>898440109293288</td><td><span class="badge">银联商户</span></td><td>广州极点三维信息科技有限公司</td><td>2025-09-29 09:46:41</td><td>2025-09-29 09:46:41</td><td>陈嘉豪</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>15</td><td>索菲亚_广东官方补贴活动（10%优惠）</td><td>898440109293288</td><td><span class="badge">银联商户</span></td><td>广州极点三维信息科技有限公司</td><td>2025-08-25 15:56:27</td><td>2025-09-29 09:47:04</td><td>陈嘉豪</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>14</td><td>索菲亚_广东官方补贴活动（15%优惠）</td><td>898440109293288</td><td><span class="badge">银联商户</span></td><td>广州极点三维信息科技有限公司</td><td>2025-07-24 15:12:27</td><td>2025-09-29 09:46:55</td><td>陈嘉豪</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>13</td><td>总部收款_建行监管支付规则</td><td>CCB-GD-001</td><td><span class="badge">建行商户</span></td><td>索菲亚总部收款工具</td><td>2026-06-05 10:12:24</td><td>2026-06-05 10:12:24</td><td>产品经理</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>12</td><td>25年武汉家装（武汉恒家睿菲家居有限公司）</td><td>89842015712UBUZ</td><td><span class="badge">银联商户</span></td><td>武汉恒家睿菲家居有限公司</td><td>2025-05-12 13:37:55</td><td>2025-05-12 13:37:55</td><td>周嘉宝</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>11</td><td>25年武汉家装（武汉思索未来家居装饰工程有限公司）</td><td>89842015712UBV0</td><td><span class="badge">银联商户</span></td><td>武汉思索未来家居装饰工程有限公司</td><td>2025-05-12 13:37:08</td><td>2025-05-12 13:37:08</td><td>周嘉宝</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>10</td><td>25年武汉家装（武汉日家美家居有限公司）</td><td>89842015712UBUY</td><td><span class="badge">银联商户</span></td><td>武汉日家美家居有限公司</td><td>2025-05-12 13:36:12</td><td>2025-05-12 13:36:12</td><td>周嘉宝</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>9</td><td>25年武汉家装（武汉日家盈家居有限公司）</td><td>89842015712UBUX</td><td><span class="badge">银联商户</span></td><td>武汉日家盈家居有限公司</td><td>2025-05-12 13:35:43</td><td>2025-05-12 13:35:43</td><td>周嘉宝</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>8</td><td>25年武汉家装（武汉天诺贸易有限公司）</td><td>89842015712UBV1</td><td><span class="badge">银联商户</span></td><td>武汉天诺贸易有限公司</td><td>2025-05-12 12:31:48</td><td>2025-05-12 12:31:48</td><td>周嘉宝</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+              <tr>
+                <td>6</td><td>25年武汉家装（武汉易福诺家居有限公司）</td><td>89842015712UBUV</td><td><span class="badge">银联商户</span></td><td>武汉易福诺家居有限公司</td><td>2025-05-08 10:04:32</td><td>2025-05-12 11:57:21</td><td>陈嘉豪</td>
+                <td><div class="op-group"><button class="op-btn">✎ 编辑</button><button class="op-btn">✎ 国补品类</button><button class="op-btn delete">🗑 删除</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <div>显示第 1 到第 10 条记录，总共 15 条记录&nbsp;&nbsp;每页显示 <span class="page-size">10 ▾</span> 条记录</div>
+            <div class="pages">
+              <div class="page">上一页</div>
+              <div class="page active">1</div>
+              <div class="page">2</div>
+              <div class="page">下一页</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+  </div>
+  <script>
+    const originalRows = [];
+
+    function toggleMerchantTypeDropdown() {
+      document.getElementById('merchantTypeDropdown').classList.toggle('open');
+    }
+
+    function selectMerchantType(type) {
+      document.getElementById('merchantTypeInput').value = type;
+      document.getElementById('merchantTypeDropdown').classList.remove('open');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const name = document.getElementById('ruleNameInput').value.trim();
+      const merchantNo = document.getElementById('merchantNoInput').value.trim();
+      const merchantType = document.getElementById('merchantTypeInput').value;
+      const tbody = document.getElementById('ruleTableBody');
+      tbody.innerHTML = '';
+      const matched = originalRows.filter(row => {
+        const cells = row.querySelectorAll('td');
+        const ruleName = cells[1].textContent.trim();
+        const no = cells[2].textContent.trim();
+        const type = cells[3].textContent.trim();
+        return (!name || ruleName.includes(name)) && (!merchantNo || no === merchantNo) && (merchantType === '全部' || type === merchantType);
+      });
+      if (!matched.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="9">暂无匹配数据</td></tr>';
+        return;
+      }
+      matched.forEach(row => tbody.appendChild(row.cloneNode(true)));
+    }
+
+    function applyFocusMode() {
+      const params = new URLSearchParams(location.search);
+      const focus = params.get('focus');
+      if (!focus) return;
+      const targets = [];
+      if (focus === 'merchant_type' || focus === 'list_filters') {
+        targets.push(document.getElementById('merchantTypeFilter'));
+        highlightTableColumn(4);
+      }
+      if (focus === 'rule_name_filter' || focus === 'list_filters') targets.push(document.getElementById('filterNameField'));
+      if (focus === 'merchant_no_filter' || focus === 'list_filters') targets.push(document.getElementById('filterMerchantNoField'));
+      if (!targets.length) return;
+      targets.forEach(el => {
+        if (!el) return;
+        el.classList.add('focus-highlight');
+      });
+    }
+
+    function highlightTableColumn(columnIndex) {
+      const tableCard = document.querySelector('.table-card');
+      const table = tableCard && tableCard.querySelector('table');
+      const header = table && table.querySelector(`thead th:nth-child(${columnIndex})`);
+      const lastCell = table && table.querySelector(`tbody tr:last-child td:nth-child(${columnIndex})`);
+      if (!tableCard || !header || !lastCell) return;
+      tableCard.querySelectorAll('.column-highlight-box').forEach(el => el.remove());
+      const box = document.createElement('div');
+      box.className = 'column-highlight-box';
+      box.style.left = `${table.offsetLeft + header.offsetLeft - 2}px`;
+      box.style.top = `${table.offsetTop + header.offsetTop - 2}px`;
+      box.style.width = `${header.offsetWidth + 4}px`;
+      box.style.height = `${lastCell.offsetTop + lastCell.offsetHeight - header.offsetTop + 4}px`;
+      tableCard.appendChild(box);
+    }
+
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('merchantTypeDropdown');
+      const filter = document.getElementById('merchantTypeFilter');
+      if (filter && !filter.contains(event.target)) dropdown.classList.remove('open');
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('#ruleTableBody tr').forEach(row => originalRows.push(row.cloneNode(true)));
+      applyFocusMode();
+    });
+  </script>
+</body>
+</html>

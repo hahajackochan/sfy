@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRD v1.0 - 会员小程序广告位新增曝光数据埋点</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --border: #e5e7eb;
+      --warning: #92400e;
+      --warning-bg: #fffbeb;
+      --ok: #047857;
+      --ok-bg: #ecfdf5;
+      --code-bg: #111827;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    nav {
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      width: 280px;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 20px;
+      background: #0f172a;
+      color: white;
+    }
+    nav h2 { margin: 0 0 16px; font-size: 18px; }
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      color: #cbd5e1;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    nav a:hover { background: rgba(255,255,255,.08); color: white; }
+    main { flex: 1; padding: 40px; max-width: 1200px; }
+    .hero {
+      padding: 32px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+      color: white;
+      box-shadow: 0 18px 45px rgba(37,99,235,.22);
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 32px; line-height: 1.25; }
+    .hero p { margin: 0; color: #e0e7ff; }
+    section {
+      margin-top: 24px;
+      padding: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15,23,42,.04);
+    }
+    h2 { margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-size: 24px; }
+    h3 { margin: 24px 0 12px; font-size: 18px; }
+    h4 { margin: 18px 0 8px; font-size: 16px; }
+    p { margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; overflow: hidden; border-radius: 12px; }
+    th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; font-weight: 700; }
+    tr:nth-child(even) td { background: #fafafa; }
+    code { padding: 2px 6px; background: #eef2ff; color: #3730a3; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    a { color: var(--primary); font-weight: 700; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .flow-card { position: relative; margin: 16px 0; }
+    .flow-toolbar { position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 8px; }
+    .flow-toggle {
+      height: 34px;
+      padding: 0 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      color: #334155;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15,23,42,.08);
+    }
+    .flow-toggle:hover { border-color: var(--primary); color: var(--primary); }
+    .mermaid { margin: 0; padding: 52px 18px 18px; background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; }
+    .flow-source { display: none; margin: 0; padding-top: 52px; }
+    .flow-card.show-source .mermaid { display: none; }
+    .flow-card.show-source .flow-source { display: block; }
+    pre { padding: 16px; overflow: auto; background: var(--code-bg); color: #e5e7eb; border-radius: 14px; font-size: 13px; line-height: 1.6; }
+    pre code { padding: 0; background: transparent; color: inherit; }
+    .tag { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--primary-soft); color: #1d4ed8; font-size: 12px; font-weight: 700; }
+    .note { padding: 14px 16px; border-left: 4px solid var(--primary); background: #eff6ff; border-radius: 10px; }
+    .warn { padding: 14px 16px; border-left: 4px solid #f59e0b; background: var(--warning-bg); color: var(--warning); border-radius: 10px; }
+    .ok { padding: 14px 16px; border-left: 4px solid #10b981; background: var(--ok-bg); color: var(--ok); border-radius: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .card { padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+    .small { color: var(--muted); font-size: 13px; }
+    ul, ol { padding-left: 22px; }
+    .toc-note { color: #94a3b8; font-size: 12px; margin-top: 14px; }
+    @media (max-width: 900px) {
+      .layout { display: block; }
+      nav { position: static; width: 100%; height: auto; }
+      main { padding: 20px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: "default" });</script>
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <h2>PRD 导航</h2>
+      <a href="#info">项目信息</a>
+      <a href="#background">一、需求背景</a>
+      <a href="#goals">二、需求目标</a>
+      <a href="#users">三、用户与使用场景</a>
+      <a href="#scope">四、需求范围</a>
+      <a href="#features">五、功能清单</a>
+      <a href="#detail-api">六、详细方案：广告接口</a>
+      <a href="#detail-exposure">七、详细方案：曝光上报</a>
+      <a href="#detail-click">八、详细方案：点击事件迁移索数</a>
+      <a href="#detail-region">九、详细方案：地区搜索</a>
+      <a href="#flow">十、业务流程图</a>
+      <a href="#edge">十一、异常与边界</a>
+      <a href="#tracking">十二、数据追踪与埋点</a>
+      <a href="#acceptance">十三、验收标准</a>
+      <a href="#todo">十四、附件</a>
+      <div class="toc-note">版本：v1.0<br/>状态：第一版详细 PRD</div>
+    </nav>
+
+    <main>
+      <div class="hero">
+        <h1>会员小程序广告位新增曝光数据埋点</h1>
+        <p>广告查询接口补充命中规则信息 + 小程序广告曝光上报 + 点击上报迁移至索数 + 后台地区选择搜索优化</p>
+      </div>
+
+      <section id="info">
+        <h2>项目信息与版本记录</h2>
+        <table>
+          <tr><th>项目</th><th>内容</th></tr>
+          <tr><td>需求名称</td><td>会员小程序广告位新增曝光数据埋点</td></tr>
+          <tr><td>需求来源</td><td>会员运营</td></tr>
+                    <tr><td>涉及系统</td><td>消费者业务中台、索数、会员小程序</td></tr>
+          <tr><td>预计上线时间</td><td>2026年5月13日</td></tr>
+          <tr><td>当前版本</td><td>v1.0</td></tr>
+          <tr><td>版本切换</td><td><select><option>v1.0 当前版本</option></select></td></tr>
+        </table>
+        <table>
+          <tr><th>版本</th><th>日期</th><th>变更说明</th><th>产品经理</th></tr>
+          <tr><td>v1.0</td><td>2026-05-07</td><td>创建第一版 PRD，明确接口、曝光、点击和地区搜索需求</td><td>陈嘉豪</td></tr>
+        </table>
+      </section>
+
+      <section id="background">
+        <h2>一、需求背景</h2>
+        <p>会员小程序已支持个性化广告推荐能力。会员运营人员可以在后台配置分群规则、展示规则，并将不同广告关联到不同规则，实现针对不同用户群体展示不同广告内容。</p>
+        <p>当前业务只能查看广告点击相关数据，无法查看广告曝光人数和曝光次数。因此运营无法判断广告点击表现不佳到底是因为广告内容/权益不吸引目标人群，还是因为广告曝光量不足、展示规则配置不合理、目标人群覆盖过小。</p>
+      </section>
+
+      <section id="goals">
+        <h2>二、需求目标</h2>
+        <table>
+          <tr><th>目标类型</th><th>描述</th><th>衡量指标</th><th>目标值</th></tr>
+          <tr><td>数据采集目标</td><td>新增广告曝光事件上报</td><td>索数可查询广告曝光数据</td><td>广告实际展示后可成功上报</td></tr>
+          <tr><td>归因分析目标</td><td>曝光/点击事件携带广告对应规则信息</td><td>事件字段包含分群规则 ID、展示规则 ID</td><td>曝光与点击字段口径一致</td></tr>
+          <tr><td>配置效率目标</td><td>地区类规则选择支持搜索</td><td>地区选择控件可搜索省/市/区</td><td>覆盖 3 个指定点位</td></tr>
+        </table>
+      </section>
+
+      <section id="users">
+        <h2>三、用户与使用场景</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>主要用户：会员运营人员</h3>
+            <p>关注不同广告内容在不同用户人群、不同展示规则下的曝光和点击效果，用于判断是否需要更换广告素材、活动权益或投放策略。</p>
+          </div>
+          <div class="card">
+            <h3>协作用户：研发/测试</h3>
+            <p>关注广告查询接口是否准确返回规则信息、小程序是否按正确时机上报、索数是否能按字段筛选数据。</p>
+          </div>
+        </div>
+        <h3>典型业务场景</h3>
+        <p>运营为“黄金等级以上且线下下单时间在 365 天前的客户”配置专享复购优惠广告。广告上线后，运营需要知道该广告结合分群/展示规则实际展示给了多少目标用户，以及这些用户是否愿意点击，从而判断广告内容是否有吸引力。</p>
+      </section>
+
+      <section id="scope">
+        <h2>四、需求范围</h2>
+        <p>本章节只定义本期做与不做的边界，具体功能项、优先级和详细方案见「五、需求功能清单」。</p>
+        <h3>4.1 本期范围边界</h3>
+        <table>
+          <tr><th>范围类型</th><th>边界说明</th></tr>
+          <tr><td>数据归因基础</td><td>围绕广告曝光、点击分析所需的广告、分群规则、展示规则等关键字段补齐，保证后续数据能按规则维度分析。</td></tr>
+          <tr><td>事件采集链路</td><td>覆盖会员小程序广告实际展示后的曝光采集，以及现有点击事件迁移到索数后的统一分析口径。</td></tr>
+          <tr><td>后台配置体验</td><td>仅优化消费者业务中台分群规则和展示规则中涉及地区选择的搜索能力，提升运营配置效率。</td></tr>
+        </table>
+        <h3>4.2 本期不包含</h3>
+        <ul>
+          <li>不建设完整数据看板，仅保证索数侧可按新增字段查询与分析。</li>
+        </ul>
+      </section>
+
+      <section id="features">
+        <h2>五、需求功能清单</h2>
+        <table>
+          <tr><th>模块</th><th>功能点</th><th>优先级</th><th>说明</th><th>详细方案</th></tr>
+          <tr><td>广告查询接口</td><td>返回分群规则 ID</td><td>P0</td><td>每条广告记录返回当前广告下用户实际命中的分群规则 ID，多个用英文逗号拼接，无值为空字符串</td><td><a href="#detail-api">查看</a></td></tr>
+          <tr><td>广告查询接口</td><td>返回展示规则 ID</td><td>P0</td><td>每条广告记录返回当前广告下用户实际命中的展示规则 ID，多个用英文逗号拼接，无值为空字符串</td><td><a href="#detail-api">查看</a></td></tr>
+          <tr><td>会员小程序</td><td>广告曝光事件上报</td><td>P0</td><td>广告实际渲染展示后上报；轮播广告首次进入可视区域后上报；页面首屏外广告滚动到可视区域后才上报</td><td><a href="#detail-exposure">查看</a></td></tr>
+          <tr><td>会员小程序</td><td>广告点击上报迁移至索数</td><td>P0</td><td>现有广告点击事件由小程序 WE 分析上报调整为上报到索数，并补充分群规则 ID、展示规则 ID；点击不去重</td><td><a href="#detail-click">查看</a></td></tr>
+          <tr><td>后台配置</td><td>地区选择支持搜索</td><td>P1</td><td>覆盖分群规则和展示规则中的 3 个地区选择点位</td><td><a href="#detail-region">查看</a></td></tr>
+        </table>
+      </section>
+
+      <section id="detail-api">
+        <h2>六、详细方案：广告查询接口优化</h2>
+        <h3>6.1 功能说明</h3>
+        <p>本期仅要求每条广告记录新增返回当前广告下，当前用户实际命中的分群规则 ID 和展示规则 ID。</p>
+        <p><strong>接口文档：</strong><a href="https://doc.suofeiya.com.cn/web/#/376/12833" target="_blank" rel="noopener noreferrer">https://doc.suofeiya.com.cn/web/#/376/12833</a></p>
+        <h3>6.2 新增返回字段</h3>
+        <table>
+          <tr><th>字段名</th><th>字段含义</th><th>类型</th><th>是否必返</th><th>空值规则</th></tr>
+          <tr><td><code>crowdRuleIds</code></td><td>当前广告下用户实际命中的分群规则 ID</td><td>string</td><td>是</td><td>无命中返回空字符串 <code>""</code></td></tr>
+          <tr><td><code>displayRuleIds</code></td><td>当前广告下用户实际命中的展示规则 ID</td><td>string</td><td>是</td><td>无命中返回空字符串 <code>""</code></td></tr>
+        </table>
+        <h3>6.3 字段格式规则</h3>
+        <ol>
+          <li>规则 ID 字符串统一使用 <code>rule_</code> 作为固定前缀，前缀后拼接实际分群规则 ID 或展示规则 ID，如 <code>rule_1</code>。</li>
+          <li>命中单个规则时，返回一个带 <code>rule_</code> 前缀的规则 ID，如 <code>rule_1</code>。</li>
+          <li>命中多个规则时，将多个带 <code>rule_</code> 前缀的规则 ID 用英文逗号拼接，如 <code>rule_1,rule_2,rule_3</code>。</li>
+          <li>广告未关联对应规则时，返回空字符串 <code>""</code>。</li>
+        </ol>
+        <h3>6.4 返回口径</h3>
+        <div class="warn">
+          每条广告记录只返回“本广告下，当前用户实际命中的规则 ID”。不得返回用户命中但与该广告无关的分群规则或展示规则。
+        </div>
+      </section>
+
+      <section id="detail-exposure">
+        <h2>七、详细方案：会员小程序广告曝光上报</h2>
+        <h3>7.1 功能说明</h3>
+        <p>会员小程序在广告实际渲染并展示后，调用索数广告曝光上报事件。</p>
+        <h3>7.2 曝光触发口径</h3>
+        <table>
+          <tr><th>广告形态/场景</th><th>曝光上报规则</th></tr>
+          <tr><td>普通广告（单图/弹窗）</td><td>广告组件实际渲染并展示后上报曝光</td></tr>
+          <tr><td>轮播广告</td><td>广告首次进入可视区域时上报曝光。示例：如轮播图有 5 个，会员只查看了第 1 个就离开，未看到后续 4 个，则只上报第 1 个广告的曝光。</td></tr>
+          <tr><td>页面首屏外广告</td><td>接口已返回但当前屏幕未展示时不上报；用户滚动到广告进入可视区域后才上报曝光</td></tr>
+          <tr><td>轮播位中未被用户看到的广告</td><td>不上报曝光</td></tr>
+          <tr><td>接口返回但页面未展示</td><td>不上报曝光</td></tr>
+          <tr><td>广告图片/组件加载失败</td><td>不上报曝光</td></tr>
+        </table>
+        <h3>7.3 曝光去重规则</h3>
+        <p>同一页面未离开前，每个广告位模块使用各自独立的广告位置标识，并按“广告位置标识 + 广告 ID”避免重复上报。</p>
+        <p>对于页面底部或首屏外广告，即使广告接口已返回该广告记录，只要当前手机屏幕未滚动到对应位置、用户实际未看到广告，就不得上报曝光；需等用户滚动到该广告进入可视区域后才上报。该类广告按“可视状态变化”触发：从不可见变为可见时上报；</p>
+        <h3>7.4 索数上报说明</h3>
+        <table>
+          <tr><th>事件说明</th><th>内容</th><th>说明</th></tr>
+          <tr><td>事件名称</td><td>广告曝光</td><td></td></tr>
+          <tr><td>事件标识符</td><td><code>ad_exposure</code></td><td></td></tr>
+        </table>
+        <p>以下字段根据索数事件配置截图识别整理。截图中未展示“是否必填”列时，是否必传以索数平台实际配置为准。</p>
+        <table>
+          <tr><th>序号</th><th>属性名称</th><th>标识符</th><th>属性说明</th></tr>
+          <tr><td>1</td><td>中台广告类型code</td><td><code>ad_type_code</code></td><td></td></tr>
+          <tr><td>2</td><td>中台广告跳转类型</td><td><code>middle_platform_ad_skip_type</code></td><td></td></tr>
+          <tr><td>3</td><td>中台小程序路径类型</td><td><code>middle_platform_applet_url_type</code></td><td>小程序路径类型</td></tr>
+          <tr><td>4</td><td>广告名称</td><td><code>position_name</code></td><td></td></tr>
+          <tr><td>5</td><td>广告标识</td><td><code>position_key</code></td><td></td></tr>
+          <tr><td>6</td><td>点击跳转地址</td><td><code>skip_url</code></td><td>传入H5地址或小程序地址</td></tr>
+          <tr><td>7</td><td>小程序APPID</td><td><code>app_id</code></td><td>当触发类型=小程序时传入</td></tr>
+          <tr><td>8</td><td>会员ID</td><td><code>member_id</code></td><td></td></tr>
+          <tr><td>9</td><td>广告ID</td><td><code>ad_id</code></td><td></td></tr>
+          <tr><td>10</td><td>等级名称</td><td><code>grade_name</code></td><td></td></tr>
+          <tr><td>11</td><td>会员等级</td><td><code>grade_num</code></td><td></td></tr>
+          <tr><td>12</td><td>品牌</td><td><code>brand_id</code></td><td></td></tr>
+          <tr><td>13</td><td>用户身份</td><td><code>user_identity</code></td><td></td></tr>
+          <tr><td>14</td><td>用户UnionID</td><td><code>unionid</code></td><td></td></tr>
+          <tr><td>15</td><td>分群规则 ID</td><td><code>crowdRuleIds</code></td><td>当前广告下用户实际命中的分群规则 ID，多个用英文逗号拼接；无值传空字符串</td></tr>
+          <tr><td>16</td><td>展示规则 ID</td><td><code>displayRuleIds</code></td><td>当前广告下用户实际命中的展示规则 ID，多个用英文逗号拼接；无值传空字符串</td></tr>
+        </table>
+      </section>
+
+      <section id="detail-click">
+        <h2>八、详细方案：广告点击上报迁移至索数</h2>
+        <h3>8.1 功能说明</h3>
+        <p>会员小程序现有广告点击事件已具备上报能力，但当前上报到小程序 WE 分析，且未携带分群规则 ID、展示规则 ID。本期需将广告点击事件调整为上报到索数，并在索数点击事件中补充分群规则 ID 和展示规则 ID。</p>
+        <h3>8.2 点击规则</h3>
+        <ol>
+          <li>点击事件不做去重，用户点击一次广告，上报一次索数点击事件。</li>
+          <li>点击事件需停止依赖小程序 WE 分析作为本需求的数据分析口径，统一上报到索数。</li>
+          <li>索数点击事件使用该广告记录中接口返回的 <code>crowdRuleIds</code> 和 <code>displayRuleIds</code>。</li>
+          <li>曝光和点击应使用同一份广告对象里的规则 ID，保证字段口径一致。</li>
+          <li>广告 ID、广告位置标识等原有点击字段需按索数事件字段要求传入。</li>
+        </ol>
+        <h3>8.3 点击上报字段变化与索数上报说明</h3>
+        <p>点击事件沿用现有触发时机和不去重规则，但上报目标由小程序 WE 分析调整为索数，并在索数事件字段中补充分群规则 ID 和展示规则 ID。</p>
+        <table>
+          <tr><th>事件说明</th><th>内容</th><th>说明</th></tr>
+          <tr><td>事件名称</td><td>广告点击</td><td></td></tr>
+          <tr><td>事件标识符</td><td><code>ad_click</code></td><td></td></tr>
+        </table>
+        <p>以下字段根据索数事件配置截图识别整理。截图中未展示“是否必填”列时，是否必传以索数平台实际配置为准。</p>
+        <table>
+          <tr><th>序号</th><th>属性名称</th><th>标识符</th><th>属性说明</th></tr>
+          <tr><td>1</td><td>中台广告类型code</td><td><code>ad_type_code</code></td><td></td></tr>
+          <tr><td>2</td><td>中台广告跳转类型</td><td><code>middle_platform_ad_skip_type</code></td><td></td></tr>
+          <tr><td>3</td><td>中台小程序路径类型</td><td><code>middle_platform_applet_url_type</code></td><td>小程序路径类型</td></tr>
+          <tr><td>4</td><td>广告名称</td><td><code>position_name</code></td><td></td></tr>
+          <tr><td>5</td><td>广告标识</td><td><code>position_key</code></td><td></td></tr>
+          <tr><td>6</td><td>点击跳转地址</td><td><code>skip_url</code></td><td>传入H5地址或小程序地址</td></tr>
+          <tr><td>7</td><td>小程序APPID</td><td><code>app_id</code></td><td>当触发类型=小程序时传入</td></tr>
+          <tr><td>8</td><td>会员ID</td><td><code>member_id</code></td><td></td></tr>
+          <tr><td>9</td><td>广告ID</td><td><code>ad_id</code></td><td></td></tr>
+          <tr><td>10</td><td>等级名称</td><td><code>grade_name</code></td><td></td></tr>
+          <tr><td>11</td><td>会员等级</td><td><code>grade_num</code></td><td></td></tr>
+          <tr><td>12</td><td>品牌</td><td><code>brand_id</code></td><td></td></tr>
+          <tr><td>13</td><td>用户身份</td><td><code>user_identity</code></td><td></td></tr>
+          <tr><td>14</td><td>用户UnionID</td><td><code>unionid</code></td><td></td></tr>
+          <tr><td>15</td><td>分群规则 ID</td><td><code>crowdRuleIds</code></td><td>当前广告下用户实际命中的分群规则 ID，多个用英文逗号拼接；无值传空字符串</td></tr>
+          <tr><td>16</td><td>展示规则 ID</td><td><code>displayRuleIds</code></td><td>当前广告下用户实际命中的展示规则 ID，多个用英文逗号拼接；无值传空字符串</td></tr>
+        </table>
+
+      </section>
+
+      <section id="detail-region">
+        <h2>九、详细方案：后台地区选择支持搜索</h2>
+        <h3>9.1 功能说明</h3>
+        <p>为提升分群规则和展示规则配置效率，涉及地区选择的控件需支持搜索。用户可通过输入省、市、区关键字快速定位并选择目标地区。</p>
+        <h3>9.2 涉及点位</h3>
+        <table>
+          <tr><th>模块</th><th>路径/点位</th><th>优化要求</th></tr>
+          <tr><td>分群规则管理</td><td>属性 - 通用属性 - 位置</td><td>地区选择支持搜索</td></tr>
+          <tr><td>分群规则管理</td><td>线下订单 &gt; 下单 - 安装省市区</td><td>地区选择支持搜索</td></tr>
+          <tr><td>展示规则管理</td><td>地区限制</td><td>地区选择支持搜索</td></tr>
+        </table>
+        <h3>9.3 交互要求</h3>
+        <ol>
+          <li>支持按省、市、区名称关键字搜索。</li>
+          <li>搜索结果需展示完整层级，避免同名地区误选。</li>
+          <li>搜索后选择地区，不影响原有地区层级选择逻辑。</li>
+          <li>无搜索结果时展示空状态提示。</li>
+        </ol>
+      </section>
+
+      <section id="flow">
+        <h2>十、业务流程图</h2>
+        <h3>10.1 广告曝光/点击上报流程</h3>
+        <div class="flow-card">
+          <div class="flow-toolbar"><button class="flow-toggle" type="button">查看源码</button></div>
+          <div class="mermaid">
+flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[小程序请求广告查询接口]
+  B --> C[后台匹配可展示广告]
+  C --> D[后台计算本广告下用户实际命中的分群规则和展示规则]
+  D --> E[接口返回广告列表及 crowdRuleIds displayRuleIds]
+  E --> F[小程序渲染广告组件]
+  F --> G{广告是否进入当前可视区域}
+  G -- 否 --> H[不上报曝光]
+  G -- 是 --> I{同页面同广告位标识同广告ID是否已上报}
+  I -- 是 --> J[不上报重复曝光]
+  I -- 否 --> K[调用索数曝光事件并记录已上报]
+  K --> N[用户离开页面]
+  J --> N
+  N --> O[用户下次重新进入页面 可再次上报]
+  O --> A
+  F --> L[用户点击广告]
+  L --> M[调用索数点击事件并携带规则ID]
+          </div>
+          <pre class="flow-source"><code>flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[小程序请求广告查询接口]
+  B --> C[后台匹配可展示广告]
+  C --> D[后台计算本广告下用户实际命中的分群规则和展示规则]
+  D --> E[接口返回广告列表及 crowdRuleIds displayRuleIds]
+  E --> F[小程序渲染广告组件]
+  F --> G{广告是否进入当前可视区域}
+  G -- 否 --> H[不上报曝光]
+  G -- 是 --> I{同页面同广告位标识同广告ID是否已上报}
+  I -- 是 --> J[不上报重复曝光]
+  I -- 否 --> K[调用索数曝光事件并记录已上报]
+  K --> N[用户离开页面]
+  J --> N
+  N --> O[用户下次重新进入页面 可再次上报]
+  O --> A
+  F --> L[用户点击广告]
+  L --> M[调用索数点击事件并携带规则ID]</code></pre>
+        </div>
+        <h3>10.2 轮播广告曝光流程</h3>
+        <div class="flow-card">
+          <div class="flow-toolbar"><button class="flow-toggle" type="button">查看源码</button></div>
+          <div class="mermaid">
+flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[轮播广告列表渲染]
+  B --> C[广告1进入可视区域]
+  C --> D{本页同广告位置同广告ID是否已上报}
+  D -- 是 --> E[不上报广告1重复曝光]
+  D -- 否 --> F[上报广告1曝光并记录已上报]
+  F --> G{用户是否切到广告2}
+  G -- 是 --> H[广告2进入可视区域]
+  H --> I{本页同广告位置同广告ID是否已上报}
+  I -- 是 --> J[不上报广告2重复曝光]
+  I -- 否 --> K[上报广告2曝光并记录已上报]
+  G -- 否 --> L[后续广告未被看到 不上报曝光]
+  K --> M[用户离开页面]
+  E --> M
+  J --> M
+  L --> M
+  M --> N[用户下次重新进入页面]
+  N --> A
+          </div>
+          <pre class="flow-source"><code>flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[轮播广告列表渲染]
+  B --> C[广告1进入可视区域]
+  C --> D{本页同广告位置同广告ID是否已上报}
+  D -- 是 --> E[不上报广告1重复曝光]
+  D -- 否 --> F[上报广告1曝光并记录已上报]
+  F --> G{用户是否切到广告2}
+  G -- 是 --> H[广告2进入可视区域]
+  H --> I{本页同广告位置同广告ID是否已上报}
+  I -- 是 --> J[不上报广告2重复曝光]
+  I -- 否 --> K[上报广告2曝光并记录已上报]
+  G -- 否 --> L[后续广告未被看到 不上报曝光]
+  K --> M[用户离开页面]
+  E --> M
+  J --> M
+  L --> M
+  M --> N[用户下次重新进入页面]
+  N --> A</code></pre>
+        </div>
+        <h3>10.3 首屏外广告滚动曝光流程</h3>
+        <div class="flow-card">
+          <div class="flow-toolbar"><button class="flow-toggle" type="button">查看源码</button></div>
+          <div class="mermaid">
+flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[页面加载并返回底部广告]
+  B --> C{底部广告是否在当前屏幕可视区域}
+  C -- 是 --> G{本页同广告位置同广告ID是否已上报}
+  C -- 否 --> D[不上报曝光]
+  D --> E[用户向下滚动页面]
+  E --> F{底部广告是否从不可见变为可见}
+  F -- 否 --> D
+  F -- 是 --> G
+  G -- 是 --> H[不上报重复曝光]
+  G -- 否 --> I[上报底部广告曝光并记录已上报]
+  I --> J[用户离开页面]
+  H --> J
+  J --> K[用户下次重新进入页面]
+  K --> A
+          </div>
+          <pre class="flow-source"><code>flowchart TD
+  A[用户进入页面并初始化本页曝光记录] --> B[页面加载并返回底部广告]
+  B --> C{底部广告是否在当前屏幕可视区域}
+  C -- 是 --> G{本页同广告位置同广告ID是否已上报}
+  C -- 否 --> D[不上报曝光]
+  D --> E[用户向下滚动页面]
+  E --> F{底部广告是否从不可见变为可见}
+  F -- 否 --> D
+  F -- 是 --> G
+  G -- 是 --> H[不上报重复曝光]
+  G -- 否 --> I[上报底部广告曝光并记录已上报]
+  I --> J[用户离开页面]
+  H --> J
+  J --> K[用户下次重新进入页面]
+  K --> A</code></pre>
+        </div>
+      </section>
+
+      <section id="edge">
+        <h2>十一、异常与边界处理</h2>
+        <table>
+          <tr><th>场景</th><th>处理规则</th></tr>
+          <tr><td>广告接口请求失败</td><td>不展示广告，不上报曝光</td></tr>
+          <tr><td>广告接口返回空列表</td><td>不上报曝光</td></tr>
+          <tr><td>接口返回广告但页面未渲染</td><td>不上报曝光</td></tr>
+          <tr><td>广告图片或组件加载失败</td><td>不上报曝光</td></tr>
+          <tr><td>轮播广告未进入可视区域</td><td>不上报曝光</td></tr>
+          <tr><td>页面首屏外广告未滚动到可视区域</td><td>不上报曝光</td></tr>
+          <tr><td>页面首屏外广告滚动进入可视区域</td><td>从不可见变为可见时上报一次；停留可视区不重复上报；离开后再次进入可再次上报</td></tr>
+          <tr><td>同页面广告组件重复渲染</td><td>按各广告位模块独立的广告位置标识 + 广告 ID 去重，同一组合只上报一次曝光</td></tr>
+          <tr><td>用户离开页面后重新进入</td><td>广告再次实际展示时可重新上报曝光</td></tr>
+          <tr><td>分群规则 ID 为空</td><td>接口返回空字符串；索数上报空字符串</td></tr>
+          <tr><td>展示规则 ID 为空</td><td>接口返回空字符串；索数上报空字符串</td></tr>
+        </table>
+      </section>
+
+      <section id="tracking">
+        <h2>十二、数据追踪与埋点</h2>
+        <h3>12.1 曝光事件</h3>
+        <table>
+          <tr><th>字段含义</th><th>建议字段名</th><th>是否必传</th><th>来源</th><th>示例</th></tr>
+          <tr><td>广告 ID</td><td><code>ad_id</code></td><td>是</td><td>广告接口现有字段</td><td>522</td></tr>
+          <tr><td>广告位置标识</td><td><code>position_key</code></td><td>是</td><td>每个广告位模块独立维护的广告位置标识</td><td>home_banner</td></tr>
+          <tr><td>分群规则 ID</td><td><code>crowdRuleIds</code></td><td>是</td><td>广告查询接口新增返回字段</td><td>rule_1,rule_2</td></tr>
+          <tr><td>展示规则 ID</td><td><code>displayRuleIds</code></td><td>是</td><td>广告查询接口新增返回字段</td><td>rule_101,rule_102</td></tr>
+        </table>
+        <h3>12.2 点击事件</h3>
+        <p>现有广告点击事件由小程序 WE 分析上报调整为上报到索数，并补充分群规则 ID、展示规则 ID，取值与曝光事件一致。</p>
+        <h3>12.3 索数使用方式</h3>
+        <p>由于多个规则 ID 使用英文逗号拼接到同一字段，索数中可通过“字段包含指定规则 ID”的方式筛选指定分群规则或展示规则下的曝光/点击数据。</p>
+      </section>
+
+      <section id="acceptance">
+        <h2>十三、验收标准</h2>
+        <h3>13.1 广告查询接口验收</h3>
+        <table>
+          <tr><th>验收项</th><th>预期结果</th></tr>
+          <tr><td>接口返回广告列表</td><td>每条广告记录均包含 <code>crowdRuleIds</code> 和 <code>displayRuleIds</code></td></tr>
+          <tr><td>命中单个分群规则</td><td><code>crowdRuleIds</code> 返回单个规则 ID 字符串</td></tr>
+          <tr><td>命中多个分群规则</td><td><code>crowdRuleIds</code> 返回英文逗号拼接字符串</td></tr>
+          <tr><td>命中单个展示规则</td><td><code>displayRuleIds</code> 返回单个规则 ID 字符串</td></tr>
+          <tr><td>命中多个展示规则</td><td><code>displayRuleIds</code> 返回英文逗号拼接字符串</td></tr>
+          <tr><td>无命中分群规则</td><td><code>crowdRuleIds</code> 返回空字符串，不返回 null</td></tr>
+          <tr><td>无命中展示规则</td><td><code>displayRuleIds</code> 返回空字符串，不返回 null</td></tr>
+          <tr><td>规则返回范围</td><td>仅返回当前广告下用户实际命中的规则 ID</td></tr>
+        </table>
+        <h3>13.2 曝光上报验收</h3>
+        <table>
+          <tr><th>验收项</th><th>预期结果</th></tr>
+          <tr><td>广告实际渲染展示</td><td>调用 索数曝光事件</td></tr>
+          <tr><td>广告未展示</td><td>不调用曝光事件</td></tr>
+          <tr><td>轮播广告进入可视区域</td><td>首次进入可视区域时上报曝光</td></tr>
+          <tr><td>轮播广告未进入可视区域</td><td>不上报曝光</td></tr>
+          <tr><td>首屏外广告未滚动到可视区域</td><td>不上报曝光</td></tr>
+          <tr><td>首屏外广告滚动进入可视区域</td><td>从不可见变为可见时上报一次；停留可视区不重复上报；离开后再次进入可再次上报</td></tr>
+          <tr><td>同页面重复渲染同广告</td><td>按各广告位模块独立的广告位置标识 + 广告 ID 去重，同一组合只上报一次</td></tr>
+          <tr><td>重新进入页面</td><td>广告再次展示可重新上报</td></tr>
+          <tr><td>规则 ID 为空</td><td>上报空字符串</td></tr>
+        </table>
+        <h3>13.3 点击上报验收</h3>
+        <table>
+          <tr><th>验收项</th><th>预期结果</th></tr>
+          <tr><td>用户点击广告</td><td>每点击一次上报一次索数点击事件</td></tr>
+          <tr><td>点击上报平台</td><td>由小程序 WE 分析调整为索数</td></tr>
+          <tr><td>点击事件字段</td><td>索数点击事件需携带分群规则 ID、展示规则 ID</td></tr>
+          <tr><td>字段取值</td><td>与该广告曝光上报使用同一份广告对象中的规则 ID</td></tr>
+        </table>
+        <h3>13.4 地区搜索验收</h3>
+        <table>
+          <tr><th>验收项</th><th>预期结果</th></tr>
+          <tr><td>三个指定地区选择点位</td><td>均支持搜索</td></tr>
+          <tr><td>输入省/市/区关键字</td><td>可返回匹配地区</td></tr>
+          <tr><td>搜索结果</td><td>展示完整地区层级</td></tr>
+          <tr><td>无结果</td><td>展示空状态提示</td></tr>
+          <tr><td>选择地区后保存</td><td>规则可正常保存，重新进入编辑页时已选地区展示正确</td></tr>
+        </table>
+      </section>
+
+      <section id="todo">
+        <h2>十四、附件</h2>
+        <h3>14.1 已产出原型</h3>
+        <p>本需求已补充一份轻量埋点行为验证原型，用于说明规则 ID 返回后的曝光去重、轮播可视曝光、首屏外广告滚动曝光、点击上报迁移至索数等核心规则。</p>
+        <ul>
+          <li>原型文件：<a href="../prototype/prototype_v1.0.html?v=202605110947" target="_blank">打开完整原型</a></li>
+          <li>曝光专注模式：<a href="../prototype/prototype_v1.0.html?v=202605110947&focus=exposure" target="_blank">查看曝光上报切片</a></li>
+          <li>点击专注模式：<a href="../prototype/prototype_v1.0.html?v=202605110947&focus=click" target="_blank">查看点击上报切片</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script>
+    document.querySelectorAll('.flow-card').forEach(card => {
+      const button = card.querySelector('.flow-toggle');
+      button.addEventListener('click', () => {
+        const showSource = !card.classList.contains('show-source');
+        card.classList.toggle('show-source', showSource);
+        button.textContent = showSource ? '查看流程图' : '查看源码';
+      });
+    });
+  </script>
+</body>
+</html>

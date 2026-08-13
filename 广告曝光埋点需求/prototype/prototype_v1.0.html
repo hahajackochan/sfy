@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>会员小程序广告埋点行为验证原型 v1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --ink: oklch(23% 0.03 260);
+      --muted: oklch(48% 0.025 260);
+      --paper: oklch(98% 0.006 260);
+      --panel: oklch(100% 0.004 260);
+      --line: oklch(90% 0.014 260);
+      --blue: oklch(58% 0.18 255);
+      --violet: oklch(59% 0.2 300);
+      --green: oklch(62% 0.16 155);
+      --amber: oklch(74% 0.16 75);
+    }
+    body { background: var(--paper); color: var(--ink); }
+    .phone {
+      width: 390px;
+      height: 820px;
+      border-radius: 34px;
+      background: oklch(99% 0.005 260);
+      box-shadow: 0 28px 70px rgba(31,41,55,.18);
+      border: 8px solid oklch(25% 0.018 260);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .ad-card { transition: transform .22s ease, box-shadow .22s ease, opacity .22s ease; }
+    .ad-card:active { transform: scale(.98); }
+    .log-line { animation: logIn .28s ease-out both; }
+    @keyframes logIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .focus-dim { pointer-events: none; opacity: .35; filter: grayscale(.3); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <header class="mb-8 flex items-start justify-between gap-6">
+      <div>
+        <p class="text-sm font-semibold tracking-wide text-blue-700">Prototype v1.0</p>
+        <h1 class="text-3xl font-bold mt-1">广告曝光/点击埋点行为验证</h1>
+        <p class="text-slate-600 mt-2 max-w-3xl">用于评审广告接口返回规则 ID 后，小程序如何在广告实际展示、轮播进入可视区域、首屏外广告滚动可见、用户点击时上报索数事件。</p>
+      </div>
+      <div class="rounded-2xl bg-white border border-slate-200 px-4 py-3 text-sm text-slate-600">
+        <div>去重键：<b class="text-slate-900">广告位模块标识 + 广告 ID</b></div>
+        <div>多规则：<b class="text-slate-900">英文逗号拼接</b></div>
+      </div>
+    </header>
+
+    <div class="grid lg:grid-cols-[430px_1fr] gap-7 items-start">
+      <section id="phonePanel" class="phone mx-auto">
+        <div class="bg-slate-900 text-slate-100 px-5 pt-4 pb-3">
+          <div class="flex justify-between text-xs opacity-80"><span>17:05</span><span>5G 100%</span></div>
+          <div class="mt-4 flex items-center justify-between">
+            <div>
+              <div class="text-lg font-semibold">会员首页</div>
+              <div class="text-xs text-slate-300">每个广告位模块独立 positionKey</div>
+            </div>
+            <button onclick="resetPage()" class="text-xs rounded-full bg-slate-700 px-3 py-1.5">重新进入页面</button>
+          </div>
+        </div>
+
+        <main id="phoneScroll" class="phone-scroll p-4 space-y-4">
+          <div class="rounded-3xl bg-gradient-to-br from-blue-600 to-violet-600 text-white p-5 shadow-lg">
+            <div class="text-sm opacity-90">会员专享</div>
+            <div class="text-2xl font-bold mt-1">复购权益推荐</div>
+            <p class="text-sm text-blue-100 mt-2">页面加载后请求广告接口，接口返回广告及命中的规则 ID。</p>
+          </div>
+
+          <section id="normalAdSection" class="rounded-3xl bg-white border border-slate-200 p-4">
+            <div class="flex justify-between items-center mb-3">
+              <h2 class="font-semibold">普通广告位（单图/弹窗） · home_banner</h2>
+              <span id="normalBadge" class="text-xs rounded-full bg-slate-100 px-2 py-1 text-slate-500">home_banner</span>
+            </div>
+            <div id="normalAd" class="ad-card rounded-2xl bg-amber-50 border border-amber-200 p-4 cursor-pointer" onclick="clickAd('522')">
+              <div class="text-xs text-amber-700 font-semibold">广告 ID：522</div>
+              <div class="text-xl font-bold mt-1">黑曜石锅具三件套配件券</div>
+              <p class="text-sm text-amber-800 mt-2">crowdRuleIds=rule_1,rule_2</p>
+              <p class="text-sm text-amber-800">displayRuleIds=rule_101,rule_102</p>
+            </div>
+          </section>
+
+          <section id="carouselSection" class="rounded-3xl bg-white border border-slate-200 p-4">
+            <div class="flex justify-between items-center mb-3">
+              <h2 class="font-semibold">轮播广告位 · swipe_banner</h2>
+              <span class="text-xs rounded-full bg-slate-100 px-2 py-1 text-slate-500">swipe_banner</span>
+            </div>
+            <div id="carouselAd" class="ad-card rounded-2xl p-4 cursor-pointer border" onclick="clickCurrentCarouselAd()"></div>
+            <div class="grid grid-cols-3 gap-2 mt-3">
+              <button onclick="showSlide(0)" class="rounded-xl bg-slate-900 text-white text-sm py-2">看广告 1</button>
+              <button onclick="showSlide(1)" class="rounded-xl bg-slate-900 text-white text-sm py-2">看广告 2</button>
+              <button onclick="showSlide(2)" class="rounded-xl bg-slate-200 text-slate-700 text-sm py-2">广告 3</button>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">只有用户实际切到并看到的轮播广告才上报曝光。如 5 个轮播只看第 1 个就离开，后续 4 个不上报。</p>
+          </section>
+
+
+          <section class="rounded-3xl bg-white border border-slate-200 p-4">
+            <h2 class="font-semibold mb-2">页面内容区</h2>
+            <div class="space-y-3 text-sm text-slate-600">
+              <p>这段内容用于模拟首屏下方的真实业务内容。底部广告已由接口返回，但只有用户真正滚动看到后才会上报曝光。</p>
+              <div class="h-32 rounded-2xl bg-slate-100 grid place-items-center text-slate-400">订单服务 / 会员权益 / 活动信息</div>
+              <div class="rounded-2xl bg-rose-50 border-2 border-dashed border-rose-300 px-4 py-5 text-rose-800 font-semibold">
+                ↓ 页面底部还有一个广告位 bottom_banner，继续向下滚动查看
+              </div>
+            </div>
+          </section>
+
+          <section id="bottomAdSection" class="rounded-3xl bg-rose-950 p-4 mb-6 shadow-xl text-white">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <div class="inline-flex rounded-full bg-rose-200 px-3 py-1 text-xs font-bold text-rose-900">页面底部广告位</div>
+                <h2 class="font-bold text-lg mt-2">bottom_banner</h2>
+              </div>
+              <span id="bottomBadge" class="shrink-0 text-xs rounded-full bg-white/15 px-2 py-1 text-rose-50">未进入可视区</span>
+            </div>
+            <div id="bottomAd" class="ad-card rounded-3xl bg-gradient-to-br from-rose-100 to-orange-100 border border-rose-200 p-5 cursor-pointer text-rose-950" onclick="clickAd('760')">
+              <div class="text-xs text-rose-700 font-bold">广告 ID：760</div>
+              <div class="text-2xl font-black mt-1">老客专属软装升级券</div>
+              <p class="text-sm text-rose-800 mt-2">页面底部真实广告卡片，进入可视区后上报索数曝光。</p>
+              <div class="mt-3 rounded-2xl bg-white/70 p-3 text-xs text-rose-900">
+                <div>crowdRuleIds=rule_401</div>
+                <div>displayRuleIds=rule_501,rule_502</div>
+              </div>
+            </div>
+            <p class="text-xs text-rose-100 mt-3">滚动看到这张底部广告卡片时，应立即产生一条曝光日志。</p>
+          </section>
+        </main>
+      </section>
+
+      <section class="space-y-5">
+        <div id="rulePanel" class="rounded-3xl bg-white border border-slate-200 p-5">
+          <h2 class="text-xl font-bold">规则说明</h2>
+          <div class="grid md:grid-cols-2 gap-4 mt-4">
+            <div class="rounded-2xl bg-blue-50 p-4 border border-blue-100">
+              <div class="font-semibold text-blue-900">曝光事件</div>
+              <ul class="text-sm text-blue-900 mt-2 space-y-1 list-disc pl-5">
+                <li>广告实际展示后上报</li>
+                <li>轮播广告首次进入可视区域上报：如 5 个轮播只看到第 1 个，只上报第 1 个</li>
+                <li>首屏外广告滚动到可视区域才上报</li>
+                <li>同页面按各广告位模块 positionKey + 广告 ID 去重</li>
+              </ul>
+            </div>
+            <div class="rounded-2xl bg-violet-50 p-4 border border-violet-100">
+              <div class="font-semibold text-violet-900">点击事件</div>
+              <ul class="text-sm text-violet-900 mt-2 space-y-1 list-disc pl-5">
+                <li>点击一次上报一次</li>
+                <li>不做点击去重</li>
+                <li>规则 ID 取接口返回值</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div id="logPanel" class="rounded-3xl bg-slate-950 text-slate-100 p-5 min-h-[360px]">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-xl font-bold">索数上报日志</h2>
+            <div class="flex gap-2">
+              <button onclick="clearLogs()" class="rounded-xl bg-slate-800 px-3 py-2 text-sm">清空日志</button>
+              <button onclick="resetPage()" class="rounded-xl bg-blue-600 px-3 py-2 text-sm">重新进入页面</button>
+            </div>
+          </div>
+          <div id="logs" class="mt-4 space-y-2 text-sm font-mono"></div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const url = new URL(location.href);
+    const focus = url.searchParams.get('focus');
+
+    const ads = [
+      {
+        id: '522',
+        title: '黑曜石锅具三件套配件券',
+        positionKey: 'home_banner',
+        crowdRuleIds: 'rule_1,rule_2',
+        displayRuleIds: 'rule_101,rule_102',
+        color: 'bg-amber-50 border-amber-200 text-amber-950'
+      },
+      {
+        id: '749',
+        title: '推荐有礼',
+        positionKey: 'swipe_banner',
+        crowdRuleIds: '',
+        displayRuleIds: 'rule_201',
+        color: 'bg-blue-50 border-blue-200 text-blue-950'
+      },
+      {
+        id: '752',
+        title: '黄金以上客户复购送床头柜',
+        positionKey: 'swipe_banner',
+        crowdRuleIds: 'rule_301',
+        displayRuleIds: 'rule_202,rule_203',
+        color: 'bg-emerald-50 border-emerald-200 text-emerald-950'
+      },
+      {
+        id: '751',
+        title: '定制复购叠加券',
+        positionKey: 'swipe_banner',
+        crowdRuleIds: 'rule_302,rule_303',
+        displayRuleIds: '',
+        color: 'bg-violet-50 border-violet-200 text-violet-950'
+      },
+      {
+        id: '760',
+        title: '老客专属软装升级券',
+        positionKey: 'bottom_banner',
+        crowdRuleIds: 'rule_401',
+        displayRuleIds: 'rule_501,rule_502',
+        color: 'bg-rose-50 border-rose-200 text-rose-950'
+      }
+    ];
+
+    let exposed = new Set();
+    let currentSlide = 0;
+    const visibleState = new Map();
+
+    function exposureKey(ad) { return `${ad.positionKey}::${ad.id}`; }
+
+    function payloadFor(ad, type) {
+      return {
+        event_name: type === '曝光' ? '广告曝光' : '广告点击',
+        event_code: type === '曝光' ? 'ad_exposure' : 'ad_click',
+        event_type: type,
+        ad_id: ad.id,
+        ad_position_key: ad.positionKey,
+        crowd_rule_ids: ad.crowdRuleIds,
+        display_rule_ids: ad.displayRuleIds
+      };
+    }
+
+    function log(type, ad, extra = '') {
+      const logs = document.getElementById('logs');
+      const row = document.createElement('div');
+      row.className = 'log-line rounded-2xl bg-slate-900 border border-slate-800 p-3';
+      const color = type === '曝光' ? 'text-green-300' : type === '点击' ? 'text-blue-300' : 'text-amber-300';
+      row.innerHTML = `<div class="${color} font-semibold">[${type}] ${extra}</div><div class="text-slate-300 mt-1">${JSON.stringify(payloadFor(ad, type), null, 0)}</div>`;
+      logs.prepend(row);
+    }
+
+    function exposeAd(ad, options = {}) {
+      const key = exposureKey(ad);
+      if (exposed.has(key) && !options.allowRepeatAfterLeave) {
+        return;
+      }
+      exposed.add(key);
+      log('曝光', ad, options.reason || `首次展示 key=${key}`);
+      if (ad.id === '522') {
+        document.getElementById('normalBadge').textContent = '已上报曝光';
+        document.getElementById('normalBadge').className = 'text-xs rounded-full bg-green-100 px-2 py-1 text-green-700';
+      }
+      if (ad.id === '760') {
+        document.getElementById('bottomBadge').textContent = '已滚动可见并上报';
+        document.getElementById('bottomBadge').className = 'shrink-0 text-xs rounded-full bg-green-100 px-2 py-1 text-green-700';
+      }
+    }
+
+    function clickAd(adId) {
+      const ad = ads.find(item => item.id === adId);
+      log('点击', ad, '点击不去重');
+    }
+
+    function renderCarousel() {
+      const ad = ads[currentSlide + 1];
+      const el = document.getElementById('carouselAd');
+      el.className = `ad-card rounded-2xl p-4 cursor-pointer border ${ad.color}`;
+      el.innerHTML = `
+        <div class="text-xs font-semibold">轮播广告 ${currentSlide + 1} · 广告 ID：${ad.id}</div>
+        <div class="text-xl font-bold mt-1">${ad.title}</div>
+        <p class="text-sm mt-2">crowdRuleIds=${ad.crowdRuleIds || '(空字符串)'}</p>
+        <p class="text-sm">displayRuleIds=${ad.displayRuleIds || '(空字符串)'}</p>
+      `;
+    }
+
+    function showSlide(index) {
+      currentSlide = index;
+      renderCarousel();
+      exposeAd(ads[index + 1]);
+    }
+
+    function clickCurrentCarouselAd() {
+      clickAd(ads[currentSlide + 1].id);
+    }
+
+    function scrollToBottomAd() {
+      const scroll = document.getElementById('phoneScroll');
+      const bottomAd = document.getElementById('bottomAdSection');
+      scroll.scrollTo({ top: bottomAd.offsetTop - 140, behavior: 'smooth' });
+      [300, 650, 1000].forEach(delay => setTimeout(checkBottomAdVisibility, delay));
+    }
+
+    function checkBottomAdVisibility() {
+      const scroll = document.getElementById('phoneScroll');
+      const bottomAd = document.getElementById('bottomAd');
+      const ad = ads.find(item => item.id === '760');
+      const key = exposureKey(ad);
+      const scrollRect = scroll.getBoundingClientRect();
+      const adRect = bottomAd.getBoundingClientRect();
+      const visibleTop = Math.max(adRect.top, scrollRect.top);
+      const visibleBottom = Math.min(adRect.bottom, scrollRect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const visibleRatio = visibleHeight / adRect.height;
+      const isVisible = visibleRatio >= 0.25;
+      const wasVisible = visibleState.get(key) === true;
+
+      if (isVisible && !wasVisible) {
+        exposeAd(ad, { reason: `底部广告进入可视区域 key=${key}` });
+      }
+
+      if (!isVisible && wasVisible) {
+        document.getElementById('bottomBadge').textContent = '已离开可视区，本页不重复上报';
+        document.getElementById('bottomBadge').className = 'shrink-0 text-xs rounded-full bg-amber-100 px-2 py-1 text-amber-700';
+      }
+
+      visibleState.set(key, isVisible);
+    }
+
+    function resetPage() {
+      exposed = new Set();
+      visibleState.clear();
+      document.getElementById('logs').innerHTML = '';
+      document.getElementById('phoneScroll').scrollTop = 0;
+      document.getElementById('normalBadge').textContent = 'home_banner';
+      document.getElementById('normalBadge').className = 'text-xs rounded-full bg-slate-100 px-2 py-1 text-slate-500';
+      document.getElementById('bottomBadge').textContent = '未进入可视区';
+      document.getElementById('bottomBadge').className = 'shrink-0 text-xs rounded-full bg-white/15 px-2 py-1 text-rose-50';
+      currentSlide = 0;
+      renderCarousel();
+      setTimeout(() => exposeAd(ads[0], { reason: '页面首屏展示' }), 250);
+      setTimeout(() => exposeAd(ads[1], { reason: '轮播广告1首次可见' }), 450);
+      setTimeout(checkBottomAdVisibility, 100);
+    }
+
+    function clearLogs() { document.getElementById('logs').innerHTML = ''; }
+
+    function applyFocusMode() {
+      if (!focus) return;
+      const mapping = {
+        exposure: ['phonePanel', 'logPanel'],
+        click: ['phonePanel', 'logPanel'],
+        rules: ['rulePanel']
+      };
+      const keep = new Set(mapping[focus] || []);
+      ['phonePanel', 'rulePanel', 'logPanel'].forEach(id => {
+        if (!keep.has(id)) document.getElementById(id)?.classList.add('focus-dim');
+      });
+    }
+
+    renderCarousel();
+    document.getElementById('phoneScroll').addEventListener('scroll', () => requestAnimationFrame(checkBottomAdVisibility), { passive: true });
+    if ('IntersectionObserver' in window) {
+      const bottomObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) checkBottomAdVisibility();
+        });
+      }, { root: document.getElementById('phoneScroll'), threshold: 0.25 });
+      bottomObserver.observe(document.getElementById('bottomAd'));
+    }
+    applyFocusMode();
+    resetPage();
+  </script>
+</body>
+</html>

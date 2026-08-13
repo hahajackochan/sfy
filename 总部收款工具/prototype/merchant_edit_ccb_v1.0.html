@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>编辑建行商户配置原型</title>
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === '1') document.documentElement.classList.add('embed');
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 1280px;
+      background: #f3f3f3;
+      color: #555;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+    .app { display: flex; min-height: 100vh; zoom: .88; }
+    .embed .app { zoom: .62; }
+    .sidebar {
+      width: 248px;
+      flex: 0 0 248px;
+      background: #fff;
+      border-right: 1px solid #e5e5e5;
+      min-height: 100vh;
+    }
+    .brand { padding: 24px 18px 18px; text-align: center; }
+    .logo {
+      width: 116px;
+      height: 116px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: #050505;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+    }
+    .logo .sogal { font-size: 11px; letter-spacing: 1px; }
+    .logo .cn { font-size: 13px; margin-top: 3px; }
+    .logo .vip { font-size: 30px; font-weight: 800; margin-top: 6px; }
+    .brand-title { font-size: 21px; font-weight: 700; color: #222; }
+    .menu { padding: 6px 0 30px; }
+    .menu-item, .submenu-item {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #5d646b;
+      white-space: nowrap;
+    }
+    .menu-item .icon, .submenu-item .icon { width: 20px; text-align: center; color: #7b8085; font-size: 17px; }
+    .menu-item .arrow { margin-left: auto; color: #a0a0a0; font-size: 13px; }
+    .submenu-item { padding-left: 52px; height: 42px; font-size: 15px; }
+    .content { flex: 1; min-width: 0; }
+    .topbar {
+      height: 76px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #e2e2e2;
+      display: flex;
+      align-items: stretch;
+    }
+    .hamburger {
+      width: 62px;
+      height: 76px;
+      background: #18aa92;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .module-nav { display: flex; align-items: stretch; }
+    .module {
+      min-width: 112px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #8b8b8b;
+      font-size: 16px;
+      font-weight: 700;
+      border-right: 1px solid #ececec;
+    }
+    .module.active { background: #18aa92; color: #fff; }
+    .module .module-icon { font-size: 20px; }
+    .tabs {
+      height: 48px;
+      background: #fff;
+      border-bottom: 2px solid #18aa92;
+      display: flex;
+      align-items: stretch;
+    }
+    .tab-left, .tab-right-btn {
+      width: 42px;
+      border-right: 1px solid #e7e7e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      background: #fff;
+    }
+    .tab {
+      padding: 0 18px;
+      border-right: 1px solid #e7e7e7;
+      display: flex;
+      align-items: center;
+      color: #777;
+      font-size: 15px;
+    }
+    .tab.active { background: #18aa92; color: #fff; }
+    .tab .close { margin-left: 12px; font-weight: 700; }
+    .tab-spacer { flex: 1; }
+    .main { padding: 24px 24px 60px; }
+    .panel {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+      min-height: 920px;
+    }
+    .panel-title {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      padding-left: 28px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .panel-body { padding: 28px 34px 48px; }
+    .top-back {
+      width: 88px;
+      height: 44px;
+      border: 0;
+      border-radius: 3px;
+      background: #18aa92;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: inherit;
+      margin-bottom: 30px;
+    }
+    .inner-tabs {
+      display: flex;
+      align-items: center;
+      height: 72px;
+      margin-left: 142px;
+      margin-bottom: 32px;
+      border-bottom: 1px dashed #d9d9d9;
+      padding-bottom: 20px;
+    }
+    .inner-tab-active {
+      height: 54px;
+      min-width: 190px;
+      background: #337ab7;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 24px 0 20px;
+      font-size: 17px;
+      font-weight: 700;
+      border-left: 7px solid #18aa92;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.12);
+    }
+    .inner-tab {
+      margin-left: 42px;
+      color: #9aa7b5;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .form { margin-top: 34px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 360px 640px;
+      align-items: center;
+      min-height: 62px;
+      margin-bottom: 22px;
+    }
+    .label {
+      padding-right: 38px;
+      text-align: right;
+      color: #4f5357;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .required { color: #f00; margin-right: 2px; }
+    .input, .select {
+      width: 640px;
+      height: 52px;
+      border: 1px solid #dcdcdc;
+      background: #fff;
+      padding: 0 15px;
+      color: #555;
+      font-size: 16px;
+      outline: none;
+      border-radius: 1px;
+      font-family: inherit;
+    }
+    .input.readonly { background: #f8f8f8; color: #777; }
+    .select-wrap { position: relative; width: 640px; }
+    .select-wrap::after {
+      content: "▾";
+      position: absolute;
+      right: 14px;
+      top: 13px;
+      color: #888;
+      pointer-events: none;
+      font-size: 16px;
+    }
+    .type-dropdown {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 52px;
+      width: 640px;
+      background: #fff;
+      border: 1px solid #dcdcdc;
+      box-shadow: 0 8px 18px rgba(0,0,0,.12);
+      z-index: 5;
+    }
+    .type-dropdown.open { display: block; }
+    .type-option { height: 42px; display: flex; align-items: center; padding: 0 15px; font-size: 16px; color: #555; cursor: default; }
+    .type-option:hover { background: #f3f7f6; color: #18aa92; }
+    .hidden { display: none; }
+    .focus-highlight { position:relative; z-index:2; box-shadow:0 0 0 3px rgba(252,235,216,.72), 0 0 0 1px #a86115 inset; background:rgba(252,235,216,.10); }
+    .actions {
+      width: 640px;
+      margin-left: 360px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 24px;
+    }
+    .btn-back, .btn-save {
+      height: 44px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-back {
+      width: 96px;
+      background: #fff;
+      border: 1px solid #d7d7d7;
+      color: #555;
+    }
+    .btn-save {
+      width: 86px;
+      border: 0;
+      background: #18aa92;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <div class="sogal">SOGAL</div>
+          <div class="cn">索菲亚</div>
+          <div class="vip">会员VIP</div>
+        </div>
+        <div class="brand-title">索菲亚会员中心</div>
+      </div>
+      <nav class="menu">
+        <div class="menu-item"><span class="icon">▦</span><span>数据统计</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">👤</span><span>会员管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">◇</span><span>会员权益</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▣</span><span>商品管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▤</span><span>订单管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">✎</span><span>报名管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">⚙</span><span>配置管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">☷</span><span>活动管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">☑</span><span>任务中心</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">🎁</span><span>邀请有礼</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">▥</span><span>员工管理</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">✉</span><span>短信营销</span><span class="arrow">›</span></div>
+        <div class="menu-item"><span class="icon">¥</span><span>国补管理</span><span class="arrow">⌄</span></div>
+        <div class="submenu-item"><span class="icon">└</span><span>商户规则管理</span></div>
+        <div class="submenu-item"><span class="icon">└</span><span>商户管理</span></div>
+      </nav>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div class="hamburger">☰</div>
+        <div class="module-nav">
+          <div class="module"><span class="module-icon">⌂</span>平台首页</div>
+          <div class="module"><span class="module-icon">▧</span>基础模块</div>
+          <div class="module"><span class="module-icon">▣</span>活动模块</div>
+          <div class="module"><span class="module-icon">◈</span>定制模块</div>
+          <div class="module active"><span class="module-icon">Ⓥ</span>会员模块</div>
+          <div class="module"><span class="module-icon">☷</span>公共模块</div>
+          <div class="module"><span class="module-icon">✎</span>设计师工具</div>
+          <div class="module"><span class="module-icon">☘</span>切换小程序⌄</div>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div class="tab-left">≪</div>
+        <div class="tab">首页</div>
+        <div class="tab active">商户管理 <span class="close">×</span></div>
+        <div class="tab-spacer"></div>
+        <div class="tab-right-btn">≫</div>
+        <div class="tab">关闭操作⌄</div>
+        <div class="tab">退出 ↪</div>
+      </div>
+
+      <main class="main">
+        <section class="panel">
+          <div class="panel-title">编辑商户配置</div>
+          <div class="panel-body">
+            <button class="top-back">返回</button>
+
+            <div class="inner-tabs">
+              <div class="inner-tab-active">商户配置信息</div>
+              <div class="inner-tab">业务信息配置</div>
+            </div>
+
+            <form class="form">
+              <div class="form-row">
+                <div class="label"><span class="required">*</span>商户名称</div>
+                <input class="input" />
+              </div>
+              <div class="form-row">
+                <div class="label"><span class="required">*</span>商户类型</div>
+                <div class="select-wrap" id="merchantTypeWrap">
+                  <input id="merchantTypeInput" class="select" value="建行商户" readonly onclick="toggleMerchantType()" />
+                  <div id="merchantTypeDropdown" class="type-dropdown">
+                    <div class="type-option" onclick="selectMerchantType('银联商户')">银联商户</div>
+                    <div class="type-option" onclick="selectMerchantType('建行商户')">建行商户</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row ccb-field">
+                <div class="label"><span class="required">*</span>商户代码</div>
+                <input class="input" />
+              </div>
+              <div class="form-row ccb-field">
+                <div class="label"><span class="required">*</span>商户柜台代码</div>
+                <input class="input" />
+              </div>
+              <div class="form-row ccb-field">
+                <div class="label"><span class="required">*</span>分行代码</div>
+                <input class="input" />
+              </div>
+              <div class="form-row ccb-field">
+                <div class="label"><span class="required">*</span>商户公钥串</div>
+                <input class="input" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label"><span class="required">*</span>应用ID</div>
+                <input class="input" value="8a81c1e796cf90fd01981cf2890d0ab2" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label"><span class="required">*</span>应用密钥</div>
+                <input class="input" value="600413f462674cb68ed999ef74100ce5" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label"><span class="required">*</span>商户号</div>
+                <input class="input" value="898440109293288" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label"><span class="required">*</span>终端号</div>
+                <input class="input" value="FUB2TVFS" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">通讯密钥</div>
+                <input class="input" value="无" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">接入来源</div>
+                <input class="input" value="无" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">系统编号</div>
+                <input class="input" value="无" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label"><span class="required">*</span>银联开户主体</div>
+                <input class="input" value="广州极点三维信息科技有限公司" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">银联营销代码</div>
+                <input class="input" value="91440118MAE0JMH559" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">银联营销名称</div>
+                <input class="input" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">银联营销二级子商户名称</div>
+                <input class="input" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">销售企业代码</div>
+                <input class="input" />
+              </div>
+              <div class="form-row union-field hidden">
+                <div class="label">省份：<span class="required">*</span></div>
+                <div class="select-wrap"><input class="select" value="广东省" readonly /></div>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn-back">← 返回</button>
+                <button type="button" class="btn-save">保存</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+  <script>
+    function toggleMerchantType() {
+      document.getElementById('merchantTypeDropdown').classList.toggle('open');
+    }
+
+    function selectMerchantType(type) {
+      document.getElementById('merchantTypeInput').value = type;
+      document.getElementById('merchantTypeDropdown').classList.remove('open');
+      const isCcb = type === '建行商户';
+      document.querySelectorAll('.ccb-field').forEach(el => el.classList.toggle('hidden', !isCcb));
+      document.querySelectorAll('.union-field').forEach(el => el.classList.toggle('hidden', isCcb));
+    }
+
+    function applyFocusMode() {
+      const params = new URLSearchParams(location.search);
+      const focus = params.get('focus');
+      if (!focus) return;
+      const targets = [];
+      if (focus === 'merchant_fields') {
+        document.querySelectorAll('.form-row').forEach(el => targets.push(el));
+      }
+      if (focus === 'merchant_type') {
+        targets.push(document.getElementById('merchantTypeWrap'));
+      }
+      if (focus === 'ccb_fields') {
+        document.querySelectorAll('.ccb-field').forEach(el => targets.push(el));
+      }
+      if (focus === 'union_fields') {
+        document.querySelectorAll('.union-field').forEach(el => targets.push(el));
+      }
+      if (!targets.length) return;
+      targets.forEach(el => {
+        if (!el) return;
+        el.classList.add('focus-highlight');
+      });
+    }
+
+    document.addEventListener('click', function(event) {
+      const wrap = document.getElementById('merchantTypeWrap');
+      if (wrap && !wrap.contains(event.target)) {
+        document.getElementById('merchantTypeDropdown').classList.remove('open');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
+      applyFocusMode();
+    });
+  </script>
+</body>
+</html>
