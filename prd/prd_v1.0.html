@@ -132,6 +132,15 @@
 
     <section id="background"><h2>一、需求背景</h2><p>荐尺有礼是推荐类小程序：用户分享给好友，好友报名下单后，推荐者可在小程序申请提现，后台审核通过即自动发放现金奖励。现金奖励原通过微信支付「企业付款到零钱」发放。</p><p>近期后台审核通过后调用接口发放失败，原因为微信支付已将「企业付款到零钱」出资额度调整为单笔 200 元，且后续将逐步下线。荐尺单笔奖励常超过 200 元，导致奖励无法发放。</p><p>现商户号已开通「商家转账」并完成提额，单笔额度已提升至 500 元，需切换到商家转账接口，采用<b>用户授权免确认模式</b>发放现金奖励。</p><table><tr><th style="width:150px">项目</th><th>企业付款到零钱（现状）</th><th>商家转账到零钱（目标）</th></tr><tr><td>接口状态</td><td>额度受限，逐步下线</td><td>微信支付现行能力</td></tr><tr><td>单笔额度</td><td>200 元</td><td>已提额至 500 元</td></tr></table></section>
 
+<h4>微信支付企业付款到零钱限额警告通知（实拍）</h4>
+<div class="flow-card">
+  <div class="flow-card-head">微信支付企业付款到零钱限额警告
+    <button class="preview-btn" onclick="openImagePreview('../annex/background-warning.png','微信支付企业付款到零钱限额警告')">放大查看</button>
+  </div>
+  <img src="../annex/background-warning.png" alt="微信支付企业付款到零钱限额警告" style="display:block;width:100%;height:auto;background:#fff;" />
+</div>
+
+
     <section id="goals"><h2>二、需求目标</h2><table><tr><th style="width:120px">目标类型</th><th>描述</th><th style="width:170px">衡量指标</th><th style="width:110px">目标值</th></tr><tr><td>业务连续性</td><td>奖励正常发放，解决单笔超 200 元奖励发放失败，恢复大额奖励自动发放</td><td>审核通过奖励的发放成功率</td><td>≥ 99%</td></tr></table><h3>用户申请提现最新流程</h3><div class="mermaid-box"><div class="bar"><span>用户申请提现最新流程图</span></div><div class="view"><div class="mermaid-svg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 0 480 940" width="100%" style="max-width:460px;display:block;margin:0 auto" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">
 <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#555"/></marker></defs>
 <rect x="120.0" y="0.0" width="220" height="40" rx="9" fill="#ECECFF" stroke="#7c5cbf" stroke-width="1.5"/><text x="230.0" y="25.0" font-size="15" fill="#333" text-anchor="middle" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial,sans-serif">用户进入「我的奖励列表/老介新列表」</text>
