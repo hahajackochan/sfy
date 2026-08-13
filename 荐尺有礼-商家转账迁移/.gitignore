@@ -1,0 +1,6 @@
+# 取消仓库根 .gitignore 对子目录的忽略，确保本需求 PRD 素材随仓库发布
+!prd/
+!annex/
+!prototype/
+!flowcharts/
+!templates/

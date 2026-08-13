@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>荐尺有礼 · 商家转账迁移 原型 v1.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",Arial,sans-serif;background:#e9eaec;padding:18px;color:#333}
+.stage{display:flex;gap:24px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.phone-wrap{display:none}
+.phone-wrap.on{display:block}
+.phone-title{text-align:center;font-size:12px;color:#8a8f99;margin-bottom:8px;font-weight:600}
+.phone{width:375px;height:760px;background:#f4f4f4;border-radius:28px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.16);border:1px solid #d8dade}
+.statusbar{height:28px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600;color:#111}
+.navbar{height:46px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;font-weight:700;color:#111;border-bottom:1px solid #f0f0f0}
+.navbar .back{position:absolute;left:14px;font-size:20px;color:#111;font-weight:400}
+.capsule{position:absolute;right:12px;width:80px;height:28px;border:1px solid #ececec;border-radius:14px;display:flex;align-items:center;justify-content:space-around;background:#fff;font-size:11px;color:#333}
+.capsule i{font-style:normal}
+.capsule .sp{width:1px;height:13px;background:#e6e6e6}
+.body{height:calc(760px - 28px - 46px - 52px);overflow-y:auto;padding:12px;position:relative;background:#f4f4f4}
+/* 我的推荐 卡片 */
+.card{background:#FFF9F0;border-radius:14px;box-shadow:0 3px 12px rgba(190,150,200,.18);padding:12px;margin-bottom:12px}
+.sec-head{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.sec-bar{width:4px;height:16px;background:#F1514C;border-radius:2px;flex:none}
+.sec-t{font-size:15px;font-weight:700;color:#1c1c1c}
+.sec-note{font-size:11px;color:#3d7eff}
+.tickets{display:flex;gap:10px}
+.ticket{flex:1;background:#FFE6D6;border-radius:12px;padding:14px 8px;text-align:center;position:relative}
+.ticket .pill{display:inline-block;background:#FF8A3D;color:#fff;font-size:11px;padding:2px 12px;border-radius:10px}
+.ticket .num{margin-top:9px;font-size:23px;font-weight:800;color:#F1502F}
+.btn-main{display:block;width:100%;background:#FA5A2D;color:#fff;border:0;border-radius:23px;padding:13px 0;font-size:15px;font-weight:700;margin-bottom:12px}
+/* 奖励记录卡 */
+.rec-strip{background:#FFE2CF;border-radius:9px;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;margin:-2px -2px 11px}
+.rec-strip .n{color:#F1502F;font-size:13px;font-weight:600}
+.rec-strip .t{color:#9a9a9a;font-size:11px}
+.rec-top{display:flex;align-items:center;gap:11px}
+.avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(#FFE08A,#FFC94D);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.rec-user .nm{font-size:14px;font-weight:600;color:#222}
+.rec-user .ph{font-size:12px;color:#8b8b8b;margin-top:2px}
+.rec-amt{margin-left:auto;text-align:right}
+.rec-amt .lb{font-size:11px;color:#9a9a9a}
+.rec-amt .v{font-size:20px;font-weight:800;color:#F1502F}
+.rec-amt .q{display:inline-block;width:14px;height:14px;line-height:13px;border-radius:50%;background:#dcdcdc;color:#fff;font-size:10px;text-align:center;margin-left:3px;vertical-align:2px}
+.hr{height:1px;background:#FCE0CC;margin:11px 0}
+.rec-bot{display:flex;align-items:flex-end;justify-content:space-between}
+.rec-bot .l{font-size:12px;color:#8b8b8b;line-height:1.8}
+.rec-bot .l b{color:#333;font-weight:500}
+.rec-bot .l em{font-style:normal;color:#F1502F}
+.rec-bot .from{font-size:12px;color:#333;margin-bottom:7px;text-align:right}
+.btn-draw{background:#FA5A2D;color:#fff;border:0;border-radius:17px;padding:8px 20px;font-size:13px;font-weight:600}
+.float{position:absolute;right:10px;width:58px;height:58px;border-radius:50%;background:#F08A34;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1.18;box-shadow:0 3px 10px rgba(0,0,0,.22);z-index:4}
+.float-hist{bottom:120px}
+.float-auth{bottom:188px;background:#FA5A2D}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:52px;background:#fff;border-top:1px solid #f0f0f0;display:flex}
+.tabbar div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#a5a5a5;gap:2px}
+.tabbar div span{font-size:18px}
+.tabbar div.act{color:#F79C29}
+.empty{text-align:center;color:#bcbcbc;font-size:12px;padding:24px 0}
+/* 弹窗（1:1 还原 02_去提现确认弹窗_现状） */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:0 34px;z-index:6}
+.modal{background:#fff;border-radius:18px;width:88%;max-width:340px;box-shadow:0 16px 44px rgba(0,0,0,.30)}
+/* 顶部直接用用户提供的图（enter_tips.png，自带橙红渐变+光芒+铃铛+云朵），不另加颜色 */
+.modal-top{position:relative;display:flex;justify-content:center;padding-top:3px;margin-top:-67px}
+.modal-top .bell-img{width:148px;height:auto;display:block}
+.modal-b{padding:6px 22px 24px;text-align:center}
+.modal-b h3{color:#D84315;font-size:18px;font-weight:600;margin-bottom:14px;letter-spacing:.5px}
+.modal-b p{font-size:13px;color:#666;line-height:1.85;text-align:center}
+.auth-block{margin-top:14px;border:1px dashed #FFB488;background:#FFF6EF;border-radius:9px;padding:11px 12px;text-align:left}
+.auth-block b{display:block;font-size:13px;color:#D84315;font-weight:700;margin-bottom:5px}
+.auth-block p{font-size:12.5px;color:#6a6a6a;line-height:1.75;text-align:left}
+.modal-btns{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.mb1{background:#FF7043;color:#fff;border:0;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700;box-shadow:0 4px 10px rgba(255,112,67,.28)}
+.mb2{background:#FFF8F5;color:#FF7043;border:1px solid #FFAB91;border-radius:25px;padding:13px 0;font-size:15px;font-weight:700}
+.fx{outline:2px solid #a86115 !important;outline-offset:2px;border-radius:10px;box-shadow:0 0 0 4px rgba(168,97,21,.16)}
+.fx-tag{position:absolute;background:#a86115;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;transform:translateY(-100%);margin-top:-4px;z-index:9}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ① 我的奖励列表 = 我的推荐列表 -->
+  <div class="phone-wrap" id="w-reward">
+    <div class="phone-title">① 我的奖励列表（= 我的推荐列表）</div>
+    <div class="phone">
+      <div class="statusbar"><span>16:52</span><span>5G ▮39%</span></div>
+      <div class="navbar">我的奖励<div class="capsule"><i>···</i><div class="sp"></div><i>⊙</i></div></div>
+      <div class="body">
+        <div class="card">
+          <div class="sec-head"><span class="sec-bar"></span><span class="sec-t">我的推荐</span><span class="sec-note">（每隔5分钟可下拉页面更新推荐奖励）</span></div>
+          <div class="tickets">
+            <div class="ticket"><span class="pill">累计奖励</span><div class="num">￥0</div></div>
+            <div class="ticket"><span class="pill">已推荐</span><div class="num">1人</div></div>
+          </div>
+        </div>
+        <button class="btn-main">进入老介新列表</button>
+        <div class="card">
+          <div class="rec-strip"><span class="n">嘉豪测试0803</span><span class="t">2026-08-03 16:45:22</span></div>
+          <div class="rec-top">
+            <div class="avatar">🤖</div>
+            <div class="rec-user"><div class="nm">吴先生</div><div class="ph">135****4555</div></div>
+            <div class="rec-amt"><div class="lb">奖励金额</div><div class="v">￥1.2<span class="q">?</span></div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="rec-bot">
+            <div class="l">满0.30元可提现<br><b>状态</b> <em>已接单</em></div>
+            <button class="btn-draw" id="r-withdraw">去提现</button>
+          </div>
+        </div>
+        <div class="empty">— 已经到底了 —</div>
+      </div>
+      <div class="float float-auth" id="r-floatauth">授权<br>收款</div>
+      <div class="float float-hist">历史<br>活动</div>
+      <div class="tabbar"><div><span>⌂</span>首页</div><div class="act"><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+    </div>
+  </div>
+
+  <!-- ② 去提现确认弹窗 · 未授权态（改造后） -->
+  <div class="phone-wrap" id="w-unauth">
+    <div class="phone-title">② 去提现确认弹窗 · 未授权态（改造后）</div>
+    <div class="phone">
+      <div class="statusbar"><span>16:53</span><span>5G ▮40%</span></div>
+      <div class="navbar">我的奖励<div class="capsule"><i>···</i><div class="sp"></div><i>⊙</i></div></div>
+      <div class="body">
+        <div class="card">
+          <div class="sec-head"><span class="sec-bar"></span><span class="sec-t">我的推荐</span></div>
+          <div class="tickets">
+            <div class="ticket"><span class="pill">累计奖励</span><div class="num">￥0</div></div>
+            <div class="ticket"><span class="pill">已推荐</span><div class="num">1人</div></div>
+          </div>
+        </div>
+        <button class="btn-main">进入老介新列表</button>
+      </div>
+      <div class="tabbar"><div><span>⌂</span>首页</div><div class="act"><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class="mask">
+        <div class="modal">
+          <div class="modal-top"><img class="bell-img" src="../annex/enter_tips.png" alt=""></div>
+          <div class="modal-b">
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class="auth-block" id="u-authblock">
+              <b>需授权微信免确认收款</b>
+              <p>授权后审核通过的奖励将自动到账微信零钱，无需你再次确认；</p>
+            </div>
+            <div class="modal-btns">
+              <button class="mb1" id="u-btn1">同意授权并提现</button>
+              <button class="mb2">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 去提现确认弹窗 · 已授权态（维持现状） -->
+  <div class="phone-wrap" id="w-authed">
+    <div class="phone-title">③ 去提现确认弹窗 · 已授权态（维持现状）</div>
+    <div class="phone">
+      <div class="statusbar"><span>16:53</span><span>5G ▮40%</span></div>
+      <div class="navbar">我的奖励<div class="capsule"><i>···</i><div class="sp"></div><i>⊙</i></div></div>
+      <div class="body">
+        <div class="card">
+          <div class="sec-head"><span class="sec-bar"></span><span class="sec-t">我的推荐</span></div>
+          <div class="tickets">
+            <div class="ticket"><span class="pill">累计奖励</span><div class="num">￥0</div></div>
+            <div class="ticket"><span class="pill">已推荐</span><div class="num">1人</div></div>
+          </div>
+        </div>
+        <button class="btn-main">进入老介新列表</button>
+      </div>
+      <div class="tabbar"><div><span>⌂</span>首页</div><div class="act"><span>🏆</span>我的奖励</div><div><span>👤</span>个人中心</div></div>
+      <div class="mask">
+        <div class="modal" id="a-modal">
+          <div class="modal-top"><img class="bell-img" src="../annex/enter_tips.png" alt=""></div>
+          <div class="modal-b">
+            <h3>温馨提示</h3>
+            <p>7个工作日内完成审核，审核成功后红包将直接发放到微信零钱，若因推荐人微信未实名认证/账号信用度较低导致红包发放失败的，将不再进行补发</p>
+            <div class="modal-btns">
+              <button class="mb1">我已了解，继续提现</button>
+              <button class="mb2">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 老介新列表 -->
+  <div class="phone-wrap" id="w-ljx">
+    <div class="phone-title">④ 老介新列表</div>
+    <div class="phone">
+      <div class="statusbar"><span>16:55</span><span>5G ▮43%</span></div>
+      <div class="navbar"><span class="back">‹</span>老介新<div class="capsule"><i>···</i><div class="sp"></div><i>⊙</i></div></div>
+      <div class="body" style="background:#fff">
+        <div class="card">
+          <div class="rec-strip"><span class="n">嘉豪测试0803</span><span class="t">2026-08-03 16:51:07</span></div>
+          <div class="rec-top">
+            <div class="avatar">🤖</div>
+            <div class="rec-user"><div class="nm">汤先生</div><div class="ph">136****5789</div></div>
+            <div class="rec-amt"><div class="lb">奖励金额</div><div class="v">￥1.2<span class="q">?</span></div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="rec-bot">
+            <div class="l">满0.30元可提现<br><b>状态：</b><em>已接单</em></div>
+            <div>
+              <div class="from">来自（173****1369）的推荐</div>
+              <button class="btn-draw" id="l-withdraw">去提现</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var pages = {reward:'w-reward', unauth:'w-unauth', authed:'w-authed', ljx:'w-ljx'};
+  var focusMap = {
+    'float-auth':   {page:'reward', el:'r-floatauth', tag:'新增：授权收款悬浮按钮'},
+    'withdraw':     {page:'reward', el:'r-withdraw',  tag:'点击触发授权校验'},
+    'dialog-unauth':{page:'unauth', el:'u-authblock', tag:'新增：授权说明区'},
+    'dialog-btn':   {page:'unauth', el:'u-btn1',      tag:'按钮文案变化'},
+    'dialog-authed':{page:'authed', el:'a-modal',     tag:'已授权：维持现状'},
+    'ljx-withdraw': {page:'ljx',    el:'l-withdraw',  tag:'点击触发授权校验'}
+  };
+  function show(list){
+    Object.keys(pages).forEach(function(k){
+      document.getElementById(pages[k]).classList.toggle('on', list.indexOf(k) > -1);
+    });
+  }
+  function render(){
+    // 内联 srcdoc iframe：优先读取注入的 window.__page（最稳），其次宿主 iframe 的 data-page
+    var fp = (window.__page && pages[window.__page]) ? window.__page : '';
+    if (!fp) { var fe = window.frameElement || null; if (fe && fe.getAttribute) fp = fe.getAttribute('data-page') || ''; }
+    if (fp && pages[fp]) { show([fp]); return; }
+    document.querySelectorAll('.fx-tag').forEach(function(n){ n.remove(); });
+    document.querySelectorAll('.phone-wrap .fx').forEach(function(n){ n.classList.remove('fx'); });
+    var rawHash = (location.hash || '').replace('#','');
+    var hash = rawHash.split('?')[0];
+    var focus = new URLSearchParams(location.search).get('focus') || '';
+    if (!focus) { var m = /[?&]focus=([^&]+)/.exec(rawHash); if (m) focus = decodeURIComponent(m[1]); }
+    var f = focusMap[focus];
+    if (f) { show([f.page]); }
+    else if (pages[hash]) { show([hash]); }
+    else { show(Object.keys(pages)); }
+    if (f) {
+      var el = document.getElementById(f.el);
+      if (el) {
+        el.classList.add('fx');
+        var tag = document.createElement('span');
+        tag.className = 'fx-tag'; tag.textContent = f.tag;
+        var host = el.offsetParent || el.parentNode;
+        var t = document.createElement('div');
+        t.style.position='absolute';
+        t.style.left = (el.offsetLeft) + 'px';
+        t.style.top  = (el.offsetTop) + 'px';
+        t.appendChild(tag);
+        host.appendChild(t);
+      }
+    }
+  }
+  render();
+  window.addEventListener('hashchange', render);
+})();
+</script>
+</body>
+</html>
