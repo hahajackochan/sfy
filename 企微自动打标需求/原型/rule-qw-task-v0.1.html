@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企微打标任务 - 独立页原型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#303133;background:#f6f8fb;font-size:14px}
+    .topbar{height:58px;background:#fff;border-bottom:1px solid #ebeef4;display:flex;align-items:center}.brand{width:192px;height:58px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;border-right:1px solid #ebeef4}.tabs{display:flex;height:58px;align-items:center}.tab{height:58px;display:flex;align-items:center;padding:0 26px;border-right:1px solid #ebeef4;color:#606266}.tab.active{color:#a86115;background:#fcebd8}.tenant{display:flex;align-items:center;padding:0 28px;color:#606266}.user{margin-left:auto;display:flex;align-items:center;gap:26px;padding-right:28px;color:#606266}.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 58px)}.side{background:#fff;border-right:1px solid #ebeef4;padding:22px 18px;overflow:auto}.side h2{margin:0 0 6px;font-size:18px}.side .sub{color:#909399;font-size:12px;margin-bottom:18px}.toc a{display:block;padding:8px 10px;border-radius:3px;color:#606266;text-decoration:none}.toc a:hover,.toc a.active{background:#fcebd8;color:#a86115}.main{padding:24px 28px 80px;overflow:auto}.hero{background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 60%,#38bdf8 100%);color:#fff;border-radius:24px;padding:28px 30px;margin-bottom:18px;box-shadow:0 18px 40px rgba(15,23,42,.08)}.hero h1{margin:0 0 8px;font-size:30px}.hero p{margin:0;color:rgba(255,255,255,.82);max-width:900px}.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.meta div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:12px;border-radius:14px}.meta b{display:block;color:rgba(255,255,255,.72);font-size:13px;font-weight:500}.meta span{font-weight:700}.section{border:1px solid #ebeef4;border-radius:4px;background:#fff;margin-bottom:16px;padding:20px}.section h2{margin:0 0 14px;font-size:20px}.grid{display:grid;grid-template-columns:1.3fr .9fr;gap:16px}.card{border:1px solid #ebeef4;border-radius:4px;padding:16px;background:#fff}.card h3{margin:0 0 10px;font-size:16px}.status{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;background:#fdf1e8;color:#a86115;border:1px solid #f3d5bc;font-size:12px}.bar{height:10px;border-radius:999px;background:#ebeef4;overflow:hidden}.bar>span{display:block;height:100%;background:linear-gradient(90deg,#a86115,#d98c3d)}.kv{display:grid;grid-template-columns:120px 1fr;gap:8px 10px;color:#606266;font-size:13px}.kv div:nth-child(odd){color:#909399}.btn{height:32px;padding:0 15px;border-radius:3px;border:1px solid #dcdfe6;background:#fff;color:#606266;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.primary{background:#a86115;border-color:#a86115;color:#fff}.btn.text{border:0;background:transparent;color:#a86115;padding:0 4px}.input,.select{height:34px;border:1px solid #dcdfe6;border-radius:3px;padding:0 10px;display:inline-flex;align-items:center;background:#fff;color:#606266}.select::after{content:'⌄';margin-left:auto;color:#c0c4cc;padding-left:18px}.row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.table{width:100%;border-collapse:collapse}.table th,.table td{border:1px solid #ebeef4;padding:10px 12px;text-align:left;vertical-align:top}.table th{background:#f2f5f9;color:#606266}.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;font-size:12px}.pill.ok{background:#f0f9eb;color:#529b2e}.pill.warn{background:#fdf6ec;color:#b88230}.pill.bad{background:#fef0f0;color:#c45656}.focus-hit{outline:2px solid #a86115;outline-offset:4px;border-radius:4px;box-shadow:0 0 0 6px rgba(252,235,216,.75)}.focus-inline{outline:2px solid #a86115;outline-offset:3px;border-radius:4px;box-shadow:0 0 0 5px rgba(252,235,216,.65)}.highlight{background:#fff7ef;border:1px solid #f3d5bc;color:#a86115;border-radius:4px;padding:10px 12px;margin-bottom:12px}.muted{color:#909399;font-size:12px}.footer{color:#909399;font-size:12px;margin-top:18px}
+    @media (max-width:1100px){.layout{grid-template-columns:1fr}.side{position:relative}.meta,.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">消费者业务中台</div>
+    <div class="tabs"><div class="tab">平台端</div><div class="tab active">租户端</div></div>
+    <div class="tenant">索菲亚会员小程序</div>
+    <div class="user"><span>陈嘉豪，你好！</span><span>退出登录</span></div>
+  </div>
+  <div class="layout">
+    <aside class="side">
+      <h2>企微打标任务</h2>
+      <div class="sub">独立页原型 · 从分群规则列表入口进入</div>
+      <nav class="toc">
+        <a href="#overview" class="active">任务概览</a>
+        <a href="#config">企微标签配置</a>
+        <a href="#status">任务状态</a>
+        <a href="#users">用户打标结果</a>
+        <a href="#actions">可执行操作</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <header class="hero" id="overview">
+        <h1>企微打标任务</h1>
+        <p>该页面用于承接分群规则列表中的「企微打标任务」入口，集中展示规则信息、企微标签配置、任务状态和用户打标结果。</p>
+        <div class="meta"><div><b>来源规则</b><span id="ruleName">【嘉兴】安装城市-接单400天前-无未完结订单</span></div><div><b>规则编码</b><span id="ruleCode">GR202605140001</span></div><div><b>统计频率</b><span>仅统计一次</span></div><div><b>最近统计时间</b><span>空</span></div></div>
+      </header>
+
+      <section class="section" id="config">
+        <h2>一、企微标签配置</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>标签选择</h3>
+            <div class="row"><div class="select" style="min-width:260px">请选择企微标签</div><button class="btn primary">从企微自建系统选择</button></div>
+            <div class="highlight">当前已选标签：<b>【索菲亚】安装城市</b>。仅统计一次且未执行统计前可修改/删除。</div>
+            <div class="row"><button class="btn text">修改标签</button><button class="btn text">删除标签</button></div>
+          </div>
+          <div class="card">
+            <h3>配置说明</h3>
+            <div class="kv">
+              <div>数据来源</div><div>企微自建系统接口</div>
+              <div>配置限制</div><div>仅统计一次规则可配置</div>
+              <div>锁定时机</div><div>统计触发后不可修改</div>
+              <div>保存后状态</div><div>待执行</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="status">
+        <h2>二、任务状态</h2>
+        <div class="row"><span class="status">待执行</span><span class="muted">已配置企微标签，等待分群统计后执行打标</span></div>
+        <div style="margin-top:12px">
+          <div class="muted" style="margin-bottom:6px">状态进度</div>
+          <div class="bar"><span style="width:62%"></span></div>
+        </div>
+        <table class="table" style="margin-top:14px">
+          <thead><tr><th>状态</th><th>定义</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>未配置</td><td>尚未保存企微标签配置</td><td>可从列表入口进入设置</td></tr>
+            <tr><td>待执行</td><td>已保存配置，等待统计</td><td>当前状态</td></tr>
+            <tr><td>已执行</td><td>本次分群用户已完成打标</td><td>执行后锁定配置</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="users">
+        <h2>三、用户打标结果</h2>
+        <table class="table">
+          <thead><tr><th>用户</th><th>企微打标状态</th><th>失败原因</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>陈嘉豪</td><td><span class="pill warn">待打标</span></td><td>-</td><td>-</td></tr>
+            <tr><td>李小姐</td><td><span class="pill ok">打标成功</span></td><td>-</td><td>-</td></tr>
+            <tr><td>王先生</td><td><span class="pill bad">打标失败</span></td><td>未匹配到企微客户</td><td><button class="btn text">重试</button></td></tr>
+            <tr><td>赵女士</td><td><span class="pill bad">打标失败</span></td><td>接口调用失败</td><td><button class="btn text">重试</button></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="actions">
+        <h2>四、可执行操作</h2>
+        <div class="row"><button class="btn primary" onclick="alert('这里先演示提交保存')">保存任务配置</button><button class="btn">批量重试失败用户</button><button class="btn">查看执行日志</button></div>
+        <div class="footer">说明：这里先作为独立任务页原型承接列表入口，后续可继续细化为真实交互页。</div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const focus = params.get('focus');
+    if (focus) {
+      document.body.classList.add('sandbox-focus');
+      if (focus === 'task_config') document.querySelector('#config')?.classList.add('focus-hit');
+      if (focus === 'task_status') document.querySelector('#status')?.classList.add('focus-hit');
+      if (focus === 'task_users') document.querySelector('#users')?.classList.add('focus-hit');
+      if (focus === 'task_actions') document.querySelector('#actions')?.classList.add('focus-hit');
+    }
+  </script>
+</body>
+</html>

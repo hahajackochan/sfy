@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "purple-silence-8fca",
+  "main": "cloudflare/_worker.js",
+  "compatibility_date": "2026-07-14",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist-worker",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "html_handling": "none"
+  },
+  "vars": {
+    "OAUTH_REDIRECT_URI": "https://purple-silence-8fca.hahajackochan.workers.dev/auth/callback",
+    "SESSION_TTL_SECONDS": "28800"
+  }
+}

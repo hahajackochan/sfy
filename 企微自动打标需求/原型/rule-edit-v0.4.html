@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分群规则编辑 - 统计频率与生日月日范围原型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #303133;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .app { width:100vw; min-height:100vh; background:#fff; }
+    .topbar { height:58px; background:#fff; border-bottom:1px solid #ebeef4; display:flex; align-items:center; }
+    .brand { width:192px; height:58px; display:flex; align-items:center; justify-content:center; color:#303133; background:#fff; font-size:18px; font-weight:600; border-right:1px solid #ebeef4; }
+    .tabs { display:flex; height:58px; align-items:center; }
+    .tab { height:58px; display:flex; align-items:center; padding:0 26px; border-right:1px solid #ebeef4; color:#606266; background:#fff; }
+    .tab.active { color:#a86115; background:#fcebd8; }
+    .tenant { display:flex; align-items:center; padding:0 28px; color:#606266; }
+    .user { margin-left:auto; display:flex; align-items:center; gap:26px; padding-right:28px; color:#606266; }
+    .shell { display:flex; min-height:calc(100vh - 58px); }
+    .sidebar { width:192px; background:#fff; color:#606266; padding-top:18px; border-right:1px solid #ebeef4; }
+    .nav-item { height:50px; display:flex; align-items:center; gap:10px; padding:0 18px; color:#606266; font-size:14px; background:#fff; }
+    .nav-item .icon { width:18px; text-align:center; color:#909399; }
+    .nav-item.child { padding-left:30px; }
+    .nav-item.child.active { background:#fcebd8; color:#a86115; }
+    .nav-item.child.active .icon { color:#a86115; }
+    .content { flex:1; background:#fff; padding:22px 26px 88px; overflow:auto; }
+    .crumb { color:#606266; margin:4px 0 18px; }
+    .tabs-line { display:flex; gap:0; height:42px; border-bottom:1px solid #ebeef4; margin-bottom:28px; }
+    .page-tab { min-width:112px; height:42px; display:flex; align-items:center; justify-content:center; color:#606266; border:1px solid #ebeef4; border-bottom:0; margin-right:8px; background:#fff; position:relative; top:1px; }
+    .page-tab.active { color:#a86115; background:#fff; border-top:2px solid #a86115; font-weight:600; }
+    .form { max-width: 1320px; }
+    .form-row { display:flex; align-items:center; min-height:40px; margin-bottom:22px; }
+    .form-label { width:150px; text-align:right; padding-right:14px; color:#606266; }
+    .required::before { content:'*'; color:#f56c6c; margin-right:2px; }
+    .form-control { flex:1; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .input,.select,.date,.number { height:34px; border:1px solid #dcdfe6; border-radius:3px; padding:0 10px; color:#606266; background:#fff; display:inline-flex; align-items:center; min-width:220px; }
+    .month-day-range { display:flex; gap:10px; align-items:center; }
+    .input.placeholder,.select.placeholder,.date.placeholder { color:#c0c4cc; }
+    .select::after { content:'⌄'; margin-left:auto; color:#c0c4cc; padding-left:18px; }
+    .radio { display:inline-flex; align-items:center; gap:6px; margin-right:18px; color:#606266; }
+    .radio-dot { width:14px; height:14px; border:1px solid #dcdfe6; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+    .radio.active .radio-dot { border-color:#a86115; }
+    .radio.active .radio-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#a86115; }
+    .condition-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .btn { height:32px; padding:0 15px; border-radius:3px; border:1px solid #dcdfe6; background:#fff; color:#606266; display:inline-flex; align-items:center; justify-content:center; gap:4px; cursor:pointer; }
+    .btn.primary { background:#a86115; border-color:#a86115; color:#fff; }
+    .btn.ghost-orange { color:#a86115; border-color:#f3d5bc; background:#fdf1e8; }
+    .btn.text { border:0; padding:0 4px; color:#a86115; background:transparent; }
+    .condition-wrap { margin-left:150px; width: calc(100% - 150px); }
+    .condition-block { border:1px solid #ebeef4; background:#fff; margin-bottom:18px; }
+    .condition-title { height:42px; display:flex; align-items:center; padding:0 14px; background:#f2f5f9; color:#303133; font-weight:600; border-bottom:1px solid #ebeef4; }
+    .condition-row { min-height:58px; display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #f0f2f5; }
+    .condition-row:last-child { border-bottom:0; }
+    .condition-row .select { min-width:168px; }
+    .condition-row .select.long { min-width:230px; }
+
+    .focus-behavior-block { overflow-x:auto; }
+    .focus-behavior-block .condition-row { flex-wrap:nowrap; align-items:center; gap:10px; min-width:1040px; }
+    .focus-behavior-block .condition-row .select.long { flex:0 0 230px; min-width:230px; }
+    .focus-behavior-block .condition-row .select:not(.long) { flex:0 0 150px; min-width:150px; }
+    .focus-behavior-block .amount-input { flex:0 0 124px; width:124px; }
+    .focus-behavior-block .selected-box { flex:1 1 280px; min-width:280px; }
+    .focus-behavior-block .delete { margin-left:auto; flex:0 0 28px; }
+    .focus-behavior-block .and-condition-btn { flex:0 0 auto; white-space:nowrap; }
+    .focus-behavior-block .value-radio { height:34px; flex:0 0 auto; }
+    .focus-behavior-block .logic,.focus-behavior-block .day-unit { flex:0 0 auto; }
+    .behavior-spacer { width:230px; min-width:230px; height:34px; flex:0 0 230px; }
+    .condition-row.behavior-child { background:#fff; padding-top:10px; padding-bottom:10px; }
+    .condition-row .date { min-width:180px; }
+    .condition-row .number { min-width:120px; width:120px; }
+    .logic { color:#909399; margin:0 2px; }
+    .day-unit { color:#606266; margin-left:-4px; margin-right:-4px; }
+    .delete { margin-left:auto; color:#909399; font-size:16px; cursor:pointer; width:28px; height:28px; border-radius:3px; display:inline-flex; align-items:center; justify-content:center; }
+    .delete:hover { color:#f56c6c; background:#fef0f0; }
+    .hint { color:#909399; font-size:12px; margin-top:8px; line-height:20px; }
+    .freq-options { display:flex; align-items:center; gap:10px; }
+    .freq-note { display:block; color:#909399; font-size:12px; margin-top:4px; line-height:20px; }
+    .form-row.focus-stat-frequency { align-items:flex-start; }
+    .form-row.focus-stat-frequency .form-label { padding-top:7px; }
+    .form-row.focus-stat-frequency .form-control { display:block; }
+    .select { cursor:pointer; position:relative; }
+    .dropdown-menu { position:fixed; min-width:160px; background:#fff; border:1px solid #dcdfe6; border-radius:3px; box-shadow:0 6px 18px rgba(0,0,0,.12); padding:6px 0; z-index:60; display:none; }
+    .dropdown-menu.show { display:block; }
+    .dropdown-option { height:34px; display:flex; align-items:center; padding:0 12px; color:#606266; cursor:pointer; white-space:nowrap; }
+    .dropdown-option:hover { background:#fdf1e8; color:#a86115; }
+    .value-radio { display:inline-flex; align-items:center; gap:6px; color:#606266; margin-right:10px; cursor:pointer; }
+    .value-radio.active { color:#a86115; }
+    .value-radio.active .radio-dot { border-color:#a86115; }
+    .value-radio.active .radio-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#a86115; }
+    .checkbox-values { min-height:34px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; color:#606266; }
+    .checkbox-values label { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+    .check-box { width:14px; height:14px; border:1px solid #dcdfe6; border-radius:2px; display:inline-block; background:#fff; }
+
+    .amount-input { height:34px; width:132px; border:1px solid #dcdfe6; border-radius:3px; padding:0 10px; color:#606266; }
+    .selected-box { min-height:34px; min-width:360px; border:1px solid #dcdfe6; border-radius:3px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:4px 8px; background:#fff; }
+    .operator-tag { height:24px; display:inline-flex; align-items:center; gap:6px; padding:0 8px; border:1px solid #f3d5bc; background:#fdf1e8; color:#a86115; border-radius:3px; }
+    .operator-tag button { border:0; background:transparent; color:#a86115; cursor:pointer; padding:0; }
+    .qw-config-row { display:none; }
+    .qw-config-row.show { display:flex; }
+    .qw-selected-tag { min-height:32px; min-width:260px; border:1px solid #dcdfe6; border-radius:3px; background:#fff; padding:0 8px 0 10px; display:inline-flex; align-items:center; justify-content:space-between; gap:10px; color:#606266; }
+    .qw-selected-tag.placeholder { color:#c0c4cc; justify-content:flex-start; }
+    .qw-selected-tag .tag-remove { width:18px; height:18px; border:0; border-radius:50%; background:#f4f4f5; color:#909399; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; line-height:18px; padding:0; }
+    .qw-selected-tag .tag-remove:hover { background:#fef0f0; color:#f56c6c; }
+    .qw-task-status { display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:11px; background:#fdf1e8; color:#a86115; border:1px solid #f3d5bc; font-size:12px; }
+    .qw-tag-modal { width:760px; }
+    .qw-search { height:34px; width:280px; border:1px solid #dcdfe6; border-radius:3px; padding:0 10px; color:#606266; outline:none; }
+    .qw-tag-layout { display:grid; grid-template-columns:220px 1fr; gap:14px; min-height:330px; margin-top:14px; }
+    .qw-group-list { border:1px solid #ebeef4; border-radius:3px; overflow:auto; background:#fff; }
+    .qw-group-item { height:38px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; cursor:pointer; color:#606266; border-bottom:1px solid #f0f2f5; }
+    .qw-group-item:last-child { border-bottom:0; }
+    .qw-group-item.active { background:#fdf1e8; color:#a86115; font-weight:600; }
+    .qw-tag-list { border:1px solid #ebeef4; border-radius:3px; padding:12px; background:#fff; overflow:auto; }
+    .qw-tag-item { height:38px; display:flex; align-items:center; gap:8px; padding:0 10px; border-radius:3px; cursor:pointer; color:#606266; }
+    .qw-tag-item:hover { background:#f5f7fa; }
+    .qw-tag-item.active { background:#fdf1e8; color:#a86115; }
+    .qw-modal-hint { color:#909399; font-size:12px; margin-top:10px; }
+    .modal-mask { position:fixed; inset:0; background:rgba(0,0,0,.28); display:none; align-items:center; justify-content:center; z-index:80; }
+    .modal-mask.show { display:flex; }
+    .modal { width:520px; background:#fff; border-radius:4px; box-shadow:0 14px 40px rgba(0,0,0,.22); }
+    .modal-head { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; border-bottom:1px solid #ebeef4; font-weight:600; }
+    .modal-body { padding:18px; }
+    .modal-footer { height:58px; display:flex; align-items:center; justify-content:flex-end; gap:10px; padding:0 18px; border-top:1px solid #ebeef4; }
+    .lookup-row { display:flex; gap:10px; align-items:center; }
+    .lookup-result { margin-top:14px; min-height:38px; padding:10px 12px; background:#f5f7fa; color:#606266; border-radius:3px; }
+    .footer { position:fixed; left:192px; right:0; bottom:0; height:64px; background:#fff; border-top:1px solid #ebeef4; display:flex; align-items:center; padding-left:176px; gap:12px; box-shadow:0 -3px 12px rgba(0,0,0,.03); }
+    .toast { position:fixed; top:76px; left:50%; transform:translateX(-50%); min-width:280px; height:40px; display:none; align-items:center; justify-content:center; border-radius:4px; background:#fef0f0; color:#f56c6c; border:1px solid #fde2e2; z-index:40; }
+    .toast.show { display:flex; }
+    .focus-mask { display:none; }
+    .sandbox-focus .focusable:not(.focus-hit) { opacity:.45; pointer-events:none; }
+    .sandbox-focus .focus-hit { position:relative; outline:2px solid #a86115; outline-offset:6px; border-radius:4px; box-shadow:0 0 0 8px rgba(252,235,216,.7); }
+    .focus-inline { outline:2px solid #a86115; outline-offset:4px; border-radius:4px; box-shadow:0 0 0 6px rgba(252,235,216,.6); }
+    .attribute-focus .condition-wrap { opacity:1 !important; pointer-events:auto !important; }
+    .attribute-focus .condition-wrap .condition-block:not(.focus-attribute-block) { opacity:.28; pointer-events:none; }
+    .attribute-focus .focus-attribute-block { opacity:1 !important; }
+    .behavior-focus .condition-wrap { opacity:1 !important; pointer-events:auto !important; }
+    .behavior-focus .condition-wrap .condition-block:not(.focus-behavior-block) { opacity:.28; pointer-events:none; }
+    .behavior-focus .focus-behavior-block { opacity:1 !important; }
+    @media (max-width: 1200px) {
+      .brand,.sidebar{width:178px}.footer{left:178px}.form-label{width:130px}.condition-wrap{margin-left:130px;width:calc(100% - 130px)}.footer{padding-left:150px}
+      .condition-row{align-items:flex-start; flex-wrap:wrap}.delete{margin-left:0}
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">消费者业务中台</div>
+      <div class="tabs"><div class="tab">平台端</div><div class="tab active">租户端</div></div>
+      <div class="tenant">索菲亚会员小程序</div>
+      <div class="user"><span>陈嘉豪，你好！</span><span>退出登录</span></div>
+    </div>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="nav-item"><span class="icon">□</span>首页</div>
+        <div class="nav-item"><span class="icon">□</span>租户管理</div>
+        <div class="nav-item"><span class="icon">□</span>用户管理</div>
+        <div class="nav-item child"><span class="icon">•</span>用户列表</div>
+        <div class="nav-item child"><span class="icon">•</span>标签管理</div>
+        <div class="nav-item child"><span class="icon">•</span>邀请记录列表</div>
+        <div class="nav-item child active"><span class="icon">•</span>分群规则管理</div>
+        <div class="nav-item"><span class="icon">□</span>商品管理</div>
+        <div class="nav-item"><span class="icon">□</span>订单管理</div>
+        <div class="nav-item"><span class="icon">□</span>京东模块</div>
+        <div class="nav-item"><span class="icon">□</span>任务管理</div>
+        <div class="nav-item"><span class="icon">□</span>页面管理</div>
+        <div class="nav-item"><span class="icon">□</span>售后管理</div>
+        <div class="nav-item"><span class="icon">□</span>营销活动</div>
+        <div class="nav-item"><span class="icon">□</span>短信管理</div>
+        <div class="nav-item"><span class="icon">□</span>直播管理</div>
+        <div class="nav-item"><span class="icon">□</span>潜客管理</div>
+        <div class="nav-item"><span class="icon">□</span>成品分销管理</div>
+        <div class="nav-item"><span class="icon">□</span>定制分销管理</div>
+      </aside>
+      <main class="content">
+        <div class="crumb">用户管理 / 分群规则编辑</div>
+        <div class="tabs-line">
+          <div class="page-tab">分群规则管理</div>
+          <div class="page-tab active">分群规则编辑</div>
+        </div>
+
+        <div class="form">
+          <div class="form-row focusable">
+            <div class="form-label required">分群规则名称</div>
+            <div class="form-control"><div class="input placeholder">请输入展示规则名称</div></div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label">分群规则编码</div>
+            <div class="form-control"><div class="input placeholder">系统自动生成</div></div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label required">规则状态</div>
+            <div class="form-control">
+              <label class="radio active"><span class="radio-dot"></span>正常</label>
+              <label class="radio"><span class="radio-dot"></span>停用</label>
+            </div>
+          </div>
+          <div class="form-row focusable focus-stat-frequency">
+            <div class="form-label required">统计频率</div>
+            <div class="form-control" id="frequencyGroup">
+              <div class="freq-options">
+                <label class="radio freq-option-daily" data-frequency="每天统计一次"><span class="radio-dot"></span>每天统计一次</label>
+                <label class="radio freq-option-once" data-frequency="仅统计一次"><span class="radio-dot"></span>仅统计一次</label>
+              </div>
+              <span class="freq-note">仅「仅统计一次」的规则后续可配置企微打标任务。</span>
+            </div>
+          </div>
+          <div class="form-row focusable focus-qw-config qw-config-row" id="qwConfig">
+            <div class="form-label">企微打标配置</div>
+            <div class="form-control">
+              <div id="qwSelectedTag" class="qw-selected-tag placeholder">暂未选择企微标签</div>
+              <button class="btn ghost-orange" type="button" onclick="openQwTagModal(event)">选择标签</button>
+            </div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label required">分群条件筛选</div>
+            <div class="form-control">
+              <label class="radio active"><span class="radio-dot"></span>必须同时满足</label>
+              <label class="radio"><span class="radio-dot"></span>满足其一即可</label>
+            </div>
+          </div>
+
+          <div class="condition-wrap focusable focus-birthday">
+            <div class="condition-head">
+              <button class="btn ghost-orange" onclick="addAttributeRow()">添加属性</button>
+              <button class="btn">添加标签</button>
+              <button class="btn" onclick="addBehaviorRow()">添加行为</button>
+            </div>
+
+            <div class="condition-block focus-attribute-block">
+              <div class="condition-title">属性</div>
+              <div id="attributeRows">
+              <div class="condition-row" data-type="attribute">
+                <div class="select" data-role="attribute-category" data-options="通用属性|会员属性">通用属性</div>
+                <div class="select long" data-role="attribute-field" data-options="位置|用户身份|分销员身份|生日时间">生日时间</div>
+                <div class="select" id="birthdayRangeMode" data-role="birthday-range-mode" data-options="指定月日范围">指定月日范围</div>
+                <div class="month-day-range" id="birthdayRangeFields">
+                  <div class="date placeholder">请选择开始月日</div>
+                  <span class="logic">至</span>
+                  <div class="date placeholder">请选择结束月日</div>
+                </div>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              <div class="condition-row recommend-row" data-type="attribute">
+                <div class="select" data-role="attribute-category" data-options="通用属性|会员属性">会员属性</div>
+                <div class="select long" data-role="attribute-field" data-options="推荐官身份">推荐官身份</div>
+                <div class="select" data-role="attribute-operator" data-options="等于">等于</div>
+                <label class="value-radio"><span class="radio-dot"></span>推荐官</label>
+                <label class="value-radio"><span class="radio-dot"></span>非推荐官</label>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              </div>
+            </div>
+
+            <div class="condition-block focus-behavior-block">
+              <div class="condition-title">行为</div>
+              <div id="behaviorRows">
+              <div class="condition-row" data-type="behavior">
+                <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>
+                <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">子单累计实付金额</div>
+                <div class="select" data-role="behavior-operator" data-options="指定范围|等于|小于|大于">指定范围</div>
+                <input class="amount-input" placeholder="最低金额" /><span class="logic">至</span><input class="amount-input" placeholder="最高金额" />
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              <div class="condition-row" data-type="behavior">
+                <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>
+                <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">成品分销订单</div>
+                <div class="select" data-role="behavior-operator" data-options="等于">等于</div>
+                <label class="value-radio"><span class="radio-dot"></span>分销订单</label>
+                <label class="value-radio"><span class="radio-dot"></span>非分销订单</label>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              <div class="condition-row" data-type="behavior">
+                <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线下订单 -&gt; 下单</div>
+                <div class="select long" data-role="behavior-field" data-options="请选择属性...|安装时间">安装时间</div>
+                <div class="select" data-role="time-mode" data-time-mode="row" data-options="固定起止时间|相对时间范围">固定起止时间</div>
+                <div class="date placeholder">选择开始时间</div><span class="logic">至</span><div class="date placeholder">选择结束时间</div>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              <div class="condition-row" data-type="behavior">
+                <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线下订单 -&gt; 下单</div>
+                <div class="select long" data-role="behavior-field" data-options="请选择属性...|运营商主体">运营商主体</div>
+                <div class="select" data-role="behavior-operator" data-options="包含任一|不包含">包含任一</div>
+                <div class="selected-box" id="operatorBox"><span class="operator-tag">深圳市索菲亚(Y1234) <button onclick="this.parentElement.remove()">✕</button></span><button class="btn" onclick="openOperatorModal(event)">添加</button></div>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              <div class="condition-row" data-type="behavior">
+                <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">添加企微客服</div>
+                <div class="select long" data-role="behavior-field" data-options="添加情况|好友状态">添加情况</div>
+                <div class="select" data-role="behavior-operator" data-options="等于">等于</div>
+                <label class="value-radio"><span class="radio-dot"></span>未添加</label>
+                <label class="value-radio"><span class="radio-dot"></span>已添加</label>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="footer">
+      <button class="btn">取消</button>
+      <button class="btn primary" onclick="saveForm()">保存</button>
+    </div>
+    <div id="toast" class="toast">请选择统计频率</div>
+  </div>
+  <div id="operatorModal" class="modal-mask">
+    <div class="modal">
+      <div class="modal-head"><span>添加运营商主体</span><button class="btn text" onclick="closeOperatorModal()">关闭</button></div>
+      <div class="modal-body">
+        <div class="lookup-row">
+          <div class="input placeholder" id="operatorCodeInput" contenteditable="true" oninput="handleOperatorInput()" style="min-width:300px;">请输入运营商编码</div>
+          <button class="btn primary" id="operatorCheckBtn" onclick="checkOperator()" disabled style="opacity:.45;">校验</button>
+        </div>
+        <div id="operatorResult" class="lookup-result">输入运营商编码后点击校验，查询到结果后可确认添加，可继续添加多个。</div>
+      </div>
+      <div class="modal-footer"><button class="btn" onclick="closeOperatorModal()">取消</button><button class="btn primary" onclick="confirmOperator()">确认</button></div>
+    </div>
+  </div>
+  <div id="qwTagModal" class="modal-mask">
+    <div class="modal qw-tag-modal">
+      <div class="modal-head"><span>选择企微标签</span></div>
+      <div class="modal-body">
+        <input id="qwGroupSearch" class="qw-search" placeholder="搜索企微标签分组" oninput="renderQwGroups()" />
+        <div class="qw-tag-layout">
+          <div id="qwGroupList" class="qw-group-list"></div>
+          <div id="qwTagList" class="qw-tag-list"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn" onclick="closeQwTagModal()">取消</button><button class="btn primary" onclick="confirmQwTag()">确认</button></div>
+    </div>
+  </div>
+
+  <script>
+  function setActiveRadio(radio){
+    radio.parentElement.querySelectorAll('.radio').forEach(r=>r.classList.remove('active'));
+    radio.classList.add('active');
+  }
+
+  let selectedFrequency = '';
+  document.querySelectorAll('[data-frequency]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('[data-frequency]').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      selectedFrequency = el.dataset.frequency;
+      document.querySelector('.focus-stat-frequency')?.classList.add('focus-hit');
+      updateQwConfigVisibility();
+    });
+  });
+
+  const menu = document.createElement('div');
+  menu.className = 'dropdown-menu';
+  document.body.appendChild(menu);
+  function closeMenu(){ menu.classList.remove('show'); menu.innerHTML = ''; }
+  document.addEventListener('click', closeMenu);
+
+  function bindSelect(select) {
+    if (select.dataset.bound === 'true' || !select.dataset.options) return;
+    select.dataset.bound = 'true';
+    select.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const options = select.dataset.options.split('|');
+      const rect = select.getBoundingClientRect();
+      menu.style.left = rect.left + 'px';
+      menu.style.top = rect.bottom + 4 + 'px';
+      menu.style.minWidth = rect.width + 'px';
+      menu.innerHTML = options.map(o => `<div class="dropdown-option" data-value="${o}">${o}</div>`).join('');
+      menu.classList.add('show');
+      menu.querySelectorAll('.dropdown-option').forEach(option => {
+        option.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const value = option.dataset.value;
+          select.childNodes[0].textContent = value;
+          select.classList.remove('placeholder');
+          handleSelectChange(select, value);
+          closeMenu();
+        });
+      });
+    });
+  }
+
+  function bindAllSelects(root=document){ root.querySelectorAll('.select[data-options]').forEach(bindSelect); }
+
+  function updateQwConfigVisibility(){
+    const config = document.getElementById('qwConfig');
+    if (!config) return;
+    if (selectedFrequency === '仅统计一次') config.classList.add('show');
+    else config.classList.remove('show');
+  }
+
+  const qwTagGroups = [
+    { name:'会员生命周期', tags:['新会员','高活跃会员','沉睡会员'] },
+    { name:'安装城市', tags:['广州安装客户','深圳安装客户','嘉兴安装客户'] },
+    { name:'订单偏好', tags:['高客单价客户','近期下单客户','复购客户'] },
+    { name:'企微运营', tags:['待跟进客户','重点维护客户','活动触达客户'] },
+  ];
+  let activeQwGroup = qwTagGroups[0].name;
+  let pendingQwTag = null;
+  let confirmedQwTag = null;
+
+  function openQwTagModal(event){
+    event.stopPropagation();
+    pendingQwTag = confirmedQwTag;
+    document.getElementById('qwGroupSearch').value = '';
+    document.getElementById('qwTagModal').classList.add('show');
+    renderQwGroups();
+    renderQwTags();
+  }
+  function closeQwTagModal(){ document.getElementById('qwTagModal').classList.remove('show'); }
+  function renderQwGroups(){
+    const keyword = document.getElementById('qwGroupSearch').value.trim();
+    const groups = qwTagGroups.filter(g => !keyword || g.name.includes(keyword));
+    if (!groups.find(g => g.name === activeQwGroup) && groups[0]) activeQwGroup = groups[0].name;
+    document.getElementById('qwGroupList').innerHTML = groups.map(g => `<div class="qw-group-item ${g.name===activeQwGroup?'active':''}" onclick="activeQwGroup='${g.name}';renderQwGroups();renderQwTags();"><span>${g.name}</span></div>`).join('') || '<div class="qw-group-item">未找到分组</div>';
+    renderQwTags();
+  }
+  function renderQwTags(){
+    const group = qwTagGroups.find(g => g.name === activeQwGroup) || qwTagGroups[0];
+    document.getElementById('qwTagList').innerHTML = group.tags.map(tag => `<div class="qw-tag-item ${pendingQwTag===tag?'active':''}" onclick="pendingQwTag='${tag}';renderQwTags();"><span class="radio-dot"></span><span>${tag}</span></div>`).join('');
+  }
+  function renderSelectedQwTag(){
+    const target = document.getElementById('qwSelectedTag');
+    if (!target) return;
+    if (!confirmedQwTag) {
+      target.classList.add('placeholder');
+      target.textContent = '暂未选择企微标签';
+      return;
+    }
+    target.classList.remove('placeholder');
+    target.innerHTML = `<span>${confirmedQwTag}</span><button class="tag-remove" type="button" onclick="clearQwTag(event)" title="删除">✕</button>`;
+  }
+
+  function clearQwTag(event){
+    event?.stopPropagation();
+    confirmedQwTag = null;
+    pendingQwTag = null;
+    renderSelectedQwTag();
+  }
+
+  function confirmQwTag(){
+    if (!pendingQwTag) return;
+    confirmedQwTag = pendingQwTag;
+    renderSelectedQwTag();
+    closeQwTagModal();
+  }
+
+  function removeRow(el){
+    const row = el.closest('.condition-row');
+    const group = row?.parentElement;
+    if (group && group.querySelectorAll('.condition-row').length > 1) {
+      row.remove();
+      refreshBehaviorAndButtons();
+    }
+  }
+
+  function addAttributeRow(){
+    const wrap = document.getElementById('attributeRows');
+    const row = document.createElement('div');
+    row.className = 'condition-row';
+    row.dataset.type = 'attribute';
+    row.innerHTML = `
+      <div class="select" data-role="attribute-category" data-options="通用属性|会员属性">通用属性</div>
+      <div class="select long placeholder" data-role="attribute-field" data-options="位置|用户身份|分销员身份|生日时间">请选择属性</div>
+      <div class="select placeholder" data-role="attribute-operator" data-options="请选择|等于|不等于|包含|不包含">请选择</div>
+      <div class="select long placeholder" data-role="attribute-value" data-options="请选择属性值|示例值一|示例值二">请选择属性值</div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    wrap.appendChild(row);
+    bindAllSelects(row);
+  }
+
+  function addBehaviorRow(){
+    const wrap = document.getElementById('behaviorRows');
+    const row = document.createElement('div');
+    row.className = 'condition-row';
+    row.dataset.type = 'behavior';
+    row.innerHTML = `
+      <div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">意向行为 -&gt; 报名行为</div>
+      <div class="select long placeholder" data-role="behavior-field" data-options="请选择属性...|报名时间|报名渠道|报名状态">请选择属性...</div>
+      <div class="select placeholder" data-role="behavior-operator" data-options="请选择|等于|不等于|包含|不包含">请选择</div>
+      <button class="btn text" onclick="addAndCondition(this)">+ 并且满足</button>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    wrap.appendChild(row);
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+  }
+
+  function setSelectOptions(select, options, text){
+    select.dataset.options = options.join('|');
+    select.childNodes[0].textContent = text || '请选择';
+    select.classList.add('placeholder');
+  }
+
+
+  function renderBirthdayRange(row){
+    row.innerHTML = `
+      <div class="select" data-role="attribute-category" data-options="通用属性|会员属性">通用属性</div>
+      <div class="select long" data-role="attribute-field" data-options="位置|用户身份|分销员身份|生日时间">生日时间</div>
+      <div class="select" data-role="birthday-range-mode" data-options="指定月日范围">指定月日范围</div>
+      <div class="month-day-range">
+        <div class="date placeholder">请选择开始月日</div>
+        <span class="logic">至</span>
+        <div class="date placeholder">请选择结束月日</div>
+      </div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    bindAllSelects(row);
+  }
+
+  function renderRecommendIdentity(row){
+    row.innerHTML = `
+      <div class="select" data-role="attribute-category" data-options="通用属性|会员属性">会员属性</div>
+      <div class="select long" data-role="attribute-field" data-options="推荐官身份">推荐官身份</div>
+      <div class="select" data-role="attribute-operator" data-options="等于">等于</div>
+      <label class="value-radio"><span class="radio-dot"></span>推荐官</label>
+      <label class="value-radio"><span class="radio-dot"></span>非推荐官</label>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    bindAllSelects(row);
+  }
+
+
+  const behaviorFieldMap = {
+    '线上订单 -> 下单': ['订单数','商品类目','支付时间','子单状态','子单累计实付金额'],
+    '线下订单 -> 下单': ['安装时间','运营商主体'],
+    '添加企微客服': ['添加情况','好友状态'],
+    '意向行为 -> 报名行为': ['报名时间','报名渠道','报名状态']
+  };
+  let behaviorGroupSeed = 1;
+  function normalizeScene(text){ return (text || '').replace(/->/g, '->').replace(/\s+/g, ' ').trim(); }
+  function ensureBehaviorGroup(row, scene){
+    if (!row.dataset.behaviorGroup) row.dataset.behaviorGroup = 'behavior-' + behaviorGroupSeed++;
+    if (scene) row.dataset.behaviorScene = normalizeScene(scene);
+    return row.dataset.behaviorGroup;
+  }
+  function getBehaviorScene(row){
+    return row.dataset.behaviorScene || normalizeScene(row.querySelector('[data-role="behavior-scene"]')?.textContent || '');
+  }
+  function getBehaviorField(row){ return row.querySelector('[data-role="behavior-field"]')?.textContent.trim() || ''; }
+  function usedFields(groupId){
+    return [...document.querySelectorAll(`#behaviorRows .condition-row[data-behavior-group="${groupId}"]`)].map(getBehaviorField).filter(Boolean);
+  }
+  function behaviorRowsInGroup(groupId){ return [...document.querySelectorAll(`#behaviorRows .condition-row[data-behavior-group="${groupId}"]`)]; }
+  function removeAndButtons(groupId){ behaviorRowsInGroup(groupId).forEach(r => r.querySelectorAll('.and-condition-btn').forEach(btn => btn.remove())); }
+  function refreshBehaviorAndButtons(){
+    [...document.querySelectorAll('#behaviorRows .condition-row[data-behavior-group]')].forEach(row => {
+      const scene = getBehaviorScene(row);
+      if (scene) row.dataset.behaviorScene = scene;
+    });
+    const groups = [...new Set([...document.querySelectorAll('#behaviorRows .condition-row[data-behavior-group]')].map(r => r.dataset.behaviorGroup))];
+    groups.forEach(groupId => {
+      removeAndButtons(groupId);
+      const rows = behaviorRowsInGroup(groupId);
+      const scene = getBehaviorScene(rows[0]);
+      const fields = behaviorFieldMap[scene] || [];
+      const hasSlots = fields.length > 1 && usedFields(groupId).length < fields.length;
+      if (!hasSlots) return;
+      const last = rows[rows.length - 1];
+      const del = last.querySelector('.delete');
+      const btn = document.createElement('button');
+      btn.className = 'btn text and-condition-btn';
+      btn.type = 'button';
+      btn.textContent = '+ 并且满足';
+      btn.onclick = () => addAndCondition(btn);
+      last.insertBefore(btn, del);
+    });
+  }
+
+  function renderOrderCount(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">订单数</div>
+      <div class="select" data-role="behavior-operator" data-options="等于|大于|小于">等于</div>
+      <input class="amount-input" placeholder="请输入订单数" />
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+  function renderProductCategory(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">商品类目</div>
+      <div class="select" data-role="behavior-operator" data-options="包含任一|不包含">包含任一</div>
+      <div class="select long placeholder" data-role="behavior-value" data-options="请选择|橱柜|衣柜|木门|地板|家品">请选择</div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+  function renderPaymentTime(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">支付时间</div>
+      <div class="select" data-role="time-mode" data-time-mode="row" data-options="固定起止时间|相对时间范围">固定起止时间</div>
+      <div class="date placeholder">开始日期</div><span class="logic">-</span><div class="date placeholder">结束日期</div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+  function renderSubOrderStatus(row, isChild=false){
+    const statuses = ['部分支付','待支付','待发货','部分发货','待收货','已完成','退款中','已退款','已取消'];
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">子单状态</div>
+      <div class="select" data-role="behavior-operator" data-options="包含任一|不包含">包含任一</div>
+      <div class="checkbox-values">${statuses.map(v => `<label><span class="check-box"></span>${v}</label>`).join('')}</div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+  function renderDistributionOrder(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">成品分销订单</div>
+      <div class="select" data-role="behavior-operator" data-options="等于">等于</div>
+      <label class="value-radio"><span class="radio-dot"></span>分销订单</label>
+      <label class="value-radio"><span class="radio-dot"></span>非分销订单</label>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+  function renderBehaviorField(row, field, scene, isChild=false){
+    if (field === '订单数') return renderOrderCount(row, isChild);
+    if (field === '商品类目') return renderProductCategory(row, isChild);
+    if (field === '支付时间') return renderPaymentTime(row, isChild);
+    if (field === '子单状态') return renderSubOrderStatus(row, isChild);
+    if (field === '子单累计实付金额') return renderAmount(row, '指定范围', isChild);
+    if (field === '成品分销订单') return renderDistributionOrder(row, isChild);
+    if (field === '安装时间') return renderInstallTime(row, isChild);
+    if (field === '运营商主体') return renderOperator(row, isChild);
+    if (field === '添加情况' || field === '好友状态') return renderQwService(row, field, isChild);
+    row.innerHTML = `${isChild ? '<div class="behavior-spacer"></div>' : `<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">${scene || '意向行为 -> 报名行为'}</div>`}<div class="select long" data-role="behavior-field" data-options="${(behaviorFieldMap[scene] || []).join('|')}">${field || '请选择属性...'}</div><div class="select placeholder" data-role="behavior-operator" data-options="请选择|等于|不等于|包含|不包含">请选择</div><span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    bindAllSelects(row);
+  }
+  function addAndCondition(btn){
+    const row = btn.closest('.condition-row');
+    const groupId = row.dataset.behaviorGroup;
+    const scene = getBehaviorScene(row);
+    const fields = behaviorFieldMap[scene] || [];
+    const next = fields.find(f => !usedFields(groupId).includes(f));
+    if (!next) return refreshBehaviorAndButtons();
+    const child = document.createElement('div');
+    child.className = 'condition-row behavior-child';
+    child.dataset.type = 'behavior';
+    child.dataset.behaviorGroup = groupId;
+    child.dataset.behaviorScene = scene;
+    const rows = behaviorRowsInGroup(groupId);
+    rows[rows.length - 1].insertAdjacentElement('afterend', child);
+    renderBehaviorField(child, next, scene, true);
+    refreshBehaviorAndButtons();
+  }
+
+  function renderAmount(row, operator='指定范围', isChild=false){
+    const range = operator === '指定范围';
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线上订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="订单数|商品类目|支付时间|子单状态|子单累计实付金额|成品分销订单">子单累计实付金额</div>
+      <div class="select" data-role="behavior-operator" data-options="指定范围|等于|小于|大于">${operator}</div>
+      ${range ? '<input class="amount-input" placeholder="最低金额" /><span class="logic">至</span><input class="amount-input" placeholder="最高金额" />' : '<input class="amount-input" placeholder="请输入金额" />'}
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线上订单 -> 下单';
+    ensureBehaviorGroup(row, '线上订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+  function renderInstallTime(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线下订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="安装时间|运营商主体">安装时间</div>
+      <div class="select" data-role="time-mode" data-time-mode="row" data-options="固定起止时间|相对时间范围">固定起止时间</div>
+      <div class="date placeholder">选择开始时间</div><span class="logic">至</span><div class="date placeholder">选择结束时间</div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线下订单 -> 下单';
+    ensureBehaviorGroup(row, '线下订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+  function renderOperator(row, isChild=false){
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">线下订单 -&gt; 下单</div>'}
+      <div class="select long" data-role="behavior-field" data-options="安装时间|运营商主体">运营商主体</div>
+      <div class="select" data-role="behavior-operator" data-options="包含任一|不包含">包含任一</div>
+      <div class="selected-box" id="operatorBox"><span class="placeholder">请选择运营商主体</span><button class="btn" onclick="openOperatorModal(event)">添加</button></div>
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '线下订单 -> 下单';
+    ensureBehaviorGroup(row, '线下订单 -> 下单');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+
+  function renderQwService(row, field='添加情况', isChild=false){
+    const values = field === '好友状态' ? ['正常','已删除'] : ['未添加','已添加'];
+    row.innerHTML = `
+      ${isChild ? '<div class="behavior-spacer"></div>' : '<div class="select long" data-role="behavior-scene" data-options="意向行为 -> 报名行为|线上订单 -> 下单|线下订单 -> 下单|添加企微客服">添加企微客服</div>'}
+      <div class="select long" data-role="behavior-field" data-options="添加情况|好友状态">${field}</div>
+      <div class="select" data-role="behavior-operator" data-options="等于">等于</div>
+      ${values.map(v => `<label class="value-radio"><span class="radio-dot"></span>${v}</label>`).join('')}
+      <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+    row.classList.toggle('behavior-child', isChild);
+    row.dataset.behaviorScene = '添加企微客服';
+    ensureBehaviorGroup(row, '添加企微客服');
+    bindAllSelects(row);
+    bindValueRadios(row);
+    bindPlaceholderInputs(row);
+    refreshBehaviorAndButtons();
+  }
+
+  function handleSelectChange(select, value){
+    const row = select.closest('.condition-row');
+    if (!row) return;
+    const role = select.dataset.role;
+    if (role === 'attribute-category') {
+      const field = row.querySelector('[data-role="attribute-field"]');
+      if (value === '会员属性') setSelectOptions(field, ['推荐官身份'], '请选择属性');
+      if (value === '通用属性') setSelectOptions(field, ['位置','用户身份','分销员身份','生日时间'], '请选择属性');
+    }
+    if (role === 'attribute-field' && value === '生日时间') renderBirthdayRange(row);
+    if (role === 'attribute-field' && value === '推荐官身份') renderRecommendIdentity(row);
+    if (role === 'behavior-scene') {
+      const previousGroup = row.dataset.behaviorGroup;
+      if (previousGroup) behaviorRowsInGroup(previousGroup).filter(r => r !== row).forEach(r => r.remove());
+      row.dataset.behaviorGroup = 'behavior-' + behaviorGroupSeed++;
+      row.dataset.behaviorScene = normalizeScene(value);
+      row.classList.remove('behavior-child');
+      const field = row.querySelector('[data-role="behavior-field"]');
+      if (value === '线上订单 -> 下单') setSelectOptions(field, ['订单数','商品类目','支付时间','子单状态','子单累计实付金额','成品分销订单'], '请选择属性...');
+      if (value === '线下订单 -> 下单') setSelectOptions(field, ['安装时间','运营商主体'], '请选择属性...');
+      if (value === '添加企微客服') setSelectOptions(field, ['添加情况','好友状态'], '请选择行为条件');
+    }
+    const isBehaviorChild = row.classList.contains('behavior-child');
+    if (role === 'behavior-field' && value === '订单数') renderOrderCount(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '商品类目') renderProductCategory(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '支付时间') renderPaymentTime(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '子单状态') renderSubOrderStatus(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '子单累计实付金额') renderAmount(row, '指定范围', isBehaviorChild);
+    if (role === 'behavior-field' && value === '成品分销订单') renderDistributionOrder(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '安装时间') renderInstallTime(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '运营商主体') renderOperator(row, isBehaviorChild);
+    if (role === 'behavior-field' && value === '添加情况') renderQwService(row, '添加情况', isBehaviorChild);
+    if (role === 'behavior-field' && value === '好友状态') renderQwService(row, '好友状态', isBehaviorChild);
+    if (role === 'behavior-operator' && row.querySelector('[data-role="behavior-field"]')?.textContent.trim() === '子单累计实付金额') renderAmount(row, value, row.classList.contains('behavior-child'));
+    if (role === 'time-mode' && select.dataset.timeMode === 'row') {
+      if (value === '相对时间范围') {
+        select.insertAdjacentHTML('afterend', '<div class="number placeholder" contenteditable="true">请输入天数</div><span class="day-unit">天</span><div class="select" data-options="以内|之前">以内</div>');
+      }
+    }
+  }
+
+  function bindValueRadios(root=document){
+    root.querySelectorAll('.value-radio').forEach(radio => {
+      if (radio.dataset.radioBound === 'true') return;
+      radio.dataset.radioBound = 'true';
+      radio.addEventListener('click', () => {
+        const row = radio.closest('.condition-row') || radio.parentElement;
+        row.querySelectorAll('.value-radio').forEach(item => item.classList.remove('active'));
+        radio.classList.add('active');
+      });
+    });
+  }
+
+  function bindPlaceholderInputs(root=document){
+    root.querySelectorAll('[contenteditable="true"].placeholder').forEach(el => {
+      if (el.dataset.placeholderBound === 'true') return;
+      el.dataset.placeholderBound = 'true';
+      el.dataset.placeholderText = el.textContent.trim();
+      el.addEventListener('focus', () => {
+        if (el.classList.contains('placeholder') && el.textContent.trim() === el.dataset.placeholderText) {
+          el.textContent = '';
+          el.classList.remove('placeholder');
+        }
+      });
+      el.addEventListener('blur', () => {
+        if (!el.textContent.trim()) {
+          el.textContent = el.dataset.placeholderText || '';
+          el.classList.add('placeholder');
+        }
+      });
+    });
+  }
+
+  bindAllSelects();
+  bindValueRadios();
+  bindPlaceholderInputs();
+  document.querySelectorAll('#behaviorRows .condition-row').forEach(row => {
+    const scene = getBehaviorScene(row);
+    if (scene) ensureBehaviorGroup(row, scene);
+  });
+  refreshBehaviorAndButtons();
+
+  function saveForm(){
+    if (!selectedFrequency) {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      document.querySelector('.focus-stat-frequency')?.classList.add('focus-hit');
+      setTimeout(()=>t.classList.remove('show'), 1800);
+      return;
+    }
+    alert('保存成功（原型演示）');
+  }
+
+  let currentOperatorBox = null;
+  let checkedOperator = null;
+  function openOperatorModal(event){
+    event.stopPropagation();
+    currentOperatorBox = event.target.closest('.selected-box');
+    checkedOperator = null;
+    document.getElementById('operatorCodeInput').textContent = '请输入运营商编码';
+    document.getElementById('operatorCodeInput').classList.add('placeholder');
+    document.getElementById('operatorResult').textContent = '输入运营商编码后点击校验，查询到结果后可确认添加，可继续添加多个。';
+    document.getElementById('operatorCheckBtn').disabled = true;
+    document.getElementById('operatorCheckBtn').style.opacity = '.45';
+    document.getElementById('operatorModal').classList.add('show');
+  }
+  function closeOperatorModal(){ document.getElementById('operatorModal').classList.remove('show'); }
+  function handleOperatorInput(){
+    const input = document.getElementById('operatorCodeInput');
+    input.classList.remove('placeholder');
+    const hasValue = input.textContent.trim() && input.textContent.trim() !== '请输入运营商编码';
+    document.getElementById('operatorCheckBtn').disabled = !hasValue;
+    document.getElementById('operatorCheckBtn').style.opacity = hasValue ? '1' : '.45';
+  }
+  function checkOperator(){
+    const code = document.getElementById('operatorCodeInput').textContent.trim() || 'Y1234';
+    checkedOperator = { name: '深圳市索菲亚', code };
+    document.getElementById('operatorResult').textContent = `已查询到：${checkedOperator.name}（${checkedOperator.code}）`;
+  }
+  function confirmOperator(){
+    if (!checkedOperator) checkOperator();
+    if (!currentOperatorBox) return closeOperatorModal();
+    const placeholder = currentOperatorBox.querySelector('.placeholder');
+    if (placeholder) placeholder.remove();
+    const addBtn = currentOperatorBox.querySelector('button.btn');
+    const tag = document.createElement('span');
+    tag.className = 'operator-tag';
+    tag.innerHTML = `${checkedOperator.name}(${checkedOperator.code}) <button onclick="this.parentElement.remove()">✕</button>`;
+    currentOperatorBox.insertBefore(tag, addBtn);
+    closeOperatorModal();
+  }
+
+  const params = new URLSearchParams(location.search);
+  const focus = params.get('focus');
+  const autoScrollFocus = params.get('autoscroll') === '1';
+  if (focus) {
+    document.body.classList.add('sandbox-focus');
+    if (focus === 'stat_frequency') {
+      const target = document.querySelector('.focus-stat-frequency');
+      if (target) target.classList.add('focus-hit');
+    }
+    if (focus === 'qw_config') {
+      selectedFrequency = '仅统计一次';
+      document.querySelectorAll('[data-frequency]').forEach(el => {
+        el.classList.toggle('active', el.dataset.frequency === '仅统计一次');
+      });
+      updateQwConfigVisibility();
+      document.querySelector('.focus-qw-config')?.classList.add('focus-hit');
+    }
+    if (focus === 'birthday_time') {
+      const target = document.querySelector('.focus-birthday');
+      if (target) target.classList.add('focus-hit');
+    }
+    if (focus === 'birthday_relative' || focus === 'attribute_conditions') {
+      document.body.classList.add('attribute-focus');
+      const target = document.querySelector('.focus-attribute-block');
+      if (target) target.classList.add('focus-hit');
+    }
+    if (focus === 'recommend_identity') {
+      const row = [...document.querySelectorAll('#attributeRows .condition-row')].find(r => r.textContent.includes('推荐官身份'));
+      if (row) row.querySelectorAll('.value-radio,[data-role="attribute-field"],[data-role="attribute-operator"]').forEach(el => el.classList.add('focus-inline'));
+    }
+    if (focus === 'behavior_conditions') {
+      document.body.classList.add('behavior-focus');
+      const target = document.querySelector('.focus-behavior-block');
+      if (target) target.classList.add('focus-hit');
+    }
+    if (focus === 'amount') {
+      const row = [...document.querySelectorAll('#behaviorRows .condition-row')].find(r => r.textContent.includes('子单累计实付金额'));
+      if (row) row.querySelectorAll('.amount-input,[data-role="behavior-field"],[data-role="behavior-operator"]').forEach(el => el.classList.add('focus-inline'));
+    }
+    if (focus === 'distribution_order') {
+      const row = [...document.querySelectorAll('#behaviorRows .condition-row')].find(r => r.textContent.includes('成品分销订单'));
+      if (row) row.querySelectorAll('.value-radio,[data-role="behavior-field"],[data-role="behavior-operator"]').forEach(el => el.classList.add('focus-inline'));
+    }
+    if (focus === 'install_time') {
+      const row = [...document.querySelectorAll('#behaviorRows .condition-row')].find(r => r.textContent.includes('安装时间'));
+      if (row) row.querySelectorAll('.date,[data-role="behavior-field"],[data-role="time-mode"]').forEach(el => el.classList.add('focus-inline'));
+    }
+    if (focus === 'operator') {
+      const row = [...document.querySelectorAll('#behaviorRows .condition-row')].find(r => r.textContent.includes('运营商主体'));
+      if (row) row.querySelectorAll('.selected-box,[data-role="behavior-field"],[data-role="behavior-operator"]').forEach(el => el.classList.add('focus-inline'));
+      const qwRow = [...document.querySelectorAll('#behaviorRows .condition-row')].find(r => r.textContent.includes('添加企微客服'));
+      if (qwRow) qwRow.querySelectorAll('.value-radio,[data-role="behavior-scene"],[data-role="behavior-field"],[data-role="behavior-operator"]').forEach(el => el.classList.add('focus-inline'));
+    }
+    if (autoScrollFocus) requestAnimationFrame(() => document.querySelector('.focus-hit,.focus-inline')?.scrollIntoView({block:'center'}));
+  }
+</script>
+</body>
+</html>

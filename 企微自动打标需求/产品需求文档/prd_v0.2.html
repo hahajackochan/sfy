@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企微自动打标需求 PRD v0.2</title>
+  <style>
+    :root{--ink:#303133;--muted:#606266;--weak:#909399;--line:#ebeef4;--head:#f2f5f9;--brand:#a86115;--brand-soft:#fcebd8;--brand-pale:#fdf1e8;--bg:#fff;--ok:#67c23a;--warn:#e6a23c;--danger:#f56c6c;--blue:#409eff}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%, #e0f2fe 0, transparent 28%), #f6f8fb;color:var(--ink);font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:#fff;padding:24px 18px;overflow:auto}.brand{font-size:18px;font-weight:700;margin-bottom:4px}.sub{color:var(--weak);font-size:12px;margin-bottom:22px}.toc a{display:block;color:var(--muted);padding:7px 10px;border-radius:3px;text-decoration:none}.toc a:hover{background:var(--brand-soft);color:var(--brand)}.toc-group{margin:2px 0}.toc-parent{width:100%;border:0;background:#f8fafc;color:var(--ink)!important;font-weight:700;display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:3px;cursor:pointer;font:inherit;text-align:left}.toc-parent:hover{background:var(--brand-soft);color:var(--brand)!important}.toc-arrow{font-size:12px;transition:transform .18s ease;color:var(--weak)}.toc-group.collapsed .toc-arrow{transform:rotate(-90deg)}.toc-sub{margin:4px 0 8px 12px;padding-left:10px;border-left:2px solid var(--line);display:block}.toc-group.collapsed .toc-sub{display:none}.toc-sub a{font-size:13px;padding:5px 8px;color:var(--weak)}main{padding:28px 36px 80px;max-width:1280px}.hero{background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 60%, #38bdf8 100%);color:#fff;border-radius:28px;padding:34px;box-shadow:0 18px 45px rgba(15,23,42,.08);margin-bottom:28px;border:0}.hero h1{font-size:34px;line-height:1.2;margin:0 0 12px;letter-spacing:-.04em}.hero p{margin:0;color:rgba(255,255,255,.82);max-width:920px}.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}.meta div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:14px;border-radius:16px}.meta b{display:block;color:rgba(255,255,255,.72);font-size:13px;font-weight:500}.meta span{font-weight:700}section{border:1px solid var(--line);border-radius:4px;padding:24px;margin-bottom:18px;background:#fff}h2{font-size:22px;margin:0 0 16px}h3{font-size:17px;margin:22px 0 10px}h4{font-size:15px;margin:16px 0 8px}table{width:100%;border-collapse:collapse;margin:10px 0 16px}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:middle}th{background:var(--head);color:var(--muted);font-weight:600}.tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;font-size:12px}.p0{background:#fef0f0;color:#c45656}.p1{background:#fdf6ec;color:#b88230}.ok{background:#f0f9eb;color:#529b2e}.brandtag{background:var(--brand-pale);color:var(--brand)}.blue{background:#ecf5ff;color:#337ecc}.muted{color:var(--weak)}.note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand);padding:12px 14px;color:var(--muted);margin:12px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{border:1px solid var(--line);background:#fff;padding:14px;border-radius:4px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.step{background:var(--head);padding:12px;border:1px solid var(--line);border-radius:4px;position:relative}.step b{display:block}.iframe-wrap{border:1px solid var(--line);background:#f7f8fa;border-radius:4px;padding:10px;margin:10px 0 18px;overflow:hidden}.iframe-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:var(--weak);font-size:12px}.iframe-actions{display:flex;gap:8px}.iframe-wrap iframe{width:100%;height:720px;border:0;background:#fff;display:block}.small-iframe iframe{height:620px}.preview-btn{height:28px;padding:0 10px;border:1px solid #dcdfe6;border-radius:3px;background:#fff;color:#606266;cursor:pointer;font-size:12px}.preview-btn:hover{border-color:var(--brand);color:var(--brand)}.preview-modal{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;z-index:200}.preview-modal.show{display:flex}.preview-modal-panel{width:min(96vw,1400px);height:min(94vh,900px);background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.28);display:flex;flex-direction:column}.preview-modal-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);font-weight:600}.preview-modal-body{flex:1;overflow:hidden;background:#f6f8fb}.preview-modal-body iframe{width:100%;height:100%;border:0;background:#fff}.module{border:1px solid var(--line);border-radius:4px;margin:16px 0;overflow:hidden}.module-head{background:var(--head);padding:12px 14px;font-weight:700}.module-body{padding:16px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}ul{padding-left:1.2rem}.footer{color:var(--weak);font-size:12px;margin-top:24px}@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{position:relative;height:auto}.meta,.grid,.flow,.two{grid-template-columns:1fr}main{padding:20px}.iframe-wrap iframe{height:540px}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand">企微自动打标 PRD</div>
+    <div class="sub">v0.2 · 结合原型版</div>
+    <nav class="toc">
+      <a href="#info">项目信息</a>
+      <a href="#background">一、需求背景</a>
+      <a href="#goals">二、需求目标</a>
+      <a href="#users">三、用户与场景</a>
+      <a href="#journey">四、用户旅程</a>
+      <a href="#scope">五、功能清单</a>
+      <div class="toc-group" id="solutionTocGroup">
+        <button class="toc-parent" type="button" onclick="toggleSolutionToc()"><span>六、详细方案</span><span class="toc-arrow">▼</span></button>
+        <div class="toc-sub">
+          <a href="#solution-list">6.1 分群规则列表优化</a>
+          <a href="#solution-frequency">6.2 新增统计频率配置项</a>
+          <a href="#solution-attribute">6.3 新增属性条件</a>
+          <a href="#solution-behavior">6.4 新增行为条件</a>
+          <a href="#solution-qw-task">6.5 企微打标任务配置规则</a>
+          <a href="#solution-user-list">6.6 新增用户列表打标状态</a>
+        </div>
+      </div>
+      <a href="#states">七、状态与数据</a>
+      <a href="#exceptions">八、异常边界</a>
+      <a href="#todo">九、待确认事项</a>
+      <a href="#annex">十、附件</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="hero">
+      <h1>企微自动打标需求</h1>
+      <p>在消费者业务中台「分群规则管理」现有能力上，新增统计频率、一次性分群企微打标任务、新分群条件与用户打标结果闭环。本文基于现有列表页、编辑页截图还原原型，并结合已确认交互输出。</p>
+      <div class="meta"><div><b>系统</b><span>消费者业务中台</span></div><div><b>模块</b><span>分群规则管理</span></div><div><b>版本</b><span>v0.2</span></div><div><b>产品经理</b><span>待补充</span></div></div>
+    </header>
+
+    <section id="info"><h2>项目信息与版本记录</h2><table><tr><th>字段</th><th>内容</th></tr><tr><td>项目名称</td><td>企微自动打标需求</td></tr><tr><td>所属系统</td><td>消费者业务中台</td></tr><tr><td>所属模块</td><td>分群规则管理</td></tr><tr><td>关联业务</td><td>会员小程序广告展示、企业微信客户运营</td></tr><tr><td>原型依据</td><td>分群规则列表截图、分群规则编辑截图、规则编辑交互原型 v0.4</td></tr></table><table><tr><th>版本</th><th>日期</th><th>说明</th><th>产品经理</th></tr><tr><td>v0.1</td><td>2026-05-18</td><td>需求初稿，梳理背景、目标、主流程和核心规则</td><td>待补充</td></tr><tr><td>v0.2</td><td>2026-05-18</td><td>结合列表页与编辑页原型，补充详细交互方案</td><td>待补充</td></tr></table></section>
+
+    <section id="background"><h2>一、需求背景</h2><p>现有会员小程序通过消费者业务中台配置分群规则，根据属性、标签、行为等条件对会员进行分层。会员进入小程序时，系统识别其所属分群并展示对应广告内容。当前分群结果主要应用于小程序展示层，尚未直接服务企微客户运营。</p><p>业务希望将指定分群规则统计出的用户同步到企微客户运营链路。对于命中的企微客户，系统自动打上运营选择的企业微信标签，后续运营可在企微侧基于标签筛选客户并推送内容。</p><div class="note">本次需求只支持「仅统计一次」的分群规则配置企微打标任务，不处理每日统计分群下用户移入、移出后的企微标签维护。</div></section>
+
+    <section id="goals"><h2>二、需求目标</h2><table><tr><th>目标类型</th><th>描述</th><th>衡量指标</th><th>目标值</th></tr><tr><td>业务目标</td><td>让一次性分群结果可沉淀为企微客户标签，支撑运营推送。</td><td>指定运营场景是否可闭环</td><td>支持创建规则、配置标签、执行打标、查看结果、失败重试</td></tr><tr><td>效率目标</td><td>减少人工导数、人工筛选、人工打标签。</td><td>运营操作步骤</td><td>运营只需配置分群规则和一个企微标签</td></tr><tr><td>准确性目标</td><td>分群统计结果与企微打标处理范围一致。</td><td>处理范围一致性</td><td>按分群统计结果自动生成待打标用户</td></tr><tr><td>可追踪目标</td><td>运营可查看任务状态、用户打标状态和失败原因。</td><td>状态可见性</td><td>支持用户维度失败原因和批量重试</td></tr></table></section>
+
+    <section id="users"><h2>三、用户与使用场景</h2><div class="grid"><div class="card"><b>运营人员</b><p>配置分群条件、设置统计频率、为符合条件的规则设置企微标签，并查看打标结果。</p></div><div class="card"><b>业务管理人员</b><p>关注分群人群是否可用于企微运营，评估推送覆盖范围。</p></div><div class="card"><b>系统任务</b><p>执行分群统计，按配置调用企微自建系统完成客户标签处理。</p></div></div></section>
+
+    <section id="journey"><h2>四、用户旅程</h2><table><tr><th>阶段</th><th>触点</th><th>行为</th><th>痛点</th><th>产品机会</th></tr><tr><td>创建规则</td><td>分群规则编辑页</td><td>配置属性、行为等条件，设置统计频率。</td><td>需要区分动态展示分群和一次性运营分群。</td><td>新增统计频率，作为企微打标前置条件。</td></tr><tr><td>配置打标</td><td>分群规则编辑页</td><td>当统计频率选择为仅统计一次时，配置一个企微标签。</td><td>担心统计后被误修改。</td><td>统计后锁定标签配置。</td></tr><tr><td>系统执行</td><td>后台统计、企微接口</td><td>系统完成统计并处理企微打标。</td><td>运营无法感知处理进度。</td><td>展示任务状态和用户维度状态。</td></tr><tr><td>失败处理</td><td>分群规则用户列表</td><td>查看失败原因，勾选失败用户批量重试。</td><td>失败原因不明确会影响运营判断。</td><td>展示原因并提供重试闭环。</td></tr></table></section>
+
+    <section id="scope"><h2>五、需求功能清单</h2><table><tr><th>系统</th><th>模块</th><th>功能点</th><th>优先级</th><th>说明</th><th>详细方案</th></tr><tr><td rowspan="7">消费者业务中台</td><td>分群规则列表</td><td>新增统计频率展示字段</td><td><span class="tag p0">P0</span></td><td>列表新增统计频率列，用于识别规则类型。</td><td><a href="#solution-list-frequency">查看</a></td></tr><tr><td rowspan="5">分群规则编辑</td><td>新增企微打标配置项</td><td><span class="tag p0">P0</span></td><td>当统计频率选择「仅统计一次」时展示，用于选择企微标签。</td><td><a href="#solution-qw-config-entry">查看</a></td></tr><tr><td>新增统计频率配置项</td><td><span class="tag p0">P0</span></td><td>规则状态下方新增，默认不选中，保存必填。</td><td><a href="#solution-frequency">查看</a></td></tr><tr><td>新增属性条件</td><td><span class="tag p0">P0</span></td><td>包含生日时间、推荐官身份。</td><td><a href="#solution-attribute">查看</a></td></tr><tr><td>新增行为条件</td><td><span class="tag p0">P0</span></td><td>包含主单订单金额、安装时间、运营商主体。</td><td><a href="#solution-behavior">查看</a></td></tr><tr><td>企微打标任务状态规则</td><td><span class="tag p0">P0</span></td><td>围绕编辑页企微打标配置项，定义未配置、待执行、已执行。</td><td><a href="#solution-qw-task">查看</a></td></tr><tr><td>分群用户列表</td><td>新增用户列表打标状态</td><td><span class="tag p0">P0</span></td><td>展示用户维度状态、失败原因，支持批量重试。</td><td><a href="#solution-user-list">查看</a></td></tr></table></section>
+
+    <section id="solution"><h2>六、详细方案</h2>
+      <div class="module" id="solution-list"><div class="module-head">6.1 分群规则列表优化</div><div class="module-body"><h4 id="solution-list-frequency">6.1.1 列表新增统计频率字段</h4><ul><li>新增统计频率字段，取分群规则配置展示。</li></ul><div class="iframe-wrap small-iframe"><div class="iframe-head"><span>原型预览 · 分群规则列表页统计频率列</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../原型/rule-list-v0.2.html?focus=stat_frequency" data-preview-title="分群规则列表页统计频率列">放大查看</button></div></div><iframe data-preview-key="rule-list-v0.2.html" src="../原型/rule-list-v0.2.html?focus=stat_frequency" sandbox="allow-scripts allow-same-origin"></iframe></div></div>
+
+      <div class="module" id="solution-frequency"><div class="module-head">6.2 新增统计频率配置项</div><div class="module-body"><h4>6.2.1 统计频率字段</h4><ul><li>可选项：每天统计一次、仅统计一次。</li><li>默认不选中。</li><li>保存时必选。</li></ul><div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 新增统计频率配置项</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../原型/rule-edit-v0.4.html?focus=stat_frequency" data-preview-title="新增统计频率配置项">放大查看</button></div></div><iframe data-preview-key="rule-edit-v0.4.html" src="../原型/rule-edit-v0.4.html?focus=stat_frequency" sandbox="allow-scripts allow-same-origin"></iframe></div><h4 id="solution-qw-config-entry">6.2.2 企微打标配置项</h4><ul><li>展示条件：统计频率 = 仅统计一次。</li><li>位置：统计频率下方。</li><li>样式：单独一行。</li><li>操作：点击「选择标签」打开弹窗。</li><li>弹窗内容：企微标签分组、分组下标签。</li><li>搜索范围：企微标签分组。</li><li>选择限制：只能选择一个标签。</li><li>确认后：回显选中标签。</li></ul><div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 统计频率为仅统计一次时展示企微打标配置</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../原型/rule-edit-v0.4.html?focus=qw_config" data-preview-title="企微打标配置项">放大查看</button></div></div><iframe data-preview-key="rule-edit-v0.4.html" src="../原型/rule-edit-v0.4.html?focus=qw_config" sandbox="allow-scripts allow-same-origin"></iframe></div></div></div>
+
+      <div class="module" id="solution-attribute"><div class="module-head">6.3 新增属性条件</div><div class="module-body"><h4>通用规则</h4><ul><li>点击「添加属性」新增一行。</li><li>支持多条属性条件。</li><li>每行支持删除。</li></ul><h4>6.3.1 生日时间</h4><ul><li>属性分类：通用属性。</li><li>字段：生日时间。</li><li>时间类型：固定起止时间、相对时间范围。</li><li>固定起止时间：开始时间、结束时间。</li><li>相对时间范围：天数 + 以内/之前。</li></ul><h4>6.3.2 推荐官身份</h4><ul><li>属性分类：会员属性。</li><li>字段：推荐官身份。</li><li>判断条件：等于。</li><li>可选值：推荐官、非推荐官。</li></ul><div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 新增生日时间分群条件</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../原型/rule-edit-v0.4.html?focus=birthday_relative" data-preview-title="新增生日时间分群条件">放大查看</button></div></div><iframe data-preview-key="rule-edit-v0.4.html" src="../原型/rule-edit-v0.4.html?focus=birthday_relative" sandbox="allow-scripts allow-same-origin"></iframe></div></div></div>
+
+      <div class="module" id="solution-behavior"><div class="module-head">6.4 新增行为条件</div><div class="module-body"><h4>通用规则</h4><ul><li>点击「添加行为」新增一行。</li><li>支持多条行为条件。</li><li>每行支持删除。</li></ul><h4>6.4.1 主单订单金额</h4><ul><li>行为分类：线上订单-&gt;下单。</li><li>字段：主单订单金额。</li><li>判断条件：指定范围、等于、小于、大于。</li><li>指定范围：最低金额、最高金额。</li><li>其他条件：金额输入框。</li></ul><h4>6.4.2 安装时间</h4><ul><li>行为分类：线下订单-&gt;下单。</li><li>字段：安装时间。</li><li>时间类型：固定起止时间、相对时间范围。</li></ul><h4>6.4.3 运营商主体</h4><ul><li>行为分类：线下订单-&gt;下单。</li><li>字段：运营商主体。</li><li>判断条件：包含任一、包含全部、不包含。</li><li>选择方式：输入运营商编码校验后添加。</li><li>支持多选和删除。</li></ul></div></div>
+
+      <div class="module" id="solution-qw-task"><div class="module-head">6.5 企微打标任务配置规则</div><div class="module-body"><ul><li>配置位置：分群规则编辑页。</li><li>展示条件：统计频率 = 仅统计一次。</li><li>标签来源：企微自建系统。</li><li>标签数量：每条规则仅可选择一个。</li><li>统计前：可修改、删除。</li><li>统计后：不可修改、删除。</li><li>任务状态：未配置、待执行、已执行。</li></ul><div class="iframe-wrap"><div class="iframe-head"><span>原型预览 · 编辑页企微打标配置项</span><div class="iframe-actions"><button class="preview-btn" data-preview-src="../原型/rule-edit-v0.4.html?focus=qw_config" data-preview-title="编辑页企微打标配置项">放大查看</button></div></div><iframe data-preview-key="rule-edit-v0.4.html" src="../原型/rule-edit-v0.4.html?focus=qw_config" sandbox="allow-scripts allow-same-origin"></iframe></div></div></div>
+
+      <div class="module" id="solution-user-list"><div class="module-head">6.6 新增用户列表打标状态</div><div class="module-body"><ul><li>新增字段：企微打标状态。</li><li>状态：待打标、无需打标、打标成功、打标失败。</li><li>无企微打标配置：展示无需打标。</li><li>打标失败：展示失败原因。</li><li>支持批量重试失败用户。</li></ul><div class="note">用户列表原型待补充。</div></div></div>
+    </section>
+
+    <section id="states"><h2>七、状态与数据</h2><h3>7.1 企微打标任务状态</h3><table><tr><th>状态</th><th>定义</th><th>进入条件</th></tr><tr><td>未配置</td><td>尚未保存企微标签配置。</td><td>符合入口条件但未选择并保存标签。</td></tr><tr><td>待执行</td><td>已保存企微标签配置，等待分群统计后执行打标。</td><td>保存企微标签配置后。</td></tr><tr><td>已执行</td><td>本次分群用户已经执行过打标签处理，不区分全部成功、部分失败或全部失败。</td><td>系统完成本次打标处理后。</td></tr></table><h3>7.2 用户维度企微打标状态</h3><table><tr><th>状态</th><th>定义</th><th>操作</th></tr><tr><td>无需打标</td><td>该分群规则未设置企微打标任务。</td><td>无</td></tr><tr><td>待打标</td><td>该用户等待企微打标处理。</td><td>无</td></tr><tr><td>打标成功</td><td>已成功给企微客户打上标签。</td><td>无</td></tr><tr><td>打标失败</td><td>打标失败，需展示失败原因。</td><td>支持批量重试</td></tr></table></section>
+
+    <section id="exceptions"><h2>八、异常与边界处理</h2><table><tr><th>场景</th><th>处理规则</th><th>提示/表现</th></tr><tr><td>未选择统计频率保存</td><td>阻止保存。</td><td>提示：请选择统计频率。</td></tr><tr><td>每天统计一次的规则</td><td>不允许配置企微打标任务。</td><td>编辑页不展示企微打标配置项。</td></tr><tr><td>仅统计一次但最近统计时间不为空</td><td>不允许新增或修改企微打标配置。</td><td>编辑页企微打标配置区锁定。</td></tr><tr><td>企微标签接口读取失败</td><td>标签列表加载失败，允许重试。</td><td>提示加载失败。</td></tr><tr><td>未匹配到企微客户</td><td>用户维度记录为打标失败。</td><td>失败原因：未匹配到企微客户。</td></tr><tr><td>接口调用失败</td><td>用户维度记录为打标失败。</td><td>失败原因：接口调用失败，可批量重试。</td></tr><tr><td>运营商编码校验失败</td><td>弹窗不允许确认添加。</td><td>展示未查询到运营商或接口异常提示。</td></tr></table></section>
+
+    <section id="todo"><h2>九、待确认事项</h2><ul><li>生日时间、安装时间的相对时间范围统计口径，等待在线文档补充。</li><li>编辑页企微打标配置区域的最终字段与锁定状态表现。</li><li>分群规则用户列表现有页面截图及新增打标状态列位置。</li><li>复制规则时是否复制统计频率，是否复制企微打标任务配置，建议不复制企微打标任务。</li><li>已统计规则是否允许编辑条件、规则状态、统计频率，需补充最终限制。</li><li>权限规则，哪些角色可以配置企微打标任务和批量重试。</li></ul></section>
+
+    <section id="annex"><h2>十、附件</h2><table><tr><th>附件</th><th>说明</th><th>入口</th></tr><tr><td>列表页原型</td><td>分群规则列表现状还原 + 统计频率字段</td><td><a href="../原型/rule-list-v0.2.html">打开原型</a></td></tr><tr><td>编辑页原型</td><td>统计频率与新增分群条件交互</td><td><a href="../原型/rule-edit-v0.4.html">打开原型</a></td></tr><tr><td>需求采集记录</td><td>对话式需求沉淀</td><td><a href="../附件/requirements-notes-v1.md">查看记录</a></td></tr><tr><td>现状截图</td><td>列表页、编辑页参考截图</td><td><a href="../截图/table.jpg">列表页截图</a> / <a href="../截图/content_top.jpg">编辑页截图</a></td></tr></table><div class="footer">本文为 v0.2 结合原型版 PRD，后续将继续补充企微打标任务页、分群用户列表页、流程图与最终版 PRD。</div></section>
+  </main>
+</div>
+<script>
+
+  function toggleSolutionToc(){
+    document.getElementById('solutionTocGroup').classList.toggle('collapsed');
+  }
+</script>
+
+<div id="previewModal" class="preview-modal" aria-hidden="true">
+  <div class="preview-modal-panel">
+    <div class="preview-modal-head">
+      <span id="previewModalTitle">原型预览</span>
+      <button class="preview-btn" onclick="closePreviewModal()">关闭</button>
+    </div>
+    <div class="preview-modal-body"><iframe id="previewModalFrame" sandbox="allow-scripts allow-same-origin"></iframe></div>
+  </div>
+</div>
+
+<script>
+  function openPreviewModal(src, title){
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewModalFrame');
+    document.getElementById('previewModalTitle').textContent = title || '原型预览';
+    frame.src = src;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function closePreviewModal(){
+    const modal = document.getElementById('previewModal');
+    const frame = document.getElementById('previewModalFrame');
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    frame.src = 'about:blank';
+  }
+  document.querySelectorAll('.preview-btn[data-preview-src]').forEach(btn => {
+    btn.addEventListener('click', () => openPreviewModal(btn.dataset.previewSrc, btn.dataset.previewTitle));
+  });
+  document.getElementById('previewModal').addEventListener('click', (e) => { if (e.target.id === 'previewModal') closePreviewModal(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePreviewModal(); });
+</script>
+</body>
+</html>

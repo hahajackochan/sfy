@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>报名列表 · 传入X计划时间与完整详情增量原型</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#eef1f5;color:#303133}.stage{height:100vh;overflow:auto;position:relative}.screen{display:block;width:2548px;max-width:none;height:auto}.hint{position:fixed;right:24px;top:16px;z-index:20;background:#1abc9c;color:#fff;border:0;border-radius:4px;padding:9px 16px;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15)}.list-patch{position:absolute;left:2267px;top:575px;width:447px;background:#fff;z-index:8;color:#303133;font-size:13px;box-shadow:0 0 0 1px #ebeef4}.patch-row{display:grid;grid-template-columns:167px 180px 100px;height:47px;align-items:center;border-bottom:1px solid #ebeef4}.patch-row.header{height:36px;font-weight:600;background:#fff}.patch-cell{height:100%;display:flex;align-items:center;padding:0 10px;white-space:nowrap;border-right:1px solid #ebeef4}.patch-cell:last-child{border-right:0;justify-content:center}.new-plan-col{background:#e8f8f2}.detail-btn{height:30px;padding:0 12px;border:0;border-radius:3px;background:#1abc9c;color:#fff;font-size:12px;cursor:pointer}.column-focus{display:none;position:absolute;left:167px;top:0;width:180px;height:506px;outline:2px solid #ff9800;outline-offset:-2px;box-shadow:0 0 0 3px rgba(255,152,0,.18);pointer-events:none;z-index:3}.list-patch.focus-xplan .column-focus{display:block}.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;z-index:40}.backdrop.show{display:block}.drawer{position:fixed;top:0;right:0;height:100%;width:720px;max-width:96vw;background:#fff;box-shadow:-5px 0 22px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .22s;z-index:50;display:flex;flex-direction:column}.drawer.show{transform:translateX(0)}.drawer-head{height:52px;flex:0 0 52px;background:#1abc9c;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:15px;font-weight:600}.close{font-size:22px;cursor:pointer}.drawer-body{flex:1;min-height:0;padding:18px 24px 40px;overflow-y:auto}.group{padding:4px 0 14px;border-bottom:1px dashed #dcdfe6;margin-bottom:14px}.group:last-child{border-bottom:0}.row{display:grid;grid-template-columns:190px minmax(0,1fr);column-gap:20px;padding:8px 4px;font-size:13px;line-height:1.65}.row .k{font-weight:700;color:#4a4d52;text-align:right}.row .v{color:#4a4d52;min-width:0;overflow-wrap:anywhere}.default-line{margin-top:3px;color:#606266}.default-tag,.state-tag{display:inline-block;background:#fdebec;color:#e94b54;border-radius:3px;padding:0 4px;line-height:20px}.panel-btn{display:block;width:100%;border:1px solid #dcdfe6;background:#fafafa;color:#606266;border-radius:3px;padding:9px 12px;text-align:center}.status-note{margin-top:8px;padding-left:17px;position:relative;color:#606266}.status-note:before{content:'•';position:absolute;left:4px;top:0}.message{max-width:430px}.newfield{background:#e8f8f2;border-radius:4px;margin:3px 0}.focus-hl{outline:2px solid #ff9800;outline-offset:-2px;box-shadow:0 0 0 3px rgba(255,152,0,.18)}.success{color:#1abc9c;font-weight:600}.promo{display:flex;gap:10px}.empty{color:#606266}@media(max-width:800px){.screen{width:1900px}.drawer{width:94vw}.row{grid-template-columns:145px minmax(0,1fr)}.row .k{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <img class="screen" src="../annex/04_报名列表页.png" alt="报名列表现状截图">
+  <div class="list-patch" id="listPatch">
+    <div class="patch-row header"><div class="patch-cell">报名时间</div><div class="patch-cell new-plan-col">传入X计划时间</div><div class="patch-cell">操作</div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:52:22</div><div class="patch-cell new-plan-col">2026-07-21 17:22:22</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:54</div><div class="patch-cell new-plan-col">2026-07-21 16:50:54</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:19</div><div class="patch-cell new-plan-col">2026-07-21 16:50:19</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:18</div><div class="patch-cell new-plan-col">2026-07-21 17:20:18</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:18</div><div class="patch-cell new-plan-col">2026-07-21 16:50:18</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:17</div><div class="patch-cell new-plan-col">2026-07-21 16:50:17</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:16</div><div class="patch-cell new-plan-col">2026-07-21 16:50:16</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:15</div><div class="patch-cell new-plan-col">2026-07-21 16:50:15</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:14</div><div class="patch-cell new-plan-col">2026-07-21 17:20:14</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="patch-row"><div class="patch-cell">2026-07-21 16:50:13</div><div class="patch-cell new-plan-col">2026-07-21 16:50:13</div><div class="patch-cell"><button class="detail-btn" onclick="openDetail()">◉ 详情</button></div></div>
+    <div class="column-focus"></div>
+  </div>
+  <button class="hint" onclick="openDetail()">👁 查看第1条报名详情</button>
+</div>
+<div id="backdrop" class="backdrop" onclick="closeDetail()"></div>
+<div id="drawer" class="drawer">
+  <div class="drawer-head"><span>详细信息</span><span class="close" onclick="closeDetail()">×</span></div>
+  <div class="drawer-body">
+    <section class="group" id="basicGroup">
+      <div class="row"><div class="k">ID：</div><div class="v">5940525</div></div>
+      <div class="row"><div class="k">Unionid：</div><div class="v"></div></div>
+      <div class="row"><div class="k">姓名：</div><div class="v">李瑶瑶</div></div>
+      <div class="row"><div class="k">手机号：</div><div class="v">176****4027</div></div>
+      <div class="row"><div class="k">省/市/区：</div><div class="v">山西省/晋城市/泽州县</div></div>
+    </section>
+
+    <section class="group" id="sourceGroup">
+      <div class="row"><div class="k">类型年份：</div><div class="v"><div></div><div class="default-line">默认为：<span class="default-tag">空</span></div></div></div>
+      <div class="row"><div class="k">来源（source）：</div><div class="v"><div>普通报名</div><div class="default-line">默认为：<span class="default-tag">普通报名</span></div></div></div>
+      <div class="row"><div class="k">一级来源：</div><div class="v"><div>Online</div><div class="default-line">默认为：<span class="default-tag">Online</span></div></div></div>
+      <div class="row"><div class="k">二级来源：</div><div class="v"><div>抖音</div><div class="default-line">默认为：<span class="default-tag">微信微博</span></div></div></div>
+      <div class="row"><div class="k">三级来源：</div><div class="v"><div>抖音索菲亚全屋智能旗舰店-直播</div><div class="default-line">默认为：<span class="default-tag">微信报名</span></div></div></div>
+      <div class="row"><div class="k">四级来源：</div><div class="v"><div>黄晓盈</div><div class="default-line">默认为：<span class="default-tag">空</span></div></div></div>
+      <div class="row"><div class="k">五级来源：</div><div class="v"><div></div><div class="default-line">默认为：<span class="default-tag">空</span></div></div></div>
+    </section>
+
+    <section class="group" id="serviceGroup">
+      <div class="row"><div class="k">服务顾问员工账号：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">服务顾问员工姓名：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">服务顾问UnionId：</div><div class="v"></div></div>
+      <div class="row"><div class="k">客服ID：</div><div class="v"></div></div>
+      <div class="row"><div class="k">品类需求：</div><div class="v">衣柜</div></div>
+      <div class="row"><div class="k">异业品牌需求：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">潜客需求：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">备注更新时间：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">经销商Id：</div><div class="v"></div></div>
+      <div class="row"><div class="k">经销商名称：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">门店ID：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">门店名称：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">城市：</div><div class="v">空</div></div>
+    </section>
+
+    <section class="group" id="xPlanGroup">
+      <div class="row" id="transmitRow"><div class="k">是否传X计划：</div><div class="v">是</div></div>
+      <div class="row newfield" id="detDelay"><div class="k">延迟报名时间：</div><div class="v">30 分钟</div></div>
+      <div class="row newfield" id="detXtime"><div class="k">传入X计划时间：</div><div class="v">2026-07-21 17:22:22</div></div>
+      <div class="row"><div class="k">X计划传参详情：</div><div class="v"><div class="panel-btn">查看参数详情</div></div></div>
+      <div class="row"><div class="k">X计划报名状态：</div><div class="v"><div>失败</div><div class="status-note">当报名记录的品类处理结果包含（创建电商潜客、创建意向潜客、创建橱柜电商潜客、创建木门电商潜客）任意一个状态时，X计划报名状态为<span class="state-tag">成功</span>，否则状态为<span class="state-tag">失败</span>；</div></div></div>
+      <div class="row"><div class="k"></div><div class="v"><div class="panel-btn">X计划报名结果</div></div></div>
+      <div class="row"><div class="k">衣柜潜客类型：</div><div class="v"></div></div>
+      <div class="row"><div class="k">X计划信息：</div><div class="v message">预约成功，请留意当地电话或020开头电话，小索马上安排设计师与您联系，请保持手机畅通哦！</div></div>
+      <div class="row"><div class="k">是否测试记录：</div><div class="v">否</div></div>
+      <div class="row"><div class="k">客户ID：</div><div class="v">空</div></div>
+      <div class="row"><div class="k">场景ID：</div><div class="v">0</div></div>
+      <div class="row"><div class="k">场景值：</div><div class="v"></div></div>
+      <div class="row"><div class="k">来源应用ID：</div><div class="v"></div></div>
+      <div class="row"><div class="k">来源应用：</div><div class="v"></div></div>
+    </section>
+
+    <section class="group"><div class="row"><div class="k">电销跟进状态：</div><div class="v"></div></div></section>
+    <section class="group"><div class="row"><div class="k">二级跟进状态：</div><div class="v"></div></div></section>
+    <section class="group"><div class="row"><div class="k">意向潜客创建人ID：</div><div class="v"></div></div></section>
+    <section class="group"><div class="row"><div class="k">推送服务号：</div><div class="v"></div></div></section>
+    <section class="group"><div class="row"><div class="k">推广员信息：</div><div class="v promo"><strong>是否推广：</strong><span>否</span></div></div></section>
+  </div>
+</div>
+<script>
+function openDetail(){document.getElementById('drawer').classList.add('show');document.getElementById('backdrop').classList.add('show')}
+function closeDetail(){document.getElementById('drawer').classList.remove('show');document.getElementById('backdrop').classList.remove('show')}
+const params=new URLSearchParams(location.search),focus=params.get('focus');
+if(focus==='list-xplan-time-col'){
+  document.getElementById('listPatch').classList.add('focus-xplan');
+  document.querySelector('.hint').style.display='none';
+  if(params.get('autoscroll')==='1') requestAnimationFrame(()=>{const s=document.querySelector('.stage');s.scrollLeft=2140;s.scrollTop=520});
+}
+if(focus==='detail-fields'){
+  openDetail();
+  document.getElementById('detDelay').classList.add('focus-hl');
+  document.getElementById('detXtime').classList.add('focus-hl');
+  requestAnimationFrame(()=>document.getElementById('detDelay').scrollIntoView({block:'center'}));
+}
+</script>
+</body>
+</html>

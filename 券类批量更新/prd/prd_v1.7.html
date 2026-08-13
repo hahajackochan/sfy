@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>券类批量更新 PRD v1.7</title>
+<style>
+  :root{--ink:#303133;--muted:#6b7280;--line:#ebeef4;--thead:#f2f5f9;--accent:#a86115;--navy:#1d3858;--paper:#fff;--bg:#f6f7fb;--good:#16835b;--warn:#b45309;--bad:#c2413b;}
+  *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;font-size:14px;line-height:1.75}
+  a{color:#915410;text-decoration:none} a:hover{text-decoration:underline} code{padding:1px 5px;border-radius:4px;background:#fff4e8;color:#915410;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+  .layout{display:grid;grid-template-columns:292px minmax(0,1fr);min-height:100vh}.side{position:sticky;top:0;align-self:start;height:100vh;padding:26px 20px;background:#fff;border-right:1px solid var(--line);overflow:auto}.brand{font-size:18px;font-weight:750;color:#203a5a;letter-spacing:.3px;margin:0 0 24px}.brand small{display:block;color:#9ca3af;font-size:12px;font-weight:500;margin-top:2px}.toc{border-top:1px solid var(--line);padding-top:12px}.toc>a,.toc-group>span,.toc-sub a{display:block;border-radius:7px;padding:7px 10px}.toc>a{font-weight:650;color:#475569}.toc>a:hover,.toc-sub a:hover{background:#fff7ef;text-decoration:none}.toc-group{margin:5px 0}.toc-group>span{font-weight:750;color:#203a5a;background:#f8fafc}.toc-sub{padding:5px 0 5px 12px}.toc-sub a{font-size:13px;color:#596578;padding-top:4px;padding-bottom:4px}.main{min-width:0;padding:32px 42px 60px;max-width:1500px}.hero{padding:34px 38px;border-radius:12px;background:linear-gradient(120deg,#1c3858,#304f70);color:#fff}.hero h1{font-size:30px;line-height:1.35;margin:0;font-weight:780}.hero .meta{margin-top:12px;color:#dbe8f4;font-size:13px}.section{margin-top:22px;padding:28px 30px;background:var(--paper);border:1px solid var(--line);border-radius:10px}.section h2{margin:0 0 18px;padding-bottom:11px;border-bottom:1px solid var(--line);font-size:20px;color:#203a5a}.section h3{margin:25px 0 9px;color:#344a64;font-size:16px}.section h4{margin:18px 0 6px;color:#4a6077;font-size:14px}.section p{margin:8px 0}.lead{margin:0 0 16px;padding:12px 14px;border-left:4px solid var(--accent);background:#fff8f1;border-radius:3px}.note{padding:10px 13px;border-radius:7px;background:#f8fafc;color:#586475;border:1px solid #e7ebf1}.danger{padding:10px 13px;border-radius:7px;background:#fff7f6;color:#963b35;border:1px solid #f4d7d4}.ok{padding:10px 13px;border-radius:7px;background:#f0fbf6;color:#226948;border:1px solid #ccebd9}.tag{display:inline-block;vertical-align:middle;padding:1px 7px;border-radius:12px;font-size:12px;font-weight:700;line-height:20px}.p0{color:#9f331f;background:#fff1ef}.p1{color:#8a5a13;background:#fff8e7}.must{color:#9f331f;background:#fff1ef}.should{color:#8a5a13;background:#fff8e7}.table-scroll{overflow:auto;border:1px solid var(--line);border-radius:8px}table{width:100%;min-width:720px;border-collapse:separate;border-spacing:0}th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}th:last-child,td:last-child{border-right:0}tr:last-child td{border-bottom:0}th{background:var(--thead);font-weight:700;color:#42556b;white-space:nowrap}.rule{margin:7px 0;padding-left:14px}.rule::before{content:"•";margin-left:-14px;margin-right:7px;color:var(--accent);font-weight:bold}.loc{display:block;margin:10px 0 6px;color:#4c5d70;font-weight:700}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.mini{padding:14px 15px;border:1px solid var(--line);border-radius:8px;background:#fff}.mini strong{color:#203a5a}.journey td:first-child{font-weight:700;color:#42556b}.feature{scroll-margin-top:24px;margin-top:22px;padding:21px 22px;border:1px solid var(--line);border-radius:9px;background:#fff}.feature h3{margin:0 0 13px;color:#203a5a}.status{font-size:12px;color:#737f90}.attachment{display:inline-flex;align-items:center;gap:7px;margin:5px 8px 5px 0;padding:8px 11px;border:1px solid #ead7c3;background:#fffaf5;border-radius:7px;font-size:13px}.footer{color:#8993a2;text-align:center;padding:30px 0 0;font-size:12px}@media(max-width:960px){.layout{display:block}.side{position:static;height:auto;border-right:0;padding:18px}.main{padding:18px}.hero,.section{padding:22px}.grid-2{grid-template-columns:1fr}.toc{display:none}}
+.iframe-wrap{margin-top:16px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#f8fafc}.iframe-head{height:38px;padding:0 12px;display:flex;align-items:center;border-bottom:1px solid var(--line);background:#f7f9fb;font-size:13px;font-weight:700;color:#45576b}.iframe-head a{margin-left:auto;font-size:12px;font-weight:500;padding:3px 8px;border:1px solid #d8c0a6;border-radius:4px;background:#fffaf5}.iframe-wrap iframe{display:block;width:100%;height:550px;border:0;background:#e8edf1}.flow-card{margin-top:16px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}.flow-head{min-height:38px;padding:6px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);background:#f7f9fb;font-size:13px;font-weight:700;color:#45576b}.flow-head button,.flow-head a{font:500 12px/-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;color:#915410;padding:3px 8px;border:1px solid #d8c0a6;border-radius:4px;background:#fffaf5;cursor:pointer;text-decoration:none}.flow-head button:first-of-type{margin-left:auto}.flow-svg{display:block;width:100%;height:auto;min-height:400px;padding:12px;background:#fff}.flow-source{margin:0;padding:20px;background:#fff;white-space:pre-wrap;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#334155}.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand">券类批量更新<small>产品需求文档 · v1.7 修订版</small></div>
+    <nav class="toc">
+      <a href="#info">项目信息</a>
+      <a href="#background">一、需求背景</a>
+      <a href="#scope">二、需求功能清单</a>
+      <div class="toc-group"><span>三、详细方案</span><div class="toc-sub">
+        <a href="#feature-batch-update">3.1 新增批量更新</a>
+        <a href="#feature-audit">3.2 券类修改记录</a>
+      </div></div>
+      <a href="#attachments">四、附件</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="hero"><h1>券类批量更新</h1><div class="meta">券系统 / 卡券管理 / 券类管理　·　PRD v1.7　·　2026-07-15</div></header>
+
+    <section id="info" class="section"><h2>项目信息</h2><div class="table-scroll"><table><tbody>
+      <tr><th style="width:15%">项目名称</th><td style="width:35%">券类批量更新</td><th style="width:15%">当前版本</th><td>v1.7（弹窗文案修订）</td></tr>
+      <tr><th>产品经理</th><td>陈嘉豪</td><th>更新时间</th><td>2026-07-15 19:25（Asia/Shanghai）</td></tr>
+      <tr><th>涉及系统</th><td>券系统后台</td><th>涉及模块</th><td>卡券管理 / 券类管理 / 券类修改记录</td></tr>
+    </tbody></table></div></section>
+
+    <section id="background" class="section"><h2>一、需求背景</h2>
+      <p class="lead">当前券系统后台仅支持逐条修改券类库存。</p>
+      <p>本需求在现有「券类管理」列表页新增通用的<strong>批量更新</strong>入口。本期仅开放库存数量更新；入口不以库存命名，后续可在同一能力内扩展其他券类信息的批量更新。</p>
+      <div class="note">本期不包含：批量新建券类、修改券名称/有效期/补贴方等其他券类信息、自动计算预算库存、独立库存流水页面或导入审批流。</div>
+    </section>
+
+    <section id="scope" class="section"><h2>二、需求功能清单</h2><div class="table-scroll"><table><thead><tr><th>系统</th><th>模块</th><th>功能点</th><th>优先级</th><th>说明</th><th>详细方案</th></tr></thead><tbody>
+      <tr><td>券系统后台</td><td>卡券管理 / 券类管理</td><td>新增批量更新</td><td><span class="tag p0">P0</span></td><td>新增批量更新入口；本期支持库存导入更新、模板下载、结果反馈与结果文件下载。</td><td><a href="#feature-batch-update">查看</a></td></tr>
+      <tr><td>券系统后台</td><td>券类修改记录</td><td>新增批量更新痕迹</td><td><span class="tag p0">P0</span></td><td>复用现有修改记录页面，记录每条成功更新。</td><td><a href="#feature-audit">查看</a></td></tr>
+    </tbody></table></div></section>
+
+    <section id="detail" class="section"><h2>三、详细方案</h2>
+      <article id="feature-batch-update" class="feature"><h3>3.1 新增批量更新</h3>
+        <span class="loc">位置：券系统后台 → 卡券管理 → 券类管理列表页顶部工具栏；置于「新建」后。</span>
+        <div class="rule">入口：新增「批量更新」；本期仅更新库存，支持下载模板、上传并提交文件。</div>
+        <div class="rule">模板：字段为券类ID、子类ID、库存数量；第 2 行为填写说明，数据从第 3 行开始。</div>
+        <div class="rule">更新：单一面值/业务平台传入子券按券类ID更新；券系统设置子券按券类ID+子类ID更新，子类ID必填。</div>
+        <div class="rule">校验：库存覆盖更新且不得小于已领取数量；逐行处理，失败行不影响成功行。</div>
+        <div class="rule">结果：仅展示总数、成功数、失败数，不展示明细；有失败时可下载追加「导入结果」「失败原因」的真实 <code>.xlsx</code> 文件。</div>
+        <div class="iframe-wrap"><div class="iframe-head">原型预览 · 批量更新入口<a href="../prototype/prototype_v1.7.html?focus=batch_update" target="_blank" rel="noopener noreferrer">放大查看</a></div><iframe sandbox="allow-scripts allow-same-origin" src="../prototype/prototype_v1.7.html?focus=batch_update&amp;embed=1" title="批量更新入口"></iframe></div>
+      </article>
+
+      <article id="feature-audit" class="feature"><h3>3.2 券类修改记录</h3>
+        <span class="loc">位置：复用每条券类现有的「修改记录」入口与记录页面；不新增独立库存记录入口或页面。</span>
+        <div class="rule">仅实际更新成功的券类或子类写入一条修改记录；失败行不写入记录。</div>
+        <div class="table-scroll" style="margin-top:12px"><table><thead><tr><th>现有字段</th><th>券类库存更新写入规则</th><th>子券库存更新写入规则</th></tr></thead><tbody>
+          <tr><td>更改人</td><td colspan="2">本次提交批量更新的登录用户。</td></tr>
+          <tr><td>更改项</td><td>批量更新-库存数量</td><td>批量更新-子券库存</td></tr>
+          <tr><td>原内容</td><td>库存数量：100</td><td>子类ID：30001；库存数量：50</td></tr>
+          <tr><td>更改后内容</td><td>库存数量：200</td><td>子类ID：30001；库存数量：100</td></tr>
+          <tr><td>更改时间</td><td colspan="2">该行实际更新生效的时间。</td></tr>
+        </tbody></table></div>
+        <div class="iframe-wrap"><div class="iframe-head">原型预览 · 复用现有券类修改记录<a href="../prototype/prototype_v1.7.html?focus=audit" target="_blank" rel="noopener noreferrer">放大查看</a></div><iframe sandbox="allow-scripts allow-same-origin" src="../prototype/prototype_v1.7.html?focus=audit&amp;embed=1" title="复用现有券类修改记录"></iframe></div>
+      </article>
+    </section>
+
+    <section id="attachments" class="section"><h2>四、附件</h2>
+      <a class="attachment" href="../annex/券类管理列表现状.png" target="_blank" rel="noopener noreferrer">现有券类管理列表截图</a>
+      <a class="attachment" href="../annex/券类修改记录现状.png" target="_blank" rel="noopener noreferrer">现有券类修改记录截图</a>
+      <p class="status">注：原始业务需求文档内容已在需求分析阶段提取。本项目附件目录中的截图为本次增量原型的界面还原依据。</p>
+    </section>
+    <div class="footer">券类批量更新 · PRD v1.7 · 文案修订版</div>
+  </main>
+</div>
+</body>
+</html>

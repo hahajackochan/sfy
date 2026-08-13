@@ -1,0 +1,13 @@
+{
+  "name": "official-subsidy-activity-prd",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:pages": "node scripts/build-pages.mjs",
+    "build:worker": "node scripts/build-worker.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm test && npm run build:pages && npm run build:worker",
+    "deploy:worker": "npm run build:worker && npx --yes wrangler@latest deploy"
+  }
+}

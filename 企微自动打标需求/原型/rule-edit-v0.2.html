@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分群规则编辑 - 统计频率与生日时间原型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #303133;
+      background: #fff;
+      font-size: 14px;
+    }
+    .app { width:100vw; min-height:100vh; background:#fff; }
+    .topbar { height:58px; background:#fff; border-bottom:1px solid #ebeef4; display:flex; align-items:center; }
+    .brand { width:192px; height:58px; display:flex; align-items:center; justify-content:center; color:#303133; background:#fff; font-size:18px; font-weight:600; border-right:1px solid #ebeef4; }
+    .tabs { display:flex; height:58px; align-items:center; }
+    .tab { height:58px; display:flex; align-items:center; padding:0 26px; border-right:1px solid #ebeef4; color:#606266; background:#fff; }
+    .tab.active { color:#a86115; background:#fcebd8; }
+    .tenant { display:flex; align-items:center; padding:0 28px; color:#606266; }
+    .user { margin-left:auto; display:flex; align-items:center; gap:26px; padding-right:28px; color:#606266; }
+    .shell { display:flex; min-height:calc(100vh - 58px); }
+    .sidebar { width:192px; background:#fff; color:#606266; padding-top:18px; border-right:1px solid #ebeef4; }
+    .nav-item { height:50px; display:flex; align-items:center; gap:10px; padding:0 18px; color:#606266; font-size:14px; background:#fff; }
+    .nav-item .icon { width:18px; text-align:center; color:#909399; }
+    .nav-item.child { padding-left:30px; }
+    .nav-item.child.active { background:#fcebd8; color:#a86115; }
+    .nav-item.child.active .icon { color:#a86115; }
+    .content { flex:1; background:#fff; padding:22px 26px 88px; overflow:auto; }
+    .crumb { color:#606266; margin:4px 0 18px; }
+    .tabs-line { display:flex; gap:0; height:42px; border-bottom:1px solid #ebeef4; margin-bottom:28px; }
+    .page-tab { min-width:112px; height:42px; display:flex; align-items:center; justify-content:center; color:#606266; border:1px solid #ebeef4; border-bottom:0; margin-right:8px; background:#fff; position:relative; top:1px; }
+    .page-tab.active { color:#a86115; background:#fff; border-top:2px solid #a86115; font-weight:600; }
+    .form { max-width: 1320px; }
+    .form-row { display:flex; align-items:center; min-height:40px; margin-bottom:22px; }
+    .form-label { width:150px; text-align:right; padding-right:14px; color:#606266; }
+    .required::before { content:'*'; color:#f56c6c; margin-right:2px; }
+    .form-control { flex:1; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .input,.select,.date,.number { height:34px; border:1px solid #dcdfe6; border-radius:3px; padding:0 10px; color:#606266; background:#fff; display:inline-flex; align-items:center; min-width:220px; }
+    .input.placeholder,.select.placeholder,.date.placeholder { color:#c0c4cc; }
+    .select::after { content:'⌄'; margin-left:auto; color:#c0c4cc; padding-left:18px; }
+    .radio { display:inline-flex; align-items:center; gap:6px; margin-right:18px; color:#606266; }
+    .radio-dot { width:14px; height:14px; border:1px solid #dcdfe6; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+    .radio.active .radio-dot { border-color:#a86115; }
+    .radio.active .radio-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#a86115; }
+    .condition-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .btn { height:32px; padding:0 15px; border-radius:3px; border:1px solid #dcdfe6; background:#fff; color:#606266; display:inline-flex; align-items:center; justify-content:center; gap:4px; cursor:pointer; }
+    .btn.primary { background:#a86115; border-color:#a86115; color:#fff; }
+    .btn.ghost-orange { color:#a86115; border-color:#f3d5bc; background:#fdf1e8; }
+    .btn.text { border:0; padding:0 4px; color:#a86115; background:transparent; }
+    .condition-wrap { margin-left:150px; width: calc(100% - 150px); }
+    .condition-block { border:1px solid #ebeef4; background:#fff; margin-bottom:18px; }
+    .condition-title { height:42px; display:flex; align-items:center; padding:0 14px; background:#f2f5f9; color:#303133; font-weight:600; border-bottom:1px solid #ebeef4; }
+    .condition-row { min-height:58px; display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #f0f2f5; }
+    .condition-row:last-child { border-bottom:0; }
+    .condition-row .select { min-width:168px; }
+    .condition-row .select.long { min-width:230px; }
+    .condition-row .date { min-width:180px; }
+    .condition-row .number { min-width:120px; width:120px; }
+    .logic { color:#909399; margin:0 2px; }
+    .day-unit { color:#606266; margin-left:-4px; margin-right:-4px; }
+    .delete { margin-left:auto; color:#909399; font-size:16px; cursor:pointer; width:28px; height:28px; border-radius:3px; display:inline-flex; align-items:center; justify-content:center; }
+    .delete:hover { color:#f56c6c; background:#fef0f0; }
+    .hint { color:#909399; font-size:12px; margin-top:8px; line-height:20px; }
+    .freq-note { flex-basis:100%; color:#909399; font-size:12px; margin-top:2px; line-height:20px; }
+    .select { cursor:pointer; position:relative; }
+    .dropdown-menu { position:fixed; min-width:160px; background:#fff; border:1px solid #dcdfe6; border-radius:3px; box-shadow:0 6px 18px rgba(0,0,0,.12); padding:6px 0; z-index:60; display:none; }
+    .dropdown-menu.show { display:block; }
+    .dropdown-option { height:34px; display:flex; align-items:center; padding:0 12px; color:#606266; cursor:pointer; white-space:nowrap; }
+    .dropdown-option:hover { background:#fdf1e8; color:#a86115; }
+    .footer { position:fixed; left:192px; right:0; bottom:0; height:64px; background:#fff; border-top:1px solid #ebeef4; display:flex; align-items:center; padding-left:176px; gap:12px; box-shadow:0 -3px 12px rgba(0,0,0,.03); }
+    .toast { position:fixed; top:76px; left:50%; transform:translateX(-50%); min-width:280px; height:40px; display:none; align-items:center; justify-content:center; border-radius:4px; background:#fef0f0; color:#f56c6c; border:1px solid #fde2e2; z-index:40; }
+    .toast.show { display:flex; }
+    .focus-mask { display:none; }
+    .sandbox-focus .focusable:not(.focus-hit) { opacity:.45; pointer-events:none; }
+    .sandbox-focus .focus-hit { outline:2px solid #a86115; outline-offset:6px; border-radius:4px; }
+    @media (max-width: 1200px) {
+      .brand,.sidebar{width:178px}.footer{left:178px}.form-label{width:130px}.condition-wrap{margin-left:130px;width:calc(100% - 130px)}.footer{padding-left:150px}
+      .condition-row{align-items:flex-start; flex-wrap:wrap}.delete{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">消费者业务中台</div>
+      <div class="tabs"><div class="tab">平台端</div><div class="tab active">租户端</div></div>
+      <div class="tenant">索菲亚会员小程序</div>
+      <div class="user"><span>陈嘉豪，你好！</span><span>退出登录</span></div>
+    </div>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="nav-item"><span class="icon">□</span>首页</div>
+        <div class="nav-item"><span class="icon">□</span>租户管理</div>
+        <div class="nav-item"><span class="icon">□</span>用户管理</div>
+        <div class="nav-item child"><span class="icon">•</span>用户列表</div>
+        <div class="nav-item child"><span class="icon">•</span>标签管理</div>
+        <div class="nav-item child"><span class="icon">•</span>邀请记录列表</div>
+        <div class="nav-item child active"><span class="icon">•</span>分群规则管理</div>
+        <div class="nav-item"><span class="icon">□</span>商品管理</div>
+        <div class="nav-item"><span class="icon">□</span>订单管理</div>
+        <div class="nav-item"><span class="icon">□</span>京东模块</div>
+        <div class="nav-item"><span class="icon">□</span>任务管理</div>
+        <div class="nav-item"><span class="icon">□</span>页面管理</div>
+        <div class="nav-item"><span class="icon">□</span>售后管理</div>
+        <div class="nav-item"><span class="icon">□</span>营销活动</div>
+        <div class="nav-item"><span class="icon">□</span>短信管理</div>
+        <div class="nav-item"><span class="icon">□</span>直播管理</div>
+        <div class="nav-item"><span class="icon">□</span>潜客管理</div>
+        <div class="nav-item"><span class="icon">□</span>成品分销管理</div>
+        <div class="nav-item"><span class="icon">□</span>定制分销管理</div>
+      </aside>
+      <main class="content">
+        <div class="crumb">用户管理 / 分群规则编辑</div>
+        <div class="tabs-line">
+          <div class="page-tab">分群规则管理</div>
+          <div class="page-tab active">分群规则编辑</div>
+        </div>
+
+        <div class="form">
+          <div class="form-row focusable">
+            <div class="form-label required">分群规则名称</div>
+            <div class="form-control"><div class="input placeholder">请输入展示规则名称</div></div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label">分群规则编码</div>
+            <div class="form-control"><div class="input placeholder">系统自动生成</div></div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label required">规则状态</div>
+            <div class="form-control">
+              <label class="radio active"><span class="radio-dot"></span>正常</label>
+              <label class="radio"><span class="radio-dot"></span>停用</label>
+            </div>
+          </div>
+          <div class="form-row focusable focus-stat-frequency">
+            <div class="form-label required">统计频率</div>
+            <div class="form-control" id="frequencyGroup">
+              <label class="radio" data-frequency="每天统计一次"><span class="radio-dot"></span>每天统计一次</label>
+              <label class="radio" data-frequency="仅统计一次"><span class="radio-dot"></span>仅统计一次</label>
+              <span class="freq-note">仅「仅统计一次」的规则后续可配置企微打标任务。</span>
+            </div>
+          </div>
+          <div class="form-row focusable">
+            <div class="form-label required">分群条件筛选</div>
+            <div class="form-control">
+              <label class="radio active"><span class="radio-dot"></span>必须同时满足</label>
+              <label class="radio"><span class="radio-dot"></span>满足其一即可</label>
+            </div>
+          </div>
+
+          <div class="condition-wrap focusable focus-birthday">
+            <div class="condition-head">
+              <button class="btn ghost-orange" onclick="addAttributeRow()">添加属性</button>
+              <button class="btn">添加标签</button>
+              <button class="btn" onclick="addBehaviorRow()">添加行为</button>
+            </div>
+
+            <div class="condition-block">
+              <div class="condition-title">属性</div>
+              <div id="attributeRows">
+              <div class="condition-row">
+                <div class="select" data-options="通用属性|会员属性">通用属性</div>
+                <div class="select long" data-options="位置|用户身份|分销员身份|生日时间">生日时间</div>
+                <div class="select" id="timeMode" data-time-mode="true" data-options="固定起止时间|相对时间范围">固定起止时间</div>
+                <div id="fixedFields" style="display:flex; gap:10px; align-items:center;">
+                  <div class="date placeholder">选择开始时间</div>
+                  <span class="logic">至</span>
+                  <div class="date placeholder">选择结束时间</div>
+                </div>
+                <div id="relativeFields" style="display:none; gap:10px; align-items:center;">
+                  <div class="number placeholder" contenteditable="true">请输入天数</div>
+                  <span class="day-unit">天</span>
+                  <div class="select" style="min-width:96px;" data-options="以内|之前">以内</div>
+                </div>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              </div>
+            </div>
+
+            <div class="condition-block">
+              <div class="condition-title">行为</div>
+              <div id="behaviorRows">
+              <div class="condition-row">
+                <div class="select long" data-options="意向行为 -> 报名行为|线上订单|线下订单">意向行为 -&gt; 报名行为</div>
+                <div class="select long placeholder" data-options="请选择属性...|报名时间|报名渠道|报名状态">请选择属性...</div>
+                <div class="select placeholder" data-options="请选择|等于|不等于|包含|不包含">请选择</div>
+                <button class="btn text">+ 并且满足</button>
+                <span class="delete" onclick="removeRow(this)" title="删除">✕</span>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="footer">
+      <button class="btn">取消</button>
+      <button class="btn primary" onclick="saveForm()">保存</button>
+    </div>
+    <div id="toast" class="toast">请选择统计频率</div>
+  </div>
+  <script>
+    let selectedFrequency = '';
+    document.querySelectorAll('[data-frequency]').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('[data-frequency]').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        selectedFrequency = el.dataset.frequency;
+      });
+    });
+    let mode = 'fixed';
+    function setTimeMode(nextMode){
+      mode = nextMode;
+      document.getElementById('timeMode').childNodes[0].textContent = mode === 'fixed' ? '固定起止时间' : '相对时间范围';
+      document.getElementById('fixedFields').style.display = mode === 'fixed' ? 'flex' : 'none';
+      document.getElementById('relativeFields').style.display = mode === 'fixed' ? 'none' : 'flex';
+    }
+    function showBirthday(targetMode){
+      if (targetMode) setTimeMode(targetMode);
+      document.querySelector('.focus-birthday').scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    const menu = document.createElement('div');
+    menu.className = 'dropdown-menu';
+    document.body.appendChild(menu);
+    function closeMenu(){ menu.classList.remove('show'); menu.innerHTML = ''; }
+    document.addEventListener('click', closeMenu);
+
+    function bindSelect(select) {
+      if (select.dataset.bound === 'true' || !select.dataset.options) return;
+      select.dataset.bound = 'true';
+      select.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const options = select.dataset.options.split('|');
+        const rect = select.getBoundingClientRect();
+        menu.style.left = rect.left + 'px';
+        menu.style.top = rect.bottom + 4 + 'px';
+        menu.style.minWidth = rect.width + 'px';
+        menu.innerHTML = options.map(o => `<div class="dropdown-option" data-value="${o}">${o}</div>`).join('');
+        menu.classList.add('show');
+        menu.querySelectorAll('.dropdown-option').forEach(option => {
+          option.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const value = option.dataset.value;
+            select.childNodes[0].textContent = value;
+            select.classList.remove('placeholder');
+            if (select.dataset.timeMode === 'true') {
+              setTimeMode(value === '相对时间范围' ? 'relative' : 'fixed');
+            }
+            closeMenu();
+          });
+        });
+      });
+    }
+    function bindAllSelects(root=document){ root.querySelectorAll('.select[data-options]').forEach(bindSelect); }
+    function addAttributeRow(){
+      const wrap = document.getElementById('attributeRows');
+      const row = document.createElement('div');
+      row.className = 'condition-row';
+      row.innerHTML = `
+        <div class="select" data-options="通用属性|会员属性">通用属性</div>
+        <div class="select long placeholder" data-options="位置|用户身份|分销员身份|生日时间">请选择属性</div>
+        <div class="select placeholder" data-options="请选择|等于|不等于|包含|不包含">请选择</div>
+        <div class="select long placeholder" data-options="请选择属性值|示例值一|示例值二">请选择属性值</div>
+        <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+      wrap.appendChild(row);
+      bindAllSelects(row);
+    }
+    function addBehaviorRow(){
+      const wrap = document.getElementById('behaviorRows');
+      const row = document.createElement('div');
+      row.className = 'condition-row';
+      row.innerHTML = `
+        <div class="select long" data-options="意向行为 -> 报名行为|线上订单|线下订单">意向行为 -&gt; 报名行为</div>
+        <div class="select long placeholder" data-options="请选择属性...|报名时间|报名渠道|报名状态">请选择属性...</div>
+        <div class="select placeholder" data-options="请选择|等于|不等于|包含|不包含">请选择</div>
+        <button class="btn text">+ 并且满足</button>
+        <span class="delete" onclick="removeRow(this)" title="删除">✕</span>`;
+      wrap.appendChild(row);
+      bindAllSelects(row);
+    }
+    function removeRow(el){
+      const row = el.closest('.condition-row');
+      const group = row?.parentElement;
+      if (group && group.querySelectorAll('.condition-row').length > 1) row.remove();
+    }
+
+    bindAllSelects();
+    function saveForm(){
+      if (!selectedFrequency) {
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        document.querySelector('.focus-stat-frequency').classList.add('focus-hit');
+        setTimeout(()=>t.classList.remove('show'), 1800);
+      }
+    }
+    const params = new URLSearchParams(location.search);
+    const focus = params.get('focus');
+    if (focus) {
+      document.body.classList.add('sandbox-focus');
+      if (focus === 'stat_frequency') document.querySelector('.focus-stat-frequency').classList.add('focus-hit');
+      if (focus === 'birthday_time') document.querySelector('.focus-birthday').classList.add('focus-hit');
+      if (focus === 'birthday_relative') { document.querySelector('.focus-birthday').classList.add('focus-hit'); setTimeMode('relative'); }
+    }
+  </script>
+</body>
+</html>

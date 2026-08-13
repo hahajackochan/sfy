@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>企微私域自动打标营销推送需求</title>
+  <style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;padding:40px;line-height:1.7;color:#1f2937}a{color:#2563eb}</style>
+</head>
+<body>
+  <p>正在打开最新版 PRD：<a id="latestLink" href="产品需求文档/prd_v0.3.html">产品需求文档/prd_v0.3.html</a></p>
+  <script>
+    const fallback = '产品需求文档/prd_v0.3.html';
+    fetch('latest.json?ts=' + Date.now(), { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => {
+        const target = data && data.latest ? data.latest : fallback;
+        document.getElementById('latestLink').href = target;
+        document.getElementById('latestLink').textContent = target;
+        window.location.replace(target);
+      })
+      .catch(() => window.location.replace(fallback));
+  </script>
+</body>
+</html>

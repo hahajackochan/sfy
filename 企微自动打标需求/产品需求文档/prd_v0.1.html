@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企微自动打标需求 PRD v0.1</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --green: #16a34a;
+      --orange: #f97316;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 20% 0%, #e0f2fe 0, transparent 28%), var(--bg);
+      line-height: 1.65;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      padding: 28px 22px; background: rgba(255,255,255,0.82); backdrop-filter: blur(16px);
+      border-right: 1px solid var(--line);
+    }
+    .brand { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .version { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+    .toc-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin: 24px 0 10px; }
+    .toc a { display: block; padding: 8px 10px; border-radius: 10px; color: #334155; font-size: 14px; }
+    .toc a:hover { background: var(--primary-soft); color: var(--primary); }
+    main { padding: 36px 44px 80px; max-width: 1240px; }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 60%, #38bdf8 100%);
+      color: #fff; border-radius: 28px; padding: 34px; box-shadow: var(--shadow); margin-bottom: 28px;
+    }
+    .hero h1 { margin: 0 0 12px; font-size: 34px; line-height: 1.2; letter-spacing: -0.04em; }
+    .hero p { margin: 0; color: rgba(255,255,255,.82); max-width: 820px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 24px; }
+    .meta-card { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); border-radius: 16px; padding: 14px; }
+    .meta-card b { display: block; font-size: 13px; color: rgba(255,255,255,.72); font-weight: 500; }
+    .meta-card span { display: block; margin-top: 4px; font-weight: 700; }
+    section { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: 28px; box-shadow: 0 8px 28px rgba(15,23,42,.04); margin-bottom: 22px; }
+    h2 { font-size: 24px; margin: 0 0 18px; letter-spacing: -0.03em; }
+    h3 { font-size: 18px; margin: 24px 0 12px; }
+    h4 { margin: 18px 0 8px; }
+    .note { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; padding: 14px 16px; border-radius: 14px; }
+    .info { background: var(--primary-soft); border: 1px solid #bfdbfe; color: #1e3a8a; padding: 14px 16px; border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; overflow: hidden; border-radius: 14px; }
+    th, td { border: 1px solid var(--line); padding: 12px 14px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; font-weight: 700; color: #334155; }
+    tr:nth-child(even) td { background: #fbfdff; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
+    .tag.p0 { background: #fee2e2; color: #991b1b; }
+    .tag.p1 { background: #ffedd5; color: #9a3412; }
+    .tag.p2 { background: #e0f2fe; color: #075985; }
+    .status { background: #f1f5f9; color: #334155; }
+    .status.blue { background: #dbeafe; color: #1d4ed8; }
+    .status.green { background: #dcfce7; color: #15803d; }
+    .status.red { background: #fee2e2; color: #b91c1c; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: #fff; }
+    .card b { display: block; margin-bottom: 6px; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: stretch; }
+    .step { background: #f8fafc; border: 1px solid var(--line); border-radius: 16px; padding: 14px; position: relative; }
+    .step:not(:last-child)::after { content: '→'; position: absolute; right: -15px; top: 38%; color: var(--muted); font-weight: 800; }
+    .step b { display: block; color: #0f172a; margin-bottom: 6px; }
+    ul { padding-left: 1.25rem; }
+    .pending { color: var(--orange); font-weight: 700; }
+    .ok { color: var(--green); font-weight: 700; }
+    .danger { color: var(--red); font-weight: 700; }
+    .footer-note { color: var(--muted); font-size: 13px; }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      main { padding: 22px; }
+      .meta-grid, .cards, .flow { grid-template-columns: 1fr; }
+      .step:not(:last-child)::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">企微自动打标 PRD</div>
+      <div class="version">v0.1 · 第一版初步 PRD</div>
+      <div class="toc-title">目录</div>
+      <nav class="toc">
+        <a href="#info">项目信息</a>
+        <a href="#background">一、需求背景</a>
+        <a href="#goals">二、需求目标</a>
+        <a href="#users">三、用户与场景</a>
+        <a href="#journey">四、用户旅程</a>
+        <a href="#scope">五、需求功能清单</a>
+        <a href="#logic">六、核心业务逻辑</a>
+        <a href="#modules">七、模块初步方案</a>
+        <a href="#data">八、数据与状态</a>
+        <a href="#risks">九、异常与边界</a>
+        <a href="#todo">十、待补充事项</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <h1>企微自动打标需求</h1>
+        <p>基于消费者业务中台「分群规则管理」能力，将一次性分群统计结果同步用于企业微信客户运营：运营可为符合条件的分群规则配置一个企微标签，系统在分群统计后对命中用户执行企微打标，并支持失败原因查看与批量重试。</p>
+        <div class="meta-grid">
+          <div class="meta-card"><b>系统</b><span>消费者业务中台</span></div>
+          <div class="meta-card"><b>模块</b><span>分群规则管理</span></div>
+          <div class="meta-card"><b>版本</b><span>v0.1 初稿</span></div>
+          <div class="meta-card"><b>产品经理</b><span>待补充</span></div>
+        </div>
+      </header>
+
+      <section id="info">
+        <h2>项目信息与版本记录</h2>
+        <table>
+          <tr><th>字段</th><th>内容</th></tr>
+          <tr><td>项目名称</td><td>企微自动打标需求</td></tr>
+          <tr><td>所属系统</td><td>消费者业务中台</td></tr>
+          <tr><td>所属模块</td><td>分群规则管理</td></tr>
+          <tr><td>关联业务</td><td>会员小程序广告展示、企业微信客户运营</td></tr>
+          <tr><td>当前阶段</td><td>需求第一版初稿，待补充现有页面截图与新增条件字段规则后进入原型设计</td></tr>
+        </table>
+        <table>
+          <tr><th>版本</th><th>日期</th><th>说明</th><th>产品经理</th></tr>
+          <tr><td>v0.1</td><td>2026-05-18</td><td>基于需求采集输出第一版 PRD 架构与核心业务逻辑</td><td>待补充</td></tr>
+        </table>
+      </section>
+
+      <section id="background">
+        <h2>一、需求背景</h2>
+        <h3>1.1 当前现状</h3>
+        <p>现有会员小程序已接入消费者业务中台的分群规则能力。业务人员可在中台配置由「属性」「标签」「行为」组成的分群规则，系统根据规则对会员进行分层。当会员进入小程序时，系统识别会员所属分群，并展示对应广告内容。</p>
+        <p>目前分群规则主要应用在小程序展示层，分群结果尚未沉淀到企业微信客户运营链路中。业务如果希望针对某一类分群用户做企微内容推送，需要额外通过人工、数据导出或其他链路进行处理，效率低且容易出现口径不一致。</p>
+
+        <h3>1.2 业务诉求</h3>
+        <p>业务希望将分群规则统计出的用户同步用于企微运营：对于指定分群规则命中的企微客户，系统自动打上运营选择的企业微信标签。后续业务可在企微侧基于该标签筛选客户并推送内容，开展精细化运营。</p>
+
+        <h3>1.3 本次需求定位</h3>
+        <p>本次不是重构分群规则系统，而是在现有分群规则能力上扩展三类能力：</p>
+        <ul>
+          <li>新增分群规则统计频率，让系统区分「每天统计一次」与「仅统计一次」。</li>
+          <li>针对「仅统计一次」的分群规则，提供企微打标任务配置能力。</li>
+          <li>补充本次运营需要的新分群条件，并完善分群统计与用户打标状态展示。</li>
+        </ul>
+      </section>
+
+      <section id="goals">
+        <h2>二、需求目标</h2>
+        <table>
+          <tr><th>目标类型</th><th>描述</th><th>衡量指标</th><th>目标值</th></tr>
+          <tr>
+            <td>业务目标</td>
+            <td>让业务可以将一次性分群结果用于企微客户运营，提升后续内容推送与活动触达的精细化程度。</td>
+            <td>支持企微打标的分群规则覆盖率</td>
+            <td>满足本次指定运营场景</td>
+          </tr>
+          <tr>
+            <td>效率目标</td>
+            <td>减少人工导数、人工筛选、人工打标签等操作。</td>
+            <td>从分群创建到企微标签可用的人工操作步骤</td>
+            <td>运营仅需创建规则并配置一个企微标签</td>
+          </tr>
+          <tr>
+            <td>准确性目标</td>
+            <td>保证企微标签命中用户与分群统计结果保持一致。</td>
+            <td>分群命中用户与打标处理用户的一致性</td>
+            <td>系统自动按统计结果执行打标</td>
+          </tr>
+          <tr>
+            <td>可追踪目标</td>
+            <td>运营可查看任务状态、用户维度打标状态和失败原因，并可对失败用户批量重试。</td>
+            <td>失败原因可见性、重试闭环完整度</td>
+            <td>失败用户可定位原因并重新打标</td>
+          </tr>
+        </table>
+      </section>
+
+      <section id="users">
+        <h2>三、用户与使用场景</h2>
+        <div class="cards">
+          <div class="card">
+            <b>运营人员</b>
+            <p>创建分群规则，选择统计频率，为符合条件的一次性分群配置企微标签，并查看打标结果。</p>
+          </div>
+          <div class="card">
+            <b>业务管理人员</b>
+            <p>关注分群与企微标签是否按预期执行，评估后续企微推送活动的客户覆盖范围。</p>
+          </div>
+          <div class="card">
+            <b>系统/数据任务</b>
+            <p>按既有统计链路执行分群统计，并在满足配置条件时调用企微自建系统完成标签处理。</p>
+          </div>
+        </div>
+        <h3>典型场景</h3>
+        <ul>
+          <li>运营希望针对「生日时间」「推荐官身份」「订单实付金额」等条件筛选会员，并在企微中标记为指定运营人群。</li>
+          <li>运营创建仅统计一次的分群规则后，在规则统计前设置企微标签，等待系统统计后自动打标。</li>
+          <li>打标完成后，运营在用户列表查看哪些用户成功、哪些失败，以及失败原因。</li>
+          <li>对于接口调用失败等可恢复失败，运营勾选失败用户并批量重新打标。</li>
+        </ul>
+      </section>
+
+      <section id="journey">
+        <h2>四、用户使用场景与旅程图</h2>
+        <table>
+          <tr><th>阶段</th><th>用户触点</th><th>用户行为</th><th>痛点/情绪</th><th>产品机会点</th></tr>
+          <tr>
+            <td>明确运营人群</td>
+            <td>运营活动方案、会员运营策略</td>
+            <td>运营确定需要触达的人群，例如特定生日时间、推荐官身份或订单金额人群。</td>
+            <td>需要把业务口径转化成系统可识别的分群条件。</td>
+            <td>补充分群条件，让运营可以直接在规则编辑中完成配置。</td>
+          </tr>
+          <tr>
+            <td>创建分群规则</td>
+            <td>分群规则编辑页</td>
+            <td>选择属性、标签、行为条件，设置统计频率。</td>
+            <td>如果统计频率未明确，后续无法判断是否适合企微打标。</td>
+            <td>新增必填字段「统计频率」，为后续任务能力提供前置判断。</td>
+          </tr>
+          <tr>
+            <td>配置企微打标</td>
+            <td>分群规则列表、企微打标任务页</td>
+            <td>在符合条件的规则右侧点击企微打标任务，选择一个企微标签并保存。</td>
+            <td>担心选错标签，或规则统计后配置被误改。</td>
+            <td>只允许未统计的一次性规则配置；统计后锁定标签配置。</td>
+          </tr>
+          <tr>
+            <td>系统执行</td>
+            <td>后台分群统计与企微接口</td>
+            <td>系统完成分群统计，并对命中用户执行企微打标。</td>
+            <td>运营无法直接感知每个用户是否打标成功。</td>
+            <td>提供任务状态与用户维度打标状态。</td>
+          </tr>
+          <tr>
+            <td>结果处理</td>
+            <td>分群规则用户列表</td>
+            <td>查看用户打标状态，对失败用户批量重试。</td>
+            <td>失败原因不清晰会导致运营无法判断是否需要重试。</td>
+            <td>展示失败原因，并支持批量重新打标。</td>
+          </tr>
+        </table>
+      </section>
+
+      <section id="scope">
+        <h2>五、需求功能清单</h2>
+        <table>
+          <tr><th>模块</th><th>功能点</th><th>优先级</th><th>说明</th><th>状态</th></tr>
+          <tr>
+            <td>分群规则编辑</td>
+            <td>新增统计频率</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>新增「每天统计一次」「仅统计一次」，默认不选中，保存必填。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+          <tr>
+            <td>分群规则编辑</td>
+            <td>新增分群条件</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>新增生日时间、推荐官身份、订单实付金额、安装时间、运营商主体。</td>
+            <td><span class="tag status">待字段规则</span></td>
+          </tr>
+          <tr>
+            <td>分群规则列表</td>
+            <td>企微打标任务入口</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>仅「统计频率=仅统计一次」且「最后统计时间为空」的记录展示入口。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+          <tr>
+            <td>企微打标任务页</td>
+            <td>企微标签配置</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>从企微自建系统读取标签，每个分群规则只能选择一个企微标签。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+          <tr>
+            <td>企微打标任务页</td>
+            <td>任务状态展示</td>
+            <td><span class="tag p1">P1</span></td>
+            <td>状态包括未配置、待执行、已执行。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+          <tr>
+            <td>分群规则用户列表</td>
+            <td>企微打标状态</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>用户维度展示待打标、无需打标、打标成功、打标失败。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+          <tr>
+            <td>分群规则用户列表</td>
+            <td>失败原因与批量重试</td>
+            <td><span class="tag p0">P0</span></td>
+            <td>失败记录展示原因，支持勾选失败用户批量重试。</td>
+            <td><span class="tag status blue">已明确</span></td>
+          </tr>
+        </table>
+      </section>
+
+      <section id="logic">
+        <h2>六、核心业务逻辑</h2>
+        <h3>6.1 主链路</h3>
+        <div class="flow">
+          <div class="step"><b>创建规则</b>运营配置分群条件并选择统计频率。</div>
+          <div class="step"><b>保存规则</b>系统校验统计频率必填。</div>
+          <div class="step"><b>配置标签</b>符合条件的规则可进入企微打标任务页。</div>
+          <div class="step"><b>系统统计</b>分群规则执行一次性统计。</div>
+          <div class="step"><b>执行打标</b>对命中用户调用企微链路打标签。</div>
+        </div>
+
+        <h3>6.2 企微打标入口判断</h3>
+        <table>
+          <tr><th>判断项</th><th>规则</th><th>结果</th></tr>
+          <tr><td>统计频率</td><td>必须等于「仅统计一次」</td><td>满足时继续判断；不满足不展示企微打标任务按钮。</td></tr>
+          <tr><td>最后统计时间</td><td>必须为空</td><td>满足时展示入口；已有统计时间则表示规则已执行统计，不展示入口。</td></tr>
+          <tr><td>权限</td><td>沿用分群规则管理相关操作权限，具体权限点待确认</td><td>无权限时不展示或置灰，待后续确认。</td></tr>
+        </table>
+
+        <h3>6.3 标签配置变更规则</h3>
+        <table>
+          <tr><th>分群规则状态</th><th>是否可配置企微标签</th><th>是否可修改企微标签</th><th>是否可删除配置</th></tr>
+          <tr><td>未执行统计</td><td>是</td><td>是</td><td>是</td></tr>
+          <tr><td>已触发统计</td><td>否</td><td>否</td><td>否</td></tr>
+        </table>
+
+        <h3>6.4 任务状态定义</h3>
+        <table>
+          <tr><th>状态</th><th>定义</th><th>触发条件</th></tr>
+          <tr><td><span class="tag status">未配置</span></td><td>该分群规则尚未保存企微标签配置。</td><td>未选择并保存企微标签。</td></tr>
+          <tr><td><span class="tag status blue">待执行</span></td><td>已保存企微标签配置，等待分群规则统计后执行打标。</td><td>运营保存企微标签配置后。</td></tr>
+          <tr><td><span class="tag status green">已执行</span></td><td>本次分群用户已经执行过打标签处理，不区分全部成功、部分失败或全部失败。</td><td>系统对本次分群用户完成打标处理后。</td></tr>
+        </table>
+      </section>
+
+      <section id="modules">
+        <h2>七、模块初步方案</h2>
+        <h3>7.1 分群规则编辑：统计频率</h3>
+        <ul>
+          <li>在分群规则编辑页新增字段「统计频率」。</li>
+          <li>字段选项：每天统计一次、仅统计一次。</li>
+          <li>默认不选中。</li>
+          <li>保存分群规则时必填校验；未选择时，阻止保存并提示运营选择统计频率。</li>
+          <li>本字段将作为后续企微打标任务入口展示的核心判断条件。</li>
+        </ul>
+
+        <h3>7.2 分群规则编辑：新增条件</h3>
+        <table>
+          <tr><th>一级类型</th><th>二级类型</th><th>新增条件</th><th>配置规则</th></tr>
+          <tr><td>属性</td><td>通用属性</td><td>生日时间</td><td class="pending">待根据现有页面截图与字段规则补充</td></tr>
+          <tr><td>属性</td><td>会员属性</td><td>推荐官身份</td><td class="pending">待根据现有页面截图与字段规则补充</td></tr>
+          <tr><td>行为</td><td>线上订单</td><td>订单实付金额</td><td class="pending">待明确单笔/累计金额、时间范围、比较符等规则</td></tr>
+          <tr><td>行为</td><td>线下订单</td><td>安装时间</td><td class="pending">待明确日期范围与取值来源</td></tr>
+          <tr><td>行为</td><td>线下订单</td><td>运营商主体</td><td class="pending">待明确枚举来源与筛选方式</td></tr>
+        </table>
+
+        <h3>7.3 分群规则列表：企微打标任务入口</h3>
+        <ul>
+          <li>在分群规则列表记录右侧操作区新增「企微打标任务」入口。</li>
+          <li>入口仅在满足条件时展示：统计频率 = 仅统计一次，且最后统计时间为空。</li>
+          <li>点击后进入该分群规则对应的企微打标任务页面。</li>
+          <li>对于每天统计一次或已统计过的规则，不展示该入口，避免动态分群或历史统计结果被误配置。</li>
+        </ul>
+
+        <h3>7.4 企微打标任务页</h3>
+        <ul>
+          <li>展示当前分群规则基础信息：规则名称、统计频率、最后统计时间、当前任务状态。</li>
+          <li>支持选择一个企业微信标签。</li>
+          <li>企微标签通过接口从企微自建系统读取。</li>
+          <li>保存后，任务状态由「未配置」变更为「待执行」。</li>
+          <li>规则未执行统计前，运营可修改或删除已保存的标签配置。</li>
+          <li>规则已触发统计后，标签配置锁定，不允许修改或删除。</li>
+        </ul>
+
+        <h3>7.5 分群规则用户列表</h3>
+        <ul>
+          <li>新增字段「企微打标状态」。</li>
+          <li>未配置企微打标任务的分群规则，用户记录展示「无需打标」。</li>
+          <li>已配置企微打标任务且等待处理的用户，展示「待打标」。</li>
+          <li>打标成功后展示「打标成功」。</li>
+          <li>打标失败后展示「打标失败」，并展示失败原因。</li>
+          <li>支持勾选打标失败的用户后批量重试。</li>
+        </ul>
+      </section>
+
+      <section id="data">
+        <h2>八、数据与状态</h2>
+        <h3>8.1 分群规则新增/调整字段</h3>
+        <table>
+          <tr><th>字段</th><th>说明</th><th>是否必填</th><th>备注</th></tr>
+          <tr><td>统计频率</td><td>每天统计一次 / 仅统计一次</td><td>是</td><td>默认不选中，保存时必选。</td></tr>
+          <tr><td>最后统计时间</td><td>分群规则最近一次完成统计的时间</td><td>否</td><td>用于判断企微打标任务入口是否展示。</td></tr>
+        </table>
+
+        <h3>8.2 企微打标任务数据</h3>
+        <table>
+          <tr><th>字段</th><th>说明</th><th>备注</th></tr>
+          <tr><td>分群规则 ID</td><td>企微打标任务绑定的分群规则</td><td>一条规则最多配置一个企微标签任务。</td></tr>
+          <tr><td>企微标签 ID</td><td>从企微自建系统读取的标签标识</td><td>保存配置时记录。</td></tr>
+          <tr><td>企微标签名称</td><td>运营选择的标签名称</td><td>用于页面展示。</td></tr>
+          <tr><td>任务状态</td><td>未配置 / 待执行 / 已执行</td><td>用于任务页面展示。</td></tr>
+          <tr><td>执行时间</td><td>打标任务完成处理的时间</td><td>已执行后记录。</td></tr>
+        </table>
+
+        <h3>8.3 用户维度打标状态</h3>
+        <table>
+          <tr><th>状态</th><th>定义</th><th>是否支持重试</th></tr>
+          <tr><td>无需打标</td><td>分群规则未设置企微打标任务。</td><td>否</td></tr>
+          <tr><td>待打标</td><td>已设置企微打标任务，用户等待执行打标。</td><td>否</td></tr>
+          <tr><td>打标成功</td><td>用户已成功完成企微标签处理。</td><td>否</td></tr>
+          <tr><td>打标失败</td><td>用户企微打标处理失败，需展示失败原因。</td><td>是，支持批量重试。</td></tr>
+        </table>
+      </section>
+
+      <section id="risks">
+        <h2>九、异常与边界处理</h2>
+        <table>
+          <tr><th>场景</th><th>处理规则</th><th>提示/展示</th></tr>
+          <tr>
+            <td>保存分群规则时未选择统计频率</td>
+            <td>阻止保存。</td>
+            <td>提示：请选择统计频率。</td>
+          </tr>
+          <tr>
+            <td>每天统计一次的分群规则</td>
+            <td>不支持设置企微打标任务。</td>
+            <td>列表不展示企微打标任务入口。</td>
+          </tr>
+          <tr>
+            <td>仅统计一次但最后统计时间不为空</td>
+            <td>不允许再配置或修改企微打标任务。</td>
+            <td>列表不展示入口；任务页如可访问则配置区域锁定。</td>
+          </tr>
+          <tr>
+            <td>企微标签接口读取失败</td>
+            <td>标签列表加载失败，允许重试。</td>
+            <td>提示：企微标签加载失败，请稍后重试。</td>
+          </tr>
+          <tr>
+            <td>未匹配到企微客户</td>
+            <td>用户维度记录为打标失败，并展示失败原因。</td>
+            <td>失败原因：未匹配到企微客户。</td>
+          </tr>
+          <tr>
+            <td>企微接口调用失败</td>
+            <td>用户维度记录为打标失败，可批量重试。</td>
+            <td>失败原因：接口调用失败。</td>
+          </tr>
+          <tr>
+            <td>批量重试时勾选了非失败用户</td>
+            <td>仅允许选择打标失败用户，或提交时自动过滤非失败记录。</td>
+            <td class="pending">交互细节待原型阶段确认。</td>
+          </tr>
+        </table>
+      </section>
+
+      <section id="todo">
+        <h2>十、待补充事项</h2>
+        <div class="note">
+          当前 PRD 为第一版业务逻辑初稿，以下内容需要在原型设计前补齐，以确保界面和字段规则贴合现有系统。
+        </div>
+        <ul>
+          <li>现有分群规则编辑页面截图。</li>
+          <li>现有分群规则列表及右侧操作区截图。</li>
+          <li>现有分群规则用户列表截图。</li>
+          <li>新增条件的取值规则：生日时间、推荐官身份、订单实付金额、安装时间、运营商主体。</li>
+          <li>企微标签选择组件是否需要支持标签组、搜索、分页、远程加载。</li>
+          <li>权限规则：哪些角色可配置企微打标任务，哪些角色可批量重试。</li>
+        </ul>
+        <p class="footer-note">后续原型确认后，将补充详细方案、Mermaid 流程图、原型切片与最终版 PRD。</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

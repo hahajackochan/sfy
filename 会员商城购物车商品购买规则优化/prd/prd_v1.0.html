@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRD v1.0｜会员商城购物车&商品购买规则优化2606</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #697386;
+      --line: #e6e9f0;
+      --brand: #2457d6;
+      --brand-soft: #eef4ff;
+      --success: #16875d;
+      --warning: #b96b00;
+      --danger: #c4362e;
+      --radius: 18px;
+      --shadow: 0 18px 50px rgba(21, 35, 70, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #f8faff 0%, #f4f6fb 42%, #f8f4ef 100%);
+      line-height: 1.65;
+    }
+    a { color: var(--brand); text-decoration: none; }
+    .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      padding: 28px 20px; background: rgba(255,255,255,0.82); backdrop-filter: blur(18px);
+      border-right: 1px solid var(--line);
+    }
+    .logo { font-weight: 800; font-size: 18px; line-height: 1.35; margin-bottom: 8px; }
+    .version { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+    nav a { display: block; padding: 9px 12px; border-radius: 10px; color: #3d4961; font-size: 14px; }
+    nav a:hover { background: var(--brand-soft); color: var(--brand); }
+    .nav-group-toggle { width: 100%; border: 0; background: transparent; display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 10px; color: #3d4961; font-size: 14px; cursor: pointer; text-align: left; font-family: inherit; }
+    .nav-group-toggle:hover { background: var(--brand-soft); color: var(--brand); }
+    .nav-group-toggle.collapsed span { transform: rotate(-90deg); }
+    .nav-submenu { display: none; margin: 2px 0 8px 10px; padding-left: 10px; border-left: 2px solid var(--line); }
+    .nav-submenu.open { display: block; }
+    .nav-submenu a { font-size: 13px; padding: 7px 10px; color: #697386; }
+    main { padding: 36px 44px 80px; max-width: 1280px; }
+    .hero { background: linear-gradient(135deg, #142b73, #2457d6 58%, #5b86ff); color: white; border-radius: 26px; padding: 36px; box-shadow: var(--shadow); margin-bottom: 28px; }
+    .hero h1 { margin: 0 0 12px; font-size: 34px; line-height: 1.25; letter-spacing: -0.02em; }
+    .hero p { margin: 0; opacity: .9; max-width: 860px; }
+    section { background: rgba(255,255,255,.92); border: 1px solid rgba(230,233,240,.9); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin: 22px 0; }
+    h2 { margin: 0 0 18px; font-size: 24px; }
+    h3 { margin: 24px 0 12px; font-size: 18px; }
+    .hint { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { border: 1px solid var(--line); border-radius: 16px; padding: 18px; background: #fff; }
+    .card strong { display: block; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; background: #fff; border-radius: 14px; overflow: hidden; }
+    th, td { border: 1px solid var(--line); padding: 12px 14px; text-align: left; vertical-align: middle; font-size: 14px; }
+    th { background: #f2f5fb; color: #34405a; font-weight: 700; }
+    .tag { display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+    .p0 { background: #fff0ef; color: var(--danger); }
+    .p1 { background: #fff7e8; color: var(--warning); }
+    .done { background: #eaf8f2; color: var(--success); }
+    .todo { background: #edf3ff; color: var(--brand); }
+    .rule-list { margin: 0; padding-left: 20px; }
+    .rule-list li { margin: 7px 0; }
+    .toc-note { margin-top: 20px; padding: 12px; background: #f7f9fd; border-radius: 12px; color: var(--muted); font-size: 13px; }
+    .callout { border-left: 4px solid var(--brand); background: var(--brand-soft); padding: 14px 16px; border-radius: 12px; margin: 14px 0; }
+    .empty { color: var(--muted); font-style: italic; }
+    .flow-card { border: 1px solid var(--line); border-radius: 16px; background: #fff; margin: 18px 0; overflow: hidden; }
+    .flow-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); background: #f7f9fd; }
+    .flow-head h3 { margin: 0; font-size: 16px; }
+    .flow-toggle { border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--brand); padding: 6px 12px; cursor: pointer; font-weight: 700; }
+    .flow-body { padding: 18px; }
+    .flow-source { display: none; margin: 0; white-space: pre-wrap; background: #0f172a; color: #dbeafe; padding: 16px; border-radius: 12px; overflow: auto; }
+    .flow-card.show-source .mermaid { display: none; }
+    .flow-card.show-source .flow-source { display: block; }
+    .prototype-block { border: 1px solid var(--line); border-radius: 16px; background: #fff; margin: 18px 0 28px; overflow: hidden; }
+    .prototype-head { display:flex; align-items:center; justify-content:space-between; padding: 12px 16px; background:#f7f9fd; border-bottom:1px solid var(--line); }
+    .prototype-head h4 { margin:0; font-size:15px; }
+    .prototype-frame { width:100%; height:620px; border:0; background:transparent; display:block; }
+    .prototype-frame.mobile { width:430px; height:900px; margin:0 auto; }
+    .preview-btn { border:1px solid var(--line); border-radius:999px; background:#fff; color:var(--brand); padding:6px 12px; cursor:pointer; font-weight:700; }
+    .preview-modal { position:fixed; inset:0; background:rgba(15,23,42,.72); z-index:50; display:none; align-items:center; justify-content:center; padding:10px; }
+    .preview-modal.open { display:flex; }
+    .preview-dialog { width:min(99vw,1680px); height:min(98vh,1080px); background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.35); display:flex; flex-direction:column; }
+    .preview-dialog iframe { flex:1; width:100%; border:0; }
+    .preview-dialog-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--line); }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; }
+      main { padding: 20px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="logo">会员商城购物车<br/>商品购买规则优化</div>
+      <div class="version">PRD v1.0｜初步详细版</div>
+      <nav>
+        <a href="#info">项目信息</a>
+        <a href="#background">一、需求背景</a>
+        <a href="#goals">二、需求目标</a>
+        <a href="#scenarios">三、用户与使用场景</a>
+        <a href="#features">四、需求功能清单</a>
+        <button class="nav-group-toggle" type="button" onclick="toggleNavGroup(this)">五、详细方案 <span>⌄</span></button>
+        <div class="nav-submenu open">
+          <a href="#member-admin">5.1 会员管理</a>
+          <a href="#history-data">5.2 历史数据处理</a>
+          <a href="#purchase-rules-detail">5.3 商品购买规则</a>
+          <a href="#product-detail">5.4 商品详情页</a>
+          <a href="#cart-rules">5.5 购物车列表页</a>
+          <a href="#order-rules">5.6 下单流程</a>
+        </div>
+        <a href="#flows">六、业务流程图</a>
+        <a href="#exceptions">七、异常与边界处理</a>
+        <a href="#tracking">八、数据追踪与埋点</a>
+        <a href="#annex">九、附件</a>
+      </nav>
+      <div class="toc-note">本版本用于确认产品方向、信息架构和基础规则；原型确认后补充详细交互切片与流程图。</div>
+    </aside>
+    <main>
+      <div class="hero">
+        <h1>会员商城购物车 & 商品购买规则优化 2606</h1>
+        <p>围绕政企大客户身份、商品购买身份限制、京东商品购物车能力和地区库存校验，建立可扩展的业务身份体系，并补齐小程序前台购买链路与统一平台后台管理能力。</p>
+      </div>
+
+      <section id="info">
+        <h2>项目信息与版本记录</h2>
+        <table>
+          <tr><th>项目名称</th><td>会员商城购物车 & 商品购买规则优化 2606</td><th>版本</th><td>v1.0</td></tr>
+          <tr><th>产品经理</th><td>Jacko</td><th>文档状态</th><td>初步详细版，待原型确认</td></tr>
+          <tr><th>涉及系统</th><td>小程序统一平台、会员小程序</td><th>涉及模块</th><td>会员管理、商品购买规则、商品详情、购物车、下单流程</td></tr>
+          <tr><th>目标上线时间</th><td>6 月 24 日</td><th>版本切换</th><td>预留：v1.0</td></tr>
+        </table>
+        <table>
+          <tr><th>版本</th><th>日期</th><th>变更说明</th><th>产品经理</th></tr>
+          <tr><td>v1.0</td><td>2026-06-08</td><td>基于业务确认范围生成初步详细 PRD。</td><td>Jacko</td></tr>
+        </table>
+      </section>
+
+      <section id="background">
+        <h2>一、需求背景</h2>
+        <p>历史业务中，京东商品主要作为礼品使用，不承担常规销售购物车场景，因此一期购物车未覆盖京东商品加购能力。随着政企异业合作业务推进，业务希望通过线上商品优惠券、京东商品政策礼品和合并支付能力，提升政企大客户的活动下单转化。</p>
+        <p>当前系统存在三个主要缺口：会员身份体系无法表达“政企大客户”这类可扩展业务身份；商品购买规则无法按业务身份限制购买；京东商品无法进入购物车，且购物车缺少按收货地址判断京东商品地区库存的能力。</p>
+        <div class="callout"><strong>产品定位：</strong>本需求不是单点新增“政企大客户”字段，而是新增可扩展的业务身份结构，并以该身份支撑商品购买资格控制。</div>
+      </section>
+
+      <section id="goals">
+        <h2>二、需求目标</h2>
+        <table>
+          <tr><th>目标类型</th><th>描述</th><th>衡量指标</th><th>目标值</th></tr>
+          <tr><td>业务转化</td><td>支撑政企异业合作活动的线上选购、加购、下单链路。</td><td>政企活动成交单数</td><td>618 期间目标贡献 54 单</td></tr>
+          <tr><td>规则扩展</td><td>会员记录支持多个业务身份，为后续新增身份预留扩展能力。</td><td>业务身份配置覆盖率</td><td>政企大客户身份首版可用</td></tr>
+          <tr><td>购买管控</td><td>商品可配置仅具备指定业务身份的会员可购买。</td><td>受限商品拦截准确率</td><td>错误放行 0 起</td></tr>
+          <tr><td>用户体验</td><td>前台在详情、购物车、下单环节给出清晰限制反馈。</td><td>因规则不清导致的咨询/投诉</td><td>上线后持续观察</td></tr>
+          <tr><td>履约可用性</td><td>购物车按地址校验京东商品库存，避免缺货下单。</td><td>京东缺货订单提交失败率</td><td>上线后持续观察</td></tr>
+        </table>
+      </section>
+
+      <section id="scenarios">
+        <h2>三、用户与使用场景</h2>
+        <div class="grid grid-3">
+          <div class="card"><strong>后台运营</strong><span class="hint">在统一平台查看会员、设置政企大客户身份、核对身份来源与达成时间。</span></div>
+          <div class="card"><strong>政企会员</strong><span class="hint">在会员小程序查看可购商品、加入购物车、选择地址并提交订单。</span></div>
+          <div class="card"><strong>普通会员</strong><span class="hint">访问受限商品时可看到不可购买原因，避免误以为系统异常。</span></div>
+        </div>
+        <h3>核心用户旅程图</h3>
+        <table>
+          <tr><th>阶段</th><th>用户触点</th><th>用户行为</th><th>痛点/情绪</th><th>产品机会点</th></tr>
+          <tr><td>身份生成</td><td>统一平台 / 历史任务</td><td>系统按规则自动打标，或运营人工设置身份。</td><td>身份规则不清会导致漏标或误标。</td><td>用业务身份结构记录名称、来源、达成时间。</td></tr>
+          <tr><td>会员管理</td><td>会员列表 / 会员详情</td><td>运营筛选政企大客户，查看身份详情。</td><td>无法快速确认会员是否具备购买资格。</td><td>新增筛选条件、详情字段和设置入口。</td></tr>
+          <tr><td>商品配置</td><td>商品购买规则</td><td>运营配置商品需要哪些业务身份才可购买。</td><td>单一开关不利于后续身份扩展。</td><td>支持多业务身份配置，多个身份为同时满足关系。</td></tr>
+          <tr><td>商品浏览</td><td>商品详情页</td><td>会员查看商品，尝试购买或加购。</td><td>非目标会员可能误操作。</td><td>购买按钮置灰并提示“仅限政企大客户购买”。</td></tr>
+          <tr><td>购物车结算</td><td>购物车列表页</td><td>会员选择地址，查看可购买与不可购买商品。</td><td>身份不符、地区缺货的原因需要明确展示。</td><td>进入不可购买区域并展示具体原因。</td></tr>
+          <tr><td>提交订单</td><td>下单页</td><td>会员确认订单并提交。</td><td>规则或库存可能已变化。</td><td>下单流程最终强校验身份与京东地区库存。</td></tr>
+        </table>
+      </section>
+
+      <section id="features">
+        <h2>四、需求功能清单</h2>
+        <table>
+          <tr><th>系统</th><th>模块</th><th>功能点</th><th>优先级</th><th>说明</th><th>详细方案</th></tr>
+          <tr><td rowspan="6">小程序统一平台</td><td rowspan="4">会员管理</td><td>新增业务身份记录</td><td><span class="tag p0">P0</span></td><td>会员可拥有多个业务身份。</td><td><a href="#member-admin">查看</a></td></tr>
+          <tr><td>会员列表业务身份筛选</td><td><span class="tag p0">P0</span></td><td>筛选项为「业务身份」，选项包含「政企大客户」。</td><td><a href="#member-admin">查看</a></td></tr>
+          <tr><td>会员详情身份展示</td><td><span class="tag p0">P0</span></td><td>展示身份名称、达成时间、身份来源。</td><td><a href="#member-admin">查看</a></td></tr>
+          <tr><td>人工设置业务身份</td><td><span class="tag p0">P0</span></td><td>列表右侧入口，弹窗选择可设置身份；已有身份不再展示。</td><td><a href="#member-admin">查看</a></td></tr>
+          <tr><td>历史数据处理</td><td>历史会员补标</td><td><span class="tag p0">P0</span></td><td>按后续流程图处理历史满足政企大客户条件的会员；已有身份不覆盖。</td><td><a href="#history-data">查看</a></td></tr>
+          <tr><td>商品购买规则</td><td>业务身份购买限制</td><td><span class="tag p0">P0</span></td><td>支持配置多个业务身份，会员必须同时满足全部勾选身份。</td><td><a href="#purchase-rules">查看</a></td></tr>
+          <tr><td rowspan="4">会员小程序</td><td>商品详情</td><td>京东商品加入购物车</td><td><span class="tag p0">P0</span></td><td>京东商品支持加入购物车。</td><td><a href="#product-detail">查看</a></td></tr>
+          <tr><td>商品详情</td><td>身份限制购买态</td><td><span class="tag p0">P0</span></td><td>非满足身份会员按钮置灰，文案为“仅限政企大客户购买”。</td><td><a href="#product-detail">查看</a></td></tr>
+          <tr><td>购物车</td><td>不可购买分区规则</td><td><span class="tag p0">P0</span></td><td>身份不满足、京东地址缺货商品进入不可购买区域并显示原因。</td><td><a href="#cart-rules">查看</a></td></tr>
+          <tr><td>下单流程</td><td>提交订单强校验</td><td><span class="tag p0">P0</span></td><td>提交前校验业务身份、推荐官限制、京东地区库存等规则。</td><td><a href="#order-rules">查看</a></td></tr>
+        </table>
+      </section>
+
+      <section id="detail-plan">
+        <h2>五、详细方案</h2>
+        <p class="hint">按现有页面做增量改造。</p>
+
+        <h3 id="member-admin">5.1 会员管理</h3>
+        <div class="card">
+          <strong>列表筛选</strong>
+          <p>在会员用户列表的筛选区新增「业务身份」筛选条件，选项展示「政企大客户」。筛选后，列表返回具备对应业务身份的会员；列表本身不新增「业务身份」字段列。</p>
+        </div>
+        <div class="card">
+          <strong>设置业务身份</strong>
+          <p>在会员列表操作列的「...」中新增「设置业务身份」入口。点击后弹窗展示当前会员尚未拥有、且允许人工设置的业务身份；如果会员已拥有「政企大客户」，弹窗不再展示该选项。设置成功后，在会员详情的「业务身份信息」中展示身份名称、达成时间和身份来源。</p>
+        </div>
+        <div class="prototype-block">
+          <div class="prototype-head"><h4>原型预览 · 会员列表身份筛选与设置入口</h4><button class="preview-btn" onclick="openPreview('../prototype/prototype_v1.0.html?focus=member_filter#member-list')">放大查看</button></div>
+          <iframe class="prototype-frame" src="../prototype/prototype_v1.0.html?focus=member_filter#member-list" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+        <div class="prototype-block">
+          <div class="prototype-head"><h4>原型预览 · 会员详情业务身份信息</h4><button class="preview-btn" onclick="openPreview('../prototype/prototype_v1.0.html?focus=identity_detail#member-detail')">放大查看</button></div>
+          <iframe class="prototype-frame" src="../prototype/prototype_v1.0.html?focus=identity_detail#member-detail" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <h3 id="history-data">5.2 历史数据处理</h3>
+        <ul class="rule-list">
+          <li>按流程图识别历史会员。</li>
+          <li>未拥有身份：新增记录。</li>
+          <li>已拥有身份：不覆盖。</li>
+          <li>身份来源：历史数据处理。</li>
+          <li>执行前输出待处理名单。</li>
+        </ul>
+
+        <h3 id="purchase-rules-detail">5.3 商品购买规则</h3>
+        <ul class="rule-list">
+          <li>位置：购买限制分组。</li>
+          <li>字段：业务身份购买限制。</li>
+          <li>默认：不勾选。</li>
+          <li>不勾选：不限制。</li>
+          <li>多选：需全部满足。</li>
+          <li>推荐官：保持原逻辑。</li>
+        </ul>
+        <div class="prototype-block">
+          <div class="prototype-head"><h4>原型预览 · 商品购买规则业务身份限制</h4><button class="preview-btn" onclick="openPreview('../prototype/prototype_v1.0.html?focus=business_identity_rule#purchase-rule')">放大查看</button></div>
+          <iframe class="prototype-frame" src="../prototype/prototype_v1.0.html?focus=business_identity_rule#purchase-rule" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <h3 id="product-detail">5.4 商品详情页</h3>
+        <ul class="rule-list">
+          <li>京东商品：支持加入购物车。</li>
+          <li>入口：复用底部加入购物车。</li>
+          <li>身份不满足：展示限制提示。</li>
+          <li>按钮文案：仅限政企大客户购买。</li>
+          <li>按钮状态：置灰不可点。</li>
+        </ul>
+        <div class="prototype-block">
+          <div class="prototype-head"><h4>原型预览 · 商品详情政企身份限制</h4><button class="preview-btn" onclick="openPreview('../prototype/prototype_v1.0.html?focus=product_detail_limit#product-detail')">放大查看</button></div>
+          <iframe class="prototype-frame mobile" src="../prototype/prototype_v1.0.html?focus=product_detail_limit#product-detail" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <h3 id="cart-rules">5.5 购物车列表页</h3>
+        <ul class="rule-list">
+          <li>分区：复用不可购买。</li>
+          <li>身份不满足：进入不可购买。</li>
+          <li>京东商品：按顶部地址查库存。</li>
+          <li>当前地址缺货：进入不可购买。</li>
+          <li>原因文案：原因：当前地区缺货。</li>
+          <li>原因文案：原因：仅限政企大客户购买。</li>
+          <li>不可购买商品：不参与结算。</li>
+          <li>切换地址：重新校验库存。</li>
+        </ul>
+        <div class="prototype-block">
+          <div class="prototype-head"><h4>原型预览 · 购物车不可购买原因</h4><button class="preview-btn" onclick="openPreview('../prototype/prototype_v1.0.html?focus=cart_unavailable#cart-page')">放大查看</button></div>
+          <iframe class="prototype-frame mobile" src="../prototype/prototype_v1.0.html?focus=cart_unavailable#cart-page" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <h3 id="order-rules">5.6 下单流程</h3>
+        <ul class="rule-list">
+          <li>提交前强校验。</li>
+          <li>校验：商品状态。</li>
+          <li>校验：推荐官限制。</li>
+          <li>校验：业务身份限制。</li>
+          <li>校验：京东地区库存。</li>
+          <li>失败：返回明确原因。</li>
+        </ul>
+      </section>
+
+      <section id="flows">
+        <h2>六、业务流程图</h2>
+        <p class="hint">以下流程图默认展示可视化图形，右上角可切换查看 Mermaid 源码。</p>
+
+        <div class="flow-card">
+          <div class="flow-head"><h3>7.1 人工设置业务身份流程</h3><button class="flow-toggle" onclick="toggleFlow(this)">查看源码</button></div>
+          <div class="flow-body">
+            <div class="mermaid">flowchart TD
+  A[运营进入会员列表] --> B[点击操作列更多]
+  B --> C[选择设置业务身份]
+  C --> D[系统读取会员已有业务身份]
+  D --> E{是否已拥有政企大客户身份}
+  E -- 是 --> F[弹窗不展示政企大客户选项]
+  E -- 否 --> G[弹窗展示政企大客户选项]
+  G --> H[运营勾选并确认]
+  H --> I[写入业务身份记录]
+  I --> J[身份名称为政企大客户]
+  J --> K[身份来源为人工设置]
+  K --> L[达成身份时间为设置成功时间]
+  L --> M[刷新会员列表和会员详情]</div>
+            <pre class="flow-source">flowchart TD
+  A[运营进入会员列表] --> B[点击操作列更多]
+  B --> C[选择设置业务身份]
+  C --> D[系统读取会员已有业务身份]
+  D --> E{是否已拥有政企大客户身份}
+  E -- 是 --> F[弹窗不展示政企大客户选项]
+  E -- 否 --> G[弹窗展示政企大客户选项]
+  G --> H[运营勾选并确认]
+  H --> I[写入业务身份记录]
+  I --> J[身份名称为政企大客户]
+  J --> K[身份来源为人工设置]
+  K --> L[达成身份时间为设置成功时间]
+  L --> M[刷新会员列表和会员详情]</pre>
+          </div>
+        </div>
+
+        <div class="flow-card">
+          <div class="flow-head"><h3>7.2 商品购买资格校验流程</h3><button class="flow-toggle" onclick="toggleFlow(this)">查看源码</button></div>
+          <div class="flow-body">
+            <div class="mermaid">flowchart TD
+  A[会员访问商品] --> B[读取商品购买规则]
+  B --> C[读取会员身份信息]
+  C --> D{是否限制用户身份或等级}
+  D -- 不满足 --> X[不可购买]
+  D -- 满足或不限制 --> E{是否仅推荐官可买}
+  E -- 是 --> F{会员是否推荐官}
+  F -- 否 --> X
+  F -- 是 --> G{是否配置业务身份限制}
+  E -- 否 --> G
+  G -- 否 --> Y[可购买]
+  G -- 是 --> H{会员是否同时满足全部业务身份}
+  H -- 是 --> Y
+  H -- 否 --> X
+  X --> X1[商品详情按钮置灰]
+  X1 --> X2[购物车进入不可购买区域]
+  X2 --> X3[下单提交强校验拦截]</div>
+            <pre class="flow-source">flowchart TD
+  A[会员访问商品] --> B[读取商品购买规则]
+  B --> C[读取会员身份信息]
+  C --> D{是否限制用户身份或等级}
+  D -- 不满足 --> X[不可购买]
+  D -- 满足或不限制 --> E{是否仅推荐官可买}
+  E -- 是 --> F{会员是否推荐官}
+  F -- 否 --> X
+  F -- 是 --> G{是否配置业务身份限制}
+  E -- 否 --> G
+  G -- 否 --> Y[可购买]
+  G -- 是 --> H{会员是否同时满足全部业务身份}
+  H -- 是 --> Y
+  H -- 否 --> X
+  X --> X1[商品详情按钮置灰]
+  X1 --> X2[购物车进入不可购买区域]
+  X2 --> X3[下单提交强校验拦截]</pre>
+          </div>
+        </div>
+
+        <div class="flow-card">
+          <div class="flow-head"><h3>7.3 购物车京东库存与不可购买分区流程</h3><button class="flow-toggle" onclick="toggleFlow(this)">查看源码</button></div>
+          <div class="flow-body">
+            <div class="mermaid">flowchart TD
+  A[会员进入购物车] --> B[读取购物车商品]
+  B --> C[读取顶部已选地址]
+  C --> D[逐个判断商品状态]
+  D --> E{商品是否已下架或失效}
+  E -- 是 --> U[进入不可购买区域]
+  E -- 否 --> F{是否京东商品}
+  F -- 是 --> G{当前地址是否有库存}
+  G -- 否 --> U
+  G -- 是 --> H{是否满足购买身份限制}
+  F -- 否 --> H
+  H -- 否 --> U
+  H -- 是 --> V[进入可购买区域]
+  U --> U1[展示原因]
+  U1 --> U2[不可选择]
+  U2 --> U3[不参与全选和结算金额]
+  V --> V1[可勾选]
+  V1 --> V2[参与结算金额]
+  C --> Z{用户切换地址}
+  Z -- 是 --> D</div>
+            <pre class="flow-source">flowchart TD
+  A[会员进入购物车] --> B[读取购物车商品]
+  B --> C[读取顶部已选地址]
+  C --> D[逐个判断商品状态]
+  D --> E{商品是否已下架或失效}
+  E -- 是 --> U[进入不可购买区域]
+  E -- 否 --> F{是否京东商品}
+  F -- 是 --> G{当前地址是否有库存}
+  G -- 否 --> U
+  G -- 是 --> H{是否满足购买身份限制}
+  F -- 否 --> H
+  H -- 否 --> U
+  H -- 是 --> V[进入可购买区域]
+  U --> U1[展示原因]
+  U1 --> U2[不可选择]
+  U2 --> U3[不参与全选和结算金额]
+  V --> V1[可勾选]
+  V1 --> V2[参与结算金额]
+  C --> Z{用户切换地址}
+  Z -- 是 --> D</pre>
+          </div>
+        </div>
+
+        <div class="flow-card">
+          <div class="flow-head"><h3>7.4 下单提交强校验流程</h3><button class="flow-toggle" onclick="toggleFlow(this)">查看源码</button></div>
+          <div class="flow-body">
+            <div class="mermaid">flowchart TD
+  A[会员点击提交订单] --> B[后端读取订单商品]
+  B --> C[校验商品是否有效和可售]
+  C --> D{商品状态是否正常}
+  D -- 否 --> X[返回失败原因]
+  D -- 是 --> E[校验推荐官和业务身份限制]
+  E --> F{会员是否满足全部购买条件}
+  F -- 否 --> X
+  F -- 是 --> G{是否包含京东商品}
+  G -- 否 --> Y[继续原有下单流程]
+  G -- 是 --> H[按订单收货地址校验京东地区库存]
+  H --> I{是否全部有货}
+  I -- 否 --> X
+  I -- 是 --> Y
+  X --> X1[前端展示对应原因]
+  Y --> Y1[创建订单]</div>
+            <pre class="flow-source">flowchart TD
+  A[会员点击提交订单] --> B[后端读取订单商品]
+  B --> C[校验商品是否有效和可售]
+  C --> D{商品状态是否正常}
+  D -- 否 --> X[返回失败原因]
+  D -- 是 --> E[校验推荐官和业务身份限制]
+  E --> F{会员是否满足全部购买条件}
+  F -- 否 --> X
+  F -- 是 --> G{是否包含京东商品}
+  G -- 否 --> Y[继续原有下单流程]
+  G -- 是 --> H[按订单收货地址校验京东地区库存]
+  H --> I{是否全部有货}
+  I -- 否 --> X
+  I -- 是 --> Y
+  X --> X1[前端展示对应原因]
+  Y --> Y1[创建订单]</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="exceptions">
+        <h2>七、异常与边界处理</h2>
+        <table>
+          <tr><th>场景</th><th>处理规则</th><th>提示建议</th></tr>
+          <tr><td>会员不满足业务身份</td><td>商品详情按钮置灰；购物车进入不可购买区域；下单强校验拦截。</td><td>仅限政企大客户购买</td></tr>
+          <tr><td>商品同时限制推荐官和业务身份</td><td>会员必须同时满足推荐官与全部业务身份。</td><td>不满足购买身份要求</td></tr>
+          <tr><td>京东商品当前地址缺货</td><td>购物车进入不可购买区域；下单强校验拦截。</td><td>当前地址缺货，请更换地址后下单</td></tr>
+          <tr><td>未选择收货地址</td><td>购物车无法完成京东地区库存强校验，引导用户选择地址。</td><td>请选择收货地址后确认库存</td></tr>
+          <tr><td>会员已拥有政企大客户身份</td><td>设置身份弹窗不展示政企大客户选项。</td><td>无需提示或展示为已拥有</td></tr>
+          <tr><td>历史补标命中已有身份会员</td><td>保持原身份记录不变，不覆盖达成时间和来源。</td><td>后台任务记录跳过原因</td></tr>
+          <tr><td>库存接口异常</td><td>不应默认放行，建议提示稍后重试或暂不可购买。</td><td>库存校验失败，请稍后重试</td></tr>
+        </table>
+      </section>
+
+      <section id="tracking">
+        <h2>八、数据追踪与埋点</h2>
+        <table>
+          <tr><th>事件</th><th>触发时机</th><th>关键属性</th><th>用途</th></tr>
+          <tr><td>业务身份设置成功</td><td>后台人工设置身份成功</td><td>会员ID、身份名称、身份来源、设置时间</td><td>追踪身份设置规模</td></tr>
+          <tr><td>业务身份筛选</td><td>会员列表使用政企身份筛选</td><td>筛选条件、结果数</td><td>评估后台使用情况</td></tr>
+          <tr><td>受限商品曝光</td><td>商品详情展示身份限制态</td><td>商品ID、会员身份、限制身份</td><td>分析受限访问规模</td></tr>
+          <tr><td>加入购物车</td><td>京东商品加购成功/失败</td><td>商品ID、商品来源、失败原因</td><td>验证京东加购链路</td></tr>
+          <tr><td>购物车不可购买曝光</td><td>商品进入不可购买区域</td><td>商品ID、原因、地址区域、会员身份</td><td>识别规则拦截与缺货问题</td></tr>
+          <tr><td>提交订单拦截</td><td>下单强校验失败</td><td>商品ID、拦截原因、会员身份、地址区域</td><td>定位转化损耗原因</td></tr>
+        </table>
+      </section>
+
+      <section id="annex">
+        <h2>九、附件</h2>
+        <div class="grid grid-2">
+          <a class="card" href="#background"><strong>需求记录</strong><span class="hint">查看本 PRD 中的需求背景、目标与范围。</span></a>
+          <a class="card" href="../prototype/prototype_v1.0.html" target="_blank" rel="noopener noreferrer"><strong>高保真原型</strong><span class="hint">打开截图风格的增量改造原型。</span></a>
+          <a class="card" href="../flowcharts/flowcharts_v1.0.md" target="_blank" rel="noopener noreferrer"><strong>业务流程图源码</strong><span class="hint">查看 Mermaid 流程图源文件。</span></a>
+          <a class="card" href="#flows"><strong>PRD 内嵌流程图</strong><span class="hint">查看可视化流程图与源码切换。</span></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="preview-modal" id="previewModal" onclick="if(event.target===this) closePreview()">
+    <div class="preview-dialog">
+      <div class="preview-dialog-head"><strong>原型放大预览</strong><button class="preview-btn" onclick="closePreview()">关闭</button></div>
+      <iframe id="previewFrame" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+  </div>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    }
+    function toggleFlow(btn) {
+      const card = btn.closest('.flow-card');
+      card.classList.toggle('show-source');
+      btn.textContent = card.classList.contains('show-source') ? '查看流程图' : '查看源码';
+    }
+    function toggleNavGroup(btn) {
+      const submenu = btn.nextElementSibling;
+      submenu.classList.toggle('open');
+      btn.classList.toggle('collapsed', !submenu.classList.contains('open'));
+    }
+    function openPreview(src) {
+      const modal = document.getElementById('previewModal');
+      const frame = document.getElementById('previewFrame');
+      frame.src = src;
+      modal.classList.add('open');
+    }
+    function closePreview() {
+      const modal = document.getElementById('previewModal');
+      const frame = document.getElementById('previewFrame');
+      modal.classList.remove('open');
+      frame.src = 'about:blank';
+    }
+  </script>
+</body>
+</html>

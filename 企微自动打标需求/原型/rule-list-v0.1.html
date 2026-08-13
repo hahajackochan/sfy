@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分群规则管理 - 列表页优化原型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #303133;
+      background: #f6f8fb;
+      font-size: 14px;
+    }
+    .app { width: 100vw; min-height: 100vh; background: #f6f8fb; }
+    .topbar { height: 58px; background: #fff; border-bottom: 1px solid #ebeef4; display: flex; align-items: center; }
+    .brand { width: 192px; height: 58px; display:flex; align-items:center; justify-content:center; color:#303133; background:#fff; font-size:18px; font-weight:600; letter-spacing:.5px; border-right:1px solid #ebeef4; }
+    .tabs { display:flex; height:58px; align-items:center; gap:0; }
+    .tab { height:58px; display:flex; align-items:center; padding:0 26px; border-right:1px solid #ebeef4; color:#606266; background:#fff; }
+    .tab.active { color:#a86115; background:#fcebd8; border-bottom:0; }
+    .tenant { display:flex; align-items:center; gap:6px; padding:0 28px; color:#606266; }
+    .user { margin-left:auto; display:flex; align-items:center; gap:26px; padding-right:28px; color:#606266; }
+    .shell { display:flex; min-height:calc(100vh - 58px); }
+    .sidebar { width:192px; background:#fff; color:#606266; padding-top:18px; border-right:1px solid #ebeef4; }
+    .nav-item { height:50px; display:flex; align-items:center; gap:10px; padding:0 18px; color:#606266; font-size:14px; background:#fff; }
+    .nav-item .icon { width:18px; opacity:.9; text-align:center; }
+    .nav-item.active { background:#fcebd8; color:#a86115; }
+    .nav-item.child { padding-left:30px; background:#fff; }
+    .nav-item.child.active { background:#fcebd8; color:#a86115; }
+    .content { flex:1; padding:22px 26px; overflow:auto; background:#fff; }
+    .crumb { color:#606266; font-size:14px; margin:4px 0 18px; }
+    .notice { height:38px; display:flex; align-items:center; padding:0 16px; background:#fff; border:1px solid #ebeef4; color:#a86115; border-radius:2px; margin-bottom:18px; font-size:13px; }
+    .toolbar { height:42px; display:flex; align-items:center; margin-bottom:12px; }
+    .link { color:#409eff; cursor:pointer; }
+    .toolbar-actions { margin-left:auto; display:flex; gap:12px; }
+    .btn { height:32px; padding:0 15px; border-radius:3px; border:1px solid #dcdfe6; background:#fff; color:#606266; display:inline-flex; align-items:center; justify-content:center; gap:5px; line-height:30px; cursor:pointer; }
+    .btn.primary { background:#a86115; border-color:#a86115; color:#fff; }
+    .btn.small { height:28px; padding:0 9px; font-size:13px; }
+    .btn.text { border:0; background:transparent; color:#a86115; padding:0 3px; height:auto; }
+    .btn.text.green { color:#a86115; font-weight:600; }
+    .table-card { background:#fff; border:1px solid #ebeef4; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; }
+    th { height:50px; background:#f2f5f9; color:#606266; font-weight:600; border-bottom:1px solid #ebeef4; text-align:left; padding:0 12px; font-size:14px; }
+    td { height:66px; border-bottom:1px solid #ebeef4; padding:0 12px; color:#606266; vertical-align:middle; font-size:14px; }
+    tr:hover td { background:#fdf6ef; }
+    .code { color:#606266; }
+    .name { color:#303133; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .time { line-height:20px; color:#606266; }
+    .status-dot { display:inline-flex; align-items:center; gap:5px; color:#67c23a; }
+    .status-dot::before { content:""; width:6px; height:6px; border-radius:50%; background:#67c23a; }
+    .freq { display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:12px; background:#f4f4f5; color:#606266; font-size:12px; border:1px solid #e9e9eb; }
+    .freq.once { background:#fdf1e8; color:#a86115; border-color:#f3d5bc; }
+    .empty-time { color:#c0c4cc; }
+    .ops { display:flex; flex-wrap:wrap; gap:7px 10px; line-height:22px; }
+    .pager { height:56px; display:flex; align-items:center; gap:10px; padding:0 16px; color:#606266; justify-content:flex-start; }
+    .page-size, .page-input { height:30px; border:1px solid #dcdfe6; border-radius:3px; background:#fff; display:inline-flex; align-items:center; padding:0 10px; }
+    .page-num { min-width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; border-radius:3px; color:#606266; }
+    .page-num.active { background:#a86115; color:#fff; }
+    .drawer { position:fixed; right:24px; top:84px; width:330px; background:#fff; border:1px solid #dcdfe6; box-shadow:0 8px 28px rgba(0,0,0,.12); border-radius:4px; display:none; z-index:20; }
+    .drawer.show { display:block; }
+    .drawer-head { height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid #ebeef5; font-weight:600; }
+    .drawer-body { padding:16px; }
+    .form-row { margin-bottom:14px; }
+    .label { color:#606266; margin-bottom:6px; font-size:13px; }
+    .input { height:34px; border:1px solid #dcdfe6; border-radius:3px; display:flex; align-items:center; padding:0 10px; color:#303133; background:#fff; }
+    .tip { padding:10px; background:#f4f4f5; color:#909399; line-height:20px; border-radius:3px; font-size:12px; }
+    .badge-new { margin-left:4px; color:#e6a23c; font-size:12px; }
+    @media (max-width: 1300px) {
+      .brand,.sidebar{width:178px}.tab{padding:0 18px}.content{padding:18px}
+      th,td{padding:0 8px;font-size:13px}.ops{gap:5px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">消费者业务中台</div>
+      <div class="tabs">
+        <div class="tab">平台端</div>
+        <div class="tab active">租户端</div>
+      </div>
+      <div class="tenant">索菲亚会员小程序</div>
+      <div class="user"><span>陈嘉豪，你好！</span><span>退出登录</span></div>
+    </div>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="nav-item"><span class="icon">□</span>首页</div>
+        <div class="nav-item"><span class="icon">□</span>租户管理</div>
+        <div class="nav-item"><span class="icon">□</span>用户管理</div>
+        <div class="nav-item child"><span class="icon">•</span>用户列表</div>
+        <div class="nav-item child"><span class="icon">•</span>标签管理</div>
+        <div class="nav-item child"><span class="icon">•</span>邀请记录列表</div>
+        <div class="nav-item child active"><span class="icon">•</span>分群规则管理</div>
+        <div class="nav-item"><span class="icon">□</span>商品管理</div>
+        <div class="nav-item"><span class="icon">□</span>订单管理</div>
+        <div class="nav-item"><span class="icon">□</span>京东模块</div>
+        <div class="nav-item"><span class="icon">□</span>任务管理</div>
+        <div class="nav-item"><span class="icon">□</span>页面管理</div>
+        <div class="nav-item"><span class="icon">□</span>售后管理</div>
+        <div class="nav-item"><span class="icon">□</span>营销活动</div>
+        <div class="nav-item"><span class="icon">□</span>短信管理</div>
+        <div class="nav-item"><span class="icon">□</span>直播管理</div>
+        <div class="nav-item"><span class="icon">□</span>潜客管理</div>
+        <div class="nav-item"><span class="icon">□</span>成品分销管理</div>
+        <div class="nav-item"><span class="icon">□</span>定制分销管理</div>
+      </aside>
+      <main class="content">
+        <div class="crumb">用户管理 / 分群规则管理</div>
+        <div class="notice">温馨提示：BI每天凌晨获取开启状态的分群规则进行统计。</div>
+        <div class="toolbar">
+          <a class="link">内容关联明细</a>
+          <div class="toolbar-actions">
+            <button class="btn" onclick="toggleDrawer()">Y 筛选</button>
+            <button class="btn primary">+ 添加规则</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <table>
+            <colgroup>
+              <col style="width:150px" />
+              <col style="width:310px" />
+              <col style="width:86px" />
+              <col style="width:112px" />
+              <col style="width:116px" />
+              <col style="width:86px" />
+              <col style="width:86px" />
+              <col style="width:150px" />
+              <col style="width:86px" />
+              <col style="width:150px" />
+              <col style="width:230px" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>分群规则编码</th>
+                <th>分群规则名称</th>
+                <th>用户数</th>
+                <th>统计频率<span class="badge-new">新增</span></th>
+                <th>最近统计时间</th>
+                <th>规则状态</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>更新人</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="pager">
+            <span>共48条</span>
+            <span class="page-size">10条/页⌄</span>
+            <span class="page-num">‹</span>
+            <span class="page-num active">1</span>
+            <span class="page-num">2</span>
+            <span class="page-num">3</span>
+            <span class="page-num">4</span>
+            <span class="page-num">5</span>
+            <span class="page-num">›</span>
+            <span>前往</span><span class="page-input">1</span><span>页</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="drawer" class="drawer">
+    <div class="drawer-head"><span>筛选</span><button class="btn text" onclick="toggleDrawer()">关闭</button></div>
+    <div class="drawer-body">
+      <div class="form-row"><div class="label">分群规则编码</div><div class="input">请输入</div></div>
+      <div class="form-row"><div class="label">分群规则名称</div><div class="input">请输入</div></div>
+      <div class="form-row"><div class="label">规则状态</div><div class="input">请选择</div></div>
+      <div class="form-row"><div class="label">统计频率</div><div class="input">请选择</div></div>
+      <div class="tip">本原型先按截图还原筛选入口，具体筛选项待补充现有筛选面板截图后校准。</div>
+      <div class="flex gap-2 mt-4"><button class="btn primary">查询</button><button class="btn">重置</button></div>
+    </div>
+  </div>
+
+  <script>
+    const rows = [
+      ['GR202605140001','【嘉兴】安装城市-接单400天前-无未完结订单','2459','仅统计一次','', '陈嘉豪','2026-05-14 15:55:30','陈嘉豪','2026-05-14 15:57:24', true],
+      ['GR202605130004','安装城市=海南','6747','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-13 18:27:38','陈嘉豪','2026-05-13 18:27:57', false],
+      ['GR202605130003','安装城市=广西','12460','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-13 18:27:12','陈嘉豪','2026-05-13 18:27:30', false],
+      ['GR202605130002','安装城市=贵州','14750','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-13 18:26:37','陈嘉豪','2026-05-13 18:26:59', false],
+      ['GR202605130001','安装城市=云南','13377','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-13 18:26:30','陈嘉豪','2026-05-13 18:26:30', false],
+      ['GR202605120005','安装城市=青岛','7599','仅统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-12 15:13:36','陈嘉豪','2026-05-12 15:13:52', false],
+      ['GR202605120004','安装城市=南宁','5985','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-12 15:13:07','陈嘉豪','2026-05-12 15:13:21', false],
+      ['GR202605120003','安装城市=福州','2597','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-12 15:12:31','陈嘉豪','2026-05-12 15:12:48', false],
+      ['GR202605120002','安装城市=深圳','16997','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-12 15:12:05','陈嘉豪','2026-05-12 15:12:20', false],
+      ['GR202605120001','安装城市=东莞','6776','每天统计一次','2026-05-18 05:11:06','陈嘉豪','2026-05-12 15:11:44','陈嘉豪','2026-05-12 15:11:50', false],
+    ];
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = rows.map(r => {
+      const [code,name,count,freq,last,creator,ctime,updater,utime,canQw] = r;
+      const freqClass = freq === '仅统计一次' ? 'freq once' : 'freq';
+      const ops = `
+        <button class="btn text">编辑</button>
+        <button class="btn text">查看用户</button>
+        <button class="btn text">内容关联</button>
+        <button class="btn text">复制规则</button>
+        ${canQw ? '<button class="btn text green">企微打标任务</button>' : ''}
+      `;
+      return `<tr>
+        <td class="code">${code}</td>
+        <td><div class="name" title="${name}">${name}</div></td>
+        <td>${count}</td>
+        <td><span class="${freqClass}">${freq}</span></td>
+        <td>${last ? `<div class="time">${last.split(' ')[0]}<br>${last.split(' ')[1]}</div>` : '<span class="empty-time">-</span>'}</td>
+        <td><span class="status-dot">正常</span></td>
+        <td>${creator}</td>
+        <td><div class="time">${ctime}</div></td>
+        <td>${updater}</td>
+        <td><div class="time">${utime}</div></td>
+        <td><div class="ops">${ops}</div></td>
+      </tr>`;
+    }).join('');
+    function toggleDrawer(){ document.getElementById('drawer').classList.toggle('show'); }
+
+    const params = new URLSearchParams(location.search);
+    const focus = params.get('focus');
+    if (focus === 'qw_entry') {
+      document.querySelectorAll('.btn.text.green').forEach(el => {
+        el.style.background = '#f0f9eb';
+        el.style.border = '1px solid #b7eb8f';
+        el.style.borderRadius = '3px';
+        el.style.padding = '1px 6px';
+      });
+    }
+  </script>
+</body>
+</html>

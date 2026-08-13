@@ -1,0 +1,6 @@
+# 本需求 PRD 需随仓库发布，覆盖根 .gitignore 的忽略规则
+!prd/
+!annex/
+!prototype/
+!flowcharts/
+!templates/
